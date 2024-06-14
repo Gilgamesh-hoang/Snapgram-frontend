@@ -7,13 +7,18 @@ module.exports = {
         "standard",
         "plugin:react/recommended",
         "plugin:tailwindcss/recommended",
+        "plugin:@typescript-eslint/recommended",
         "prettier"
     ],
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
-    "plugins": ["react"],
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
     "rules": {
         "react/react-in-jsx-scope": "off"
     }
