@@ -25,18 +25,18 @@ const SigninForm: React.FC = () => {
 
     return (
         <Form {...form}>
-            <div className="sm:w-420 flex-center flex-col">
+            <div className="flex-center flex-col sm:w-420">
                 <img src="/assets/images/logo.svg" alt="logo"/>
 
                 <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">
                     Đăng nhập
                 </h2>
-                <p className="text-light-3 small-medium md:base-regular mt-2">
+                <p className="small-medium md:base-regular mt-2 text-light-3">
                     Chào mừng trở lại! Vui lòng nhập thông tin của bạn.
                 </p>
                 <form
                     onSubmit={form.handleSubmit(handleSignin)}
-                    className="flex flex-col gap-5 w-full mt-4">
+                    className="mt-4 flex w-full flex-col gap-5">
                     <FormField
                         control={form.control}
                         name="email"
@@ -87,11 +87,11 @@ const SigninForm: React.FC = () => {
                         )}
                     </Button>
 
-                    <p className="text-small-regular text-light-2 text-center mt-2">
+                    <p className="mt-2 text-center text-sm font-normal text-light-2">
                         Chưa có tài khoản?
                         <Link
                             to="/sign-up"
-                            className="text-primary-500 text-small-semibold ml-1">
+                            className="ml-1 text-sm font-semibold text-primary-500">
                             Đăng ký ngay
                         </Link>
                     </p>
