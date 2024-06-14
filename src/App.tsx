@@ -15,6 +15,7 @@ import RootLayout from "./_root/RootLayout";
 import SignupForm from "@/_auth/forms/SignupForm";
 import SigninForm from "@/_auth/forms/SigninForm";
 import {Route, Routes} from "react-router-dom";
+import {Toaster} from "@/components/ui/toast/toaster.tsx";
 
 const App = () => {
     return (
@@ -39,7 +40,7 @@ const App = () => {
                     <Route path="/update-profile/:id" element={<UpdateProfile/>}/>
                 </Route>
             </Routes>
-
+            <Toaster />
         </main>
     )
 };
