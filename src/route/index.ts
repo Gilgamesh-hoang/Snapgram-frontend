@@ -14,6 +14,7 @@ import {
 } from "@/_root/pages";
 
 export const routes = {
+    home: "/",
     signin: "/sign-in",
     signup: "/sign-up",
     explore: "/explore",
@@ -38,7 +39,7 @@ export const publicRoutes: RouteType[] = [
 ]
 
 export const privateRoutes: RouteType[] = [
-    {path: '/', element: Home, index: true},
+    {path: routes.home, element: Home, index: true},
     {path: routes.explore, element: Explore},
     {path: routes.saved, element: Saved},
     {path: routes.allUsers, element: AllUsers},
