@@ -12,6 +12,7 @@ import {
     Saved,
     UpdateProfile,
 } from "@/_root/pages";
+import Messages from "@/_root/pages/Messages.tsx";
 
 export const routes = {
     home: "/",
@@ -19,6 +20,7 @@ export const routes = {
     signup: "/sign-up",
     explore: "/explore",
     saved: "/saved",
+    messages: "/messages",
     allUsers: "/all-users",
     createPost: "/create-post",
     updatePost: "/update-post/:id",
@@ -43,6 +45,7 @@ export const privateRoutes: RouteType[] = [
     {path: routes.explore, element: Explore},
     {path: routes.saved, element: Saved},
     {path: routes.allUsers, element: AllUsers},
+    {path: routes.messages, element: Messages},
     {path: routes.createPost, element: CreatePost},
     {path: routes.updatePost, element: EditPost},
     {path: routes.posts, element: PostDetails},

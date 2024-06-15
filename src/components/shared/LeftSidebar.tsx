@@ -4,7 +4,6 @@ import { INavLink } from "@/types";
 import { sidebarLinks } from "@/constants";
 import { Button } from "@/components/ui/button";
 import React from "react";
-import Loader from "@/components/shared/Loader";
 import {clsx} from "clsx";
 import {routes} from "@/route";
 
@@ -24,7 +23,7 @@ const LeftSidebar = () => {
     return (
         <nav className="leftsidebar">
             <div className="flex flex-col gap-11">
-                <Link to="/" className="flex gap-3 items-center">
+                <Link to="/" className="flex items-center gap-3">
                     <img
                         src="/assets/images/logo.svg"
                         alt="logo"
@@ -38,11 +37,11 @@ const LeftSidebar = () => {
                 {/*        <Loader />*/}
                 {/*    </div>*/}
                 {/*) : (*/}
-                    <Link to={`/profile/1`} className="flex gap-3 items-center">
+                    <Link to={`/profile/1`} className="flex items-center gap-3">
                         <img
                             src={"/assets/icons/profile-placeholder.svg"}
                             alt="profile"
-                            className="h-14 w-14 rounded-full"
+                            className="size-12 rounded-full"
                         />
                         <div className="flex flex-col">
                             <p className="body-bold">gilgamesh</p>
@@ -51,18 +50,18 @@ const LeftSidebar = () => {
                     </Link>
                 {/*)}*/}
 
-                <ul className="flex flex-col gap-6">
+                <ul className="flex flex-col gap-2">
                     {sidebarLinks.map((link: INavLink) => {
                         const isActive = pathname === link.route;
-
+                        const isMessages = link.route === routes.messages;
                         return (
                             <li
                                 key={link.label}
-                                className={clsx('leftsidebar-link group', isActive && 'bg-primary-500')}
+                                className={clsx('leftsidebar-link group flex items-center justify-between', isActive && 'bg-primary-500')}
                             >
                                 <NavLink
                                     to={link.route}
-                                    className="flex gap-4 items-center p-4">
+                                    className="flex w-full items-center gap-4 p-3">
                                     <img
                                         src={link.imgURL}
                                         alt={link.label}
@@ -72,6 +71,10 @@ const LeftSidebar = () => {
                                     />
                                     {link.label}
                                 </NavLink>
+
+                                {isMessages && (
+                                    <span className="mr-2 size-2.5 rounded-full bg-red"></span>
+                                )}
                             </li>
                         );
                     })}
@@ -80,10 +83,10 @@ const LeftSidebar = () => {
 
             <Button
                 variant="ghost"
-                className="shad-button_ghost"
+                className="shad-button_ghost flex justify-start gap-4"
                 onClick={(e) => handleSignOut(e)}>
                 <img src="/assets/icons/logout.svg" alt="logout" />
-                <p className="small-medium lg:base-medium">Logout</p>
+                <p className="small-medium lg:base-medium">Đăng xuất</p>
             </Button>
         </nav>
     );
