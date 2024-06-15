@@ -8,6 +8,7 @@ import {SignupValidation} from "@/validation";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {routes} from "@/route";
 
 const SignupForm: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -107,7 +108,7 @@ const SignupForm: React.FC = () => {
                     <p className="mt-2 text-center text-sm font-normal text-light-2">
                         Đã có tài khoản?
                         <Link
-                            to="/sign-in"
+                            to={routes.signin}
                             className="ml-1 text-sm font-semibold text-primary-500">
                             Đăng nhập ngay
                         </Link>
