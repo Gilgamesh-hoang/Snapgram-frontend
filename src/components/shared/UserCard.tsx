@@ -18,7 +18,7 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
             <img
                 src={user.imageUrl || "/assets/icons/profile-placeholder.svg"}
                 alt="creator"
-                className="size-14 rounded-full"
+                className="size-16 rounded-full"
             />
 
             <div className="flex-center flex-col gap-1">
@@ -30,7 +30,7 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
                 </p>
             </div>
 
-            <Button type="button" size="sm" className="shad-button_primary px-5">
+            <Button type="button" size="sm" className="shad-button_primary bg-primary-500 px-5">
                 Theo dõi
             </Button>
         </Link>
