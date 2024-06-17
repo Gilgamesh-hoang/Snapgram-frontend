@@ -111,7 +111,7 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
                     />
                     <button className='absolute bottom-1/4 right-3'>
                         <img
-                            src={"/assets/icons/send.svg"}
+                            src={"/assets/icons/send-secondary.svg"}
                             alt="send"
                             width={20}
                             height={20}

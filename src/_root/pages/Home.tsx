@@ -30,7 +30,7 @@ const Home: React.FC = () => {
         <div className="flex flex-1">
             <div className="home-container">
                 <div className="home-posts">
-                    <ul className="flex w-full flex-1 flex-col gap-9 ">
+                    <ul className="flex w-full flex-1 flex-col gap-9">
                         <li className="flex w-full justify-center">
                             <PostCard post={post}/>
                         </li>
