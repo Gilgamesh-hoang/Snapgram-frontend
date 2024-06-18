@@ -2,7 +2,6 @@ import "./globals.css";
 import AuthLayout from "./_auth/AuthLayout";
 import RootLayout from "./_root/RootLayout";
 import {Route, Routes} from "react-router-dom";
-import {Toaster} from "@/components/ui/toast/toaster.tsx";
 import {privateRoutes, publicRoutes, RouteType} from "@/route";
 
 const App = () => {
@@ -38,7 +37,6 @@ const App = () => {
                     }
                 </Route>
             </Routes>
-            <Toaster/>
         </main>
     )
 };

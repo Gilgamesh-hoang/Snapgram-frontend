@@ -198,7 +198,7 @@
 
     /* File uploader */
     .file_uploader-img {
-        @apply h-80 lg:h-[480px] w-full rounded-[24px] object-cover object-top;
+        @apply h-80 lg:h-[550px] w-full rounded-[24px] object-scale-down object-center;
     }
 
     .file_uploader-label {
@@ -207,6 +207,43 @@
 
     .file_uploader-box {
         @apply flex-center flex-col p-7 h-80 lg:h-[612px];
+    }
+
+    /* Carousel */
+    .carousel {
+        @apply relative flex justify-center items-center w-full h-full;
+    }
+
+    .slide {
+        @apply h-80 lg:h-[550px] w-full rounded-[24px] object-scale-down object-center;
+    }
+
+    .arrow {
+        @apply absolute filter drop-shadow-[0px_0px_5px_#555] lg:w-8 lg:h-8 sm:w-4 sm:h-4 text-white z-10;
+    }
+
+    .arrow:hover {
+        @apply cursor-pointer;
+    }
+
+    .arrow-left {
+        @apply left-4;
+    }
+
+    .arrow-right {
+        @apply right-4;
+    }
+
+    .indicators {
+        @apply flex absolute bottom-4;
+    }
+
+    .indicator {
+        @apply bg-white h-2 w-2 rounded-full border-none outline-none shadow-[0px_0px_5px_#555] mx-[0.2rem] cursor-pointer;
+    }
+
+    .indicator-inactive {
+        @apply bg-gray-500;
     }
 
     /* Grid Post List */
@@ -258,10 +295,6 @@
         @apply text-white !important;
     }
 
-    .shad-form_message {
-        @apply text-red !important;
-    }
-
     .shad-input {
         @apply h-12 bg-dark-4 border-none placeholder:text-light-4 focus-visible:ring-1 focus-visible:ring-offset-1 ring-offset-light-3 !important;
     }
@@ -284,6 +317,6 @@
     }
 
     .error-message {
-        @apply text-red ;
+        @apply text-red italic;
     }
 }
