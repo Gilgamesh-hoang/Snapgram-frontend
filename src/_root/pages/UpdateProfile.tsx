@@ -38,7 +38,7 @@ const UpdateProfile: React.FC = () => {
     return (
         <div className="flex flex-1">
             <div className="common-container ">
-                <div className="flex-start gap-3 justify-start w-full max-w-5xl">
+                <div className="flex-start w-full max-w-5xl justify-start gap-3">
                     <img
                         src="/assets/icons/edit.svg"
                         width={36}

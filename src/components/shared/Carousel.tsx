@@ -6,9 +6,10 @@ import {MediaUrl} from "@/components/shared/FileUploader.tsx";
 
 type CarouselProps = {
     sources: MediaUrl[];
-    callback: (itemIndex: number) => void;
+    callback?: (itemIndex: number) => void;
+    isShowClose?: boolean;
 };
-const Carousel: React.FC<CarouselProps> = ({sources, callback}) => {
+const Carousel: React.FC<CarouselProps> = ({sources, callback, isShowClose = false}) => {
     const [slide, setSlide] = useState(0);
 
     const nextSlide = () => {
@@ -22,7 +23,8 @@ const Carousel: React.FC<CarouselProps> = ({sources, callback}) => {
     const useCallback = (index: number) => {
         if (index === sources.length - 1)
             prevSlide();
-        callback(index);
+        if(callback)
+            callback(index);
     }
 
     return (
@@ -51,11 +53,13 @@ const Carousel: React.FC<CarouselProps> = ({sources, callback}) => {
                         )}
 
 
-                        <div onClick={() => useCallback(idx)}
-                             className={clsx('absolute right-1 top-1 w-fit cursor-pointer rounded-full bg-dark-4 p-2',
-                                 {'hidden': slide !== idx})}>
-                            <IoClose className='lg:size-6'/>
-                        </div>
+                        {isShowClose &&
+                            <div onClick={() => useCallback(idx)}
+                                 className={clsx('absolute right-1 top-1 w-fit cursor-pointer rounded-full bg-dark-4 p-2',
+                                     {'hidden': slide !== idx})}>
+                                <IoClose className='lg:size-6'/>
+                            </div>
+                        }
                     </div>
                 );
             })}

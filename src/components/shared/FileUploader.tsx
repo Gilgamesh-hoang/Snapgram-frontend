@@ -4,11 +4,8 @@ import {FileWithPath, useDropzone} from "react-dropzone";
 import {Button} from "@/components/ui";
 import {Carousel} from "@/components/shared";
 import {convertFileToUrl} from "@/utils";
-export interface MediaUrl {
-    isImage?: boolean;
-    isVideo?: boolean;
-    src?: string;
-}
+import {MediaUrl} from "@/types";
+
 type FileUploaderProps = {
     fieldChange: (files: File[]) => void;
     mediaUrl: MediaUrl[];
@@ -42,6 +39,7 @@ const FileUploader = ({fieldChange, mediaUrl}: FileUploaderProps) => {
             mediaUrl.src = convertFileToUrl(file);
             urls = [...urls, mediaUrl]
         }
+        console.log(urls)
         return urls;
     }
 
@@ -79,8 +77,7 @@ const FileUploader = ({fieldChange, mediaUrl}: FileUploaderProps) => {
             {fileUrl && fileUrl.length > 0 ? (
                 <>
                     <div className="flex w-full flex-1 justify-center p-5 lg:p-10">
-                        {/*<img src={fileUrl} alt="image" className="file_uploader-img"/>*/}
-                        <Carousel sources={fileUrl} callback={removeItem}/>
+                        <Carousel sources={fileUrl} callback={removeItem} isShowClose={true}/>
                     </div>
                     <p className="file_uploader-label" {...getRootProps()}>Nhấn vào để thêm ảnh / video</p>
                 </>

@@ -3,6 +3,8 @@ import {Link} from "react-router-dom";
 import {PostStats} from "@/components/shared";
 import {multiFormatDateString} from "@/utils";
 import React, {useState} from "react";
+import {MediaUrl} from "@/types";
+import CarouselPost from "@/components/shared/CarouselPost.tsx";
 
 type PostCardProps = {
     post: {
@@ -15,7 +17,7 @@ type PostCardProps = {
         id: string;
         caption: string;
         location: string;
-        imageUrl: string;
+        imageUrl: MediaUrl[];
         tags: string[];
     };
 
@@ -64,35 +66,27 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
                         className="cursor-pointer"
                     />
                 </div>
-                {/*<Link*/}
-                {/*    to={`/update-post/${post.id}`}>*/}
-                {/*    <img*/}
-                {/*        src={"/assets/icons/edit.svg"}*/}
-                {/*        alt="edit"*/}
-                {/*        width={20}*/}
-                {/*        height={20}*/}
-                {/*    />*/}
-                {/*</Link>*/}
             </div>
 
-            <Link to={`/posts/${post.id}`}>
-                <div className="small-medium lg:base-medium py-5">
-                    <p>{post.caption}</p>
-                    <ul className="mt-2 flex gap-1">
-                        {post.tags.map((tag: string, index: number) => (
-                            <li key={`${tag}${index}`} className="small-regular text-light-3">
-                                #{tag}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
 
-                <img
-                    src={post.imageUrl || "/assets/icons/profile-placeholder.svg"}
-                    alt="post image"
-                    className="post-card_img"
-                />
-            </Link>
+            <div className="small-medium lg:base-medium py-5">
+                <p>{post.caption}</p>
+                <ul className="mt-2 flex gap-1">
+                    {post.tags.map((tag: string, index: number) => (
+                        <li key={`${tag}${index}`} className="small-regular text-light-3">
+                            #{tag}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <CarouselPost sources={post.imageUrl}/>
+
+            {/*<img*/}
+            {/*    src={post.imageUrl[0].src}*/}
+            {/*    alt="post image"*/}
+            {/*    className="post-card_img"*/}
+            {/*/>*/}
             <PostStats isShowShare={true}/>
 
             {/*comment*/}

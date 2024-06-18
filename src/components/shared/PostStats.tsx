@@ -1,5 +1,5 @@
 import {FC, useState} from "react";
-import {useLocation} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 
 import {checkIsLiked} from "@/utils";
 
@@ -9,7 +9,7 @@ type PostStatsProps = {
     isShowShare?: boolean;
 };
 
-const PostStats: FC<PostStatsProps> = ({post, userId, isShowShare=false}: PostStatsProps) => {
+const PostStats: FC<PostStatsProps> = ({post, userId, isShowShare = false}: PostStatsProps) => {
     const location = useLocation();
 
     const [likes, setLikes] = useState<string[]>(['a', 'b', 'c']);
@@ -37,16 +37,20 @@ const PostStats: FC<PostStatsProps> = ({post, userId, isShowShare=false}: PostSt
                     />
                     <p className="small-medium lg:base-medium">100</p>
                 </div>
-                <div className="flex gap-2">
-                    <img
-                        src={'/assets/icons/comment.svg'}
-                        alt="comment"
-                        width={20}
-                        height={20}
-                        className="cursor-pointer"
-                    />
-                    <p className="small-medium lg:base-medium">5</p>
-                </div>
+                <Link
+                    to={`/posts/1`}
+                >
+                    <div className="flex gap-2">
+                        <img
+                            src={'/assets/icons/comment.svg'}
+                            alt="comment"
+                            width={20}
+                            height={20}
+                            className="cursor-pointer"
+                        />
+                        <p className="small-medium lg:base-medium">5</p>
+                    </div>
+                </Link>
                 {isShowShare && (
                     <div className="ml-7 flex gap-2">
                         <img
