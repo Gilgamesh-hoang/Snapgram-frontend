@@ -13,7 +13,6 @@ type PostFormProps = {
         caption: string;
         location: string;
         imageUrl: MediaUrl[];
-        tags: string[];
     };
     action: "Create" | "Update";
 };

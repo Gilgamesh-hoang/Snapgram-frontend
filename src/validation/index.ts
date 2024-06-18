@@ -19,7 +19,13 @@ export const SigninValidation = z.object({
     password: z.string().min(8, {message: "Mật khẩu cần dài ít nhất 8 ký tự."}),
 });
 
-
+export const ProfileValidation = z.object({
+    file: z.custom<File>(),
+    name: z.string().min(2, { message: "Tên phải có ít nhất 2 ký tự." }),
+    username: z.string().min(2, { message: "username phải có ít nhất 2 ký tự." }),
+    email: z.string().email({message: 'Email không hợp lệ'}),
+    bio: z.string(),
+});
 // ============================================================
 // POST
 // ============================================================
