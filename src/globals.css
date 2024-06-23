@@ -35,6 +35,12 @@
     .base-semibold {
         @apply text-[16px] font-semibold leading-[140%] tracking-tighter;
     }
+    .base-extrabold {
+        @apply text-[16px] font-extrabold leading-[140%];
+    }
+    .base-light {
+        @apply text-[16px] font-light leading-[140%];
+    }
 
     .base-medium {
         @apply text-[16px] font-medium leading-[140%];

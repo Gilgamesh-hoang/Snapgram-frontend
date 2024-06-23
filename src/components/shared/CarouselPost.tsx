@@ -1,14 +1,15 @@
 import React, {useState} from "react";
-import {BsArrowLeftCircleFill, BsArrowRightCircleFill} from "react-icons/bs";
 import {clsx} from "clsx";
 import {MediaUrl} from "@/types";
-import {ArrowLeftCircle, ArrowLeftCircleIcon, ArrowLeftSquare, ArrowLeftToLine} from "lucide-react";
+import {IoIosArrowDropleftCircle, IoIosArrowDroprightCircle} from "react-icons/io";
 
 type CarouselProps = {
     sources: MediaUrl[];
 };
 const CarouselPost: React.FC<CarouselProps> = ({sources}) => {
     const [slide, setSlide] = useState(0);
+    const [isShowArrow, setIsShowArrow] = useState(sources.length > 1);
+    const isShowIndicator = sources[slide]?.isImage;
 
     const nextSlide = () => {
         setSlide(slide === sources.length - 1 ? 0 : slide + 1);
@@ -17,6 +18,20 @@ const CarouselPost: React.FC<CarouselProps> = ({sources}) => {
     const prevSlide = () => {
         setSlide(slide === 0 ? sources.length - 1 : slide - 1);
     };
+    const renderIndicator = () => {
+        return (
+            <div className="indicators absolute bottom-4 left-1/2 flex -translate-x-1/2 space-x-2">
+                {sources.map((_, idx) => (
+                    <button
+                        type="button"
+                        key={idx}
+                        className={clsx("indicator", {'indicator-inactive': slide !== idx})}
+                        onClick={() => setSlide(idx)}
+                    />
+                ))}
+            </div>
+        );
+    }
 
     return (
         <div className="relative ">
@@ -31,7 +46,6 @@ const CarouselPost: React.FC<CarouselProps> = ({sources}) => {
                                 className={clsx('post-card_img', {'hidden': slide !== idx})}
                             />
                         )}
-
                         {item.isVideo && (
                             <video
                                 src={item.src}
@@ -43,25 +57,20 @@ const CarouselPost: React.FC<CarouselProps> = ({sources}) => {
                     </div>
                 );
             })}
-            <div className='absolute top-0 left-0 w-full h-full bg-transparent flex items-center justify-center'>
 
-                <BsArrowLeftCircleFill onClick={prevSlide} className="arrow arrow-left"/>
-                <BsArrowRightCircleFill onClick={nextSlide} className="arrow arrow-right"/>
-                <span className="indicators">
-                    {sources.map((_, idx) => {
-                        return (
-                            <button
-                                type='button'
-                                key={idx}
-                                className={
-                                    slide === idx ? "indicator" : "indicator indicator-inactive"
-                                }
-                                onClick={() => setSlide(idx)}
-                            ></button>
-                        );
-                    })}
-                </span>
-            </div>
+            {isShowArrow && (
+                <>
+                    <IoIosArrowDropleftCircle
+                        onClick={prevSlide}
+                        className="arrow arrow-left absolute left-4 top-1/2 -translate-y-1/2 text-light-2"
+                    />
+                    <IoIosArrowDroprightCircle
+                        onClick={nextSlide}
+                        className="arrow arrow-right absolute right-4 top-1/2 -translate-y-1/2"
+                    />
+                    {isShowIndicator && renderIndicator()}
+                </>
+            )}
         </div>
     );
 };

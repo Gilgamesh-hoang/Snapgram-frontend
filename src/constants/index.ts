@@ -17,6 +17,11 @@ export const sidebarLinks = [
         label: "Người dùng",
     },
     {
+        imgURL: "/assets/icons/notify.svg",
+        route: routes.notifies,
+        label: "Thông báo",
+    },
+    {
         imgURL: "/assets/icons/chat.svg",
         route: routes.messages,
         label: "Tin nhắn",
@@ -49,11 +54,23 @@ export const bottomBarLinks = [
         route: routes.messages,
         label: "Tin nhắn",
     },
-    // {
-    //     imgURL: "/assets/icons/bookmark.svg",
-    //     route: routes.saved,
-    //     label: "Đã lưu",
-    // },
+    {
+        imgURL: "/assets/icons/notify.svg",
+        route: routes.notifies,
+        label: "Thông báo",
+    },
+];
+export const TopBarLinks = [
+    {
+        imgURL: "/assets/icons/people.svg",
+        route: routes.allUsers,
+        label: "Người dùng",
+    },
+    {
+        imgURL: "/assets/icons/bookmark.svg",
+        route: routes.saved,
+        label: "Đã lưu",
+    },
     {
         imgURL: "/assets/icons/gallery-add.svg",
         route: routes.createPost,

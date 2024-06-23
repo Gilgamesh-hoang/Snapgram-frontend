@@ -39,7 +39,7 @@ const LeftSidebar = () => {
                 {/*) : (*/}
                     <Link to={`/profile/1`} className="flex items-center gap-3">
                         <img
-                            src='https://instagram.fsgn19-1.fna.fbcdn.net/v/t39.30808-6/447599559_18272564167225020_767706022482666225_n.jpg?stp=dst-jpg_e35&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xNDQweDE3OTkuc2RyLmYzMDgwOCJ9&_nc_ht=instagram.fsgn19-1.fna.fbcdn.net&_nc_cat=100&_nc_ohc=tCAQYnddtA0Q7kNvgHy6BSb&edm=AI8qBrIAAAAA&ccb=7-5&ig_cache_key=MzM4MjI4MTAzMTU3MDMwNzQwNQ%3D%3D.2-ccb7-5&oh=00_AYBAoEU9kBW4DkfRSGBKG2kfKqmW8EyEmSMVj_PNnWB_nQ&oe=66737483&_nc_sid=469e9a'
+                            src='https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg'
                             alt="profile"
                             className="size-12 rounded-full"
                         />
@@ -54,6 +54,7 @@ const LeftSidebar = () => {
                     {sidebarLinks.map((link: INavLink) => {
                         const isActive = pathname === link.route;
                         const isMessages = link.route === routes.messages;
+                        const isNotify = link.route === routes.notifies;
                         return (
                             <li
                                 key={link.label}
@@ -73,6 +74,9 @@ const LeftSidebar = () => {
                                 </NavLink>
 
                                 {isMessages && (
+                                    <span className="mr-2 size-2.5 rounded-full bg-red"></span>
+                                )}
+                                {isNotify && (
                                     <span className="mr-2 size-2.5 rounded-full bg-red"></span>
                                 )}
                             </li>

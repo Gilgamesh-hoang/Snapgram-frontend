@@ -6,14 +6,22 @@ import {privateRoutes, publicRoutes, RouteType} from "@/route";
 
 const App = () => {
 
-    const routeRender = (route: RouteType) => (
-        <Route
-            key={route.path}
-            path={route.path}
-            element={<route.element/>}
-            index={route.index}
-        />
-    );
+    const routeRender = (route: RouteType) => {
+        const ChildrenNode = route.child;
+        return (
+            <Route
+                key={route.path}
+                path={route.path}
+                element={<route.element/>}
+                // index={route.index}
+            >
+                {ChildrenNode && ChildrenNode.map((routeObject) =>
+                    routeRender(routeObject)
+                )}
+            </Route>
+        )
+    };
+
 
     return (
         <main className="flex h-screen">

@@ -1,7 +1,7 @@
 export type MediaUrl = {
     isImage?: boolean;
     isVideo?: boolean;
-    src?: string;
+    src: string;
 }
 
 export type INavLink = {

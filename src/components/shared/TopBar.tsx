@@ -1,9 +1,23 @@
-import {Link} from "react-router-dom";
-
-import {Button} from "@/components/ui/button";
+import {Link, NavLink, useLocation} from "react-router-dom";
+import {TopBarLinks} from "@/constants";
+import {INavLink} from "@/types";
+import {clsx} from "clsx";
+import React, {useEffect, useState} from "react";
+import {BiLogOut} from "react-icons/bi";
+import {IoMdClose} from "react-icons/io";
 
 const TopBar = () => {
+    const [showMenu, setShowMenu] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+    const {pathname} = useLocation();
 
+    useEffect(() => {
+        if (showMenu) {
+            setIsVisible(true);
+        } else {
+            setTimeout(() => setIsVisible(false), 300); // Delay matches the transition duration
+        }
+    }, [showMenu]);
 
     return (
         <section className="topbar">
@@ -17,12 +31,7 @@ const TopBar = () => {
                     />
                 </Link>
 
-                <div className="flex gap-4">
-                    <Button
-                        variant="ghost"
-                        className="shad-button_ghost">
-                        <img src="/assets/icons/logout.svg" alt="logout" />
-                    </Button>
+                <div className="flex gap-3">
                     <Link to={`/profile/1`} className="flex-center gap-3">
                         <img
                             src={"/assets/icons/profile-placeholder.svg"}
@@ -30,8 +39,60 @@ const TopBar = () => {
                             className="size-8 rounded-full"
                         />
                     </Link>
+                    {showMenu ? (
+                        <button className="p-1" onClick={() => setShowMenu(false)}>
+                            <IoMdClose className="size-8"/>
+                        </button>
+                    ) : (
+                        <button className="" onClick={() => setShowMenu(true)}>
+                            <img src="/assets/icons/nav-menu.svg" alt="Menu"/>
+                        </button>
+                    )}
                 </div>
             </div>
+            {isVisible && (
+                <div
+                    className={clsx(
+                        "absolute top-[71px] w-full rounded-e-xl rounded-s-xl bg-gradient-to-b from-[#101012] to-[#6B6B78] px-6 py-3 transition-all duration-300",
+                        showMenu ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+                    )}
+                >
+                    <ul className="flex flex-col gap-2">
+                        {TopBarLinks.map((link: INavLink) => {
+                            const isActive = pathname === link.route;
+                            return (
+                                <li onClick={() => setShowMenu(false)}
+                                    key={link.label}
+                                    className={clsx(
+                                        "leftsidebar-link group flex items-center justify-between",
+                                        isActive && "bg-primary-500"
+                                    )}
+                                >
+                                    <NavLink
+                                        to={link.route}
+                                        className="flex w-full items-center gap-4 p-3"
+                                    >
+                                        <img
+                                            src={link.imgURL}
+                                            alt={link.label}
+                                            className={`group-hover:invert-white ${
+                                                isActive && "invert-white"
+                                            }`}
+                                        />
+                                        {link.label}
+                                    </NavLink>
+                                </li>
+                            );
+                        })}
+                    </ul>
+
+                    <button
+                        className="mb-6 mt-4 flex w-full items-center justify-center gap-3 rounded-lg bg-red p-3 text-light-2">
+                        <BiLogOut className="size-6"/>
+                        <p className="small-medium lg:base-medium">Đăng xuất</p>
+                    </button>
+                </div>
+            )}
         </section>
     );
 };

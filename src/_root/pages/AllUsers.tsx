@@ -1,50 +1,57 @@
 import {Loader, UserCard} from "@/components/shared";
-import React from "react";
+import React, {useState} from "react";
+import {Button, Input} from "@/components/ui";
+import {useInView} from "react-intersection-observer";
+import {AiOutlineCloudUpload} from "react-icons/ai";
+
 
 const AllUsers: React.FC = () => {
-
+    const {ref, inView} = useInView();
     const [isLoading, setIsLoading] = React.useState(false);
+    const [searchValue, setSearchValue] = useState("");
 
     const creator = {
         $id: "1",
         name: "John Doe",
         username: "john_doe",
-        imageUrl: "https://instagram.fsgn19-1.fna.fbcdn.net/v/t39.30808-6/447599559_18272564167225020_767706022482666225_n.jpg?stp=dst-jpg_e35&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xNDQweDE3OTkuc2RyLmYzMDgwOCJ9&_nc_ht=instagram.fsgn19-1.fna.fbcdn.net&_nc_cat=100&_nc_ohc=tCAQYnddtA0Q7kNvgHy6BSb&edm=AI8qBrIAAAAA&ccb=7-5&ig_cache_key=MzM4MjI4MTAzMTU3MDMwNzQwNQ%3D%3D.2-ccb7-5&oh=00_AYBAoEU9kBW4DkfRSGBKG2kfKqmW8EyEmSMVj_PNnWB_nQ&oe=66737483&_nc_sid=469e9a",
+        imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
     };
 
     return (
         <div className="common-container">
             <div className="user-container">
                 <h2 className="h3-bold md:h2-bold w-full text-left">Người dùng</h2>
+
+                <div className="flex w-full">
+                    <form className="mr-8 flex w-full gap-1 rounded-lg bg-dark-4">
+                        <img className='mx-4'
+                             src="/assets/icons/search.svg"
+                             width={24}
+                             height={24}
+                             alt="search"
+                        />
+                        <Input
+                            type="text"
+                            placeholder="Tìm kiếm"
+                            className="explore-search w-full "
+                            value={searchValue}
+                            onChange={(e) => {
+                                const {value} = e.target;
+                                setSearchValue(value);
+                            }}
+                        />
+                    </form>
+                    <div className=''>
+                        <Button type='button' className='h-full' title='Tải ảnh'>
+                            <AiOutlineCloudUpload size={25}/>
+                        </Button>
+                    </div>
+                </div>
+
                 {isLoading ? (
                     <Loader/>
                 ) : (
                     <ul className="user-grid">
-
-                        <li key={creator?.$id} className="w-full min-w-[200px] flex-1  ">
-                            <UserCard user={creator}/>
-                        </li>
-                        <li key={creator?.$id} className="w-full min-w-[200px] flex-1  ">
-                            <UserCard user={creator}/>
-                        </li>
-                        <li key={creator?.$id} className="w-full min-w-[200px] flex-1  ">
-                            <UserCard user={creator}/>
-                        </li>
-                        <li key={creator?.$id} className="w-full min-w-[200px] flex-1  ">
-                            <UserCard user={creator}/>
-                        </li>
-                        <li key={creator?.$id} className="w-full min-w-[200px] flex-1  ">
-                            <UserCard user={creator}/>
-                        </li>
-                        <li key={creator?.$id} className="w-full min-w-[200px] flex-1  ">
-                            <UserCard user={creator}/>
-                        </li>
-                        <li key={creator?.$id} className="w-full min-w-[200px] flex-1  ">
-                            <UserCard user={creator}/>
-                        </li>
-                        <li key={creator?.$id} className="w-full min-w-[200px] flex-1  ">
-                            <UserCard user={creator}/>
-                        </li>
                         <li key={creator?.$id} className="w-full min-w-[200px] flex-1  ">
                             <UserCard user={creator}/>
                         </li>
@@ -69,6 +76,12 @@ const AllUsers: React.FC = () => {
                     </ul>
                 )}
             </div>
+
+            {/*{!searchValue && (*/}
+            {/*    <div ref={ref} className="mt-10">*/}
+            {/*        <Loader/>*/}
+            {/*    </div>*/}
+            {/*)}*/}
         </div>
     );
 };

@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import {BsArrowLeftCircleFill, BsArrowRightCircleFill} from "react-icons/bs";
 import {IoClose} from "react-icons/io5";
 import {clsx} from "clsx";
-import {MediaUrl} from "@/components/shared/FileUploader.tsx";
+import {IoIosArrowDropleftCircle, IoIosArrowDroprightCircle} from "react-icons/io";
+import {MediaUrl} from "@/types";
 
 type CarouselProps = {
     sources: MediaUrl[];
@@ -29,7 +29,7 @@ const Carousel: React.FC<CarouselProps> = ({sources, callback, isShowClose = fal
 
     return (
         <div className="carousel">
-            <BsArrowLeftCircleFill onClick={prevSlide} className="arrow arrow-left"/>
+            <IoIosArrowDropleftCircle onClick={prevSlide} className="arrow arrow-left"/>
 
             {sources.map((item, idx) => {
                 return (
@@ -64,7 +64,7 @@ const Carousel: React.FC<CarouselProps> = ({sources, callback, isShowClose = fal
                 );
             })}
 
-            <BsArrowRightCircleFill onClick={nextSlide} className="arrow arrow-right"/>
+            <IoIosArrowDroprightCircle onClick={nextSlide} className="arrow arrow-right"/>
 
             <span className="indicators">
                 {sources.map((_, idx) => {

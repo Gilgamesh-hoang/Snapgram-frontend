@@ -7,12 +7,21 @@ import {
     EditPost,
     Explore,
     Home,
+    Messages,
+    Notifies,
     PostDetails,
     Profile,
     Saved,
-    UpdateProfile,
+    UpdateProfile
 } from "@/_root/pages";
-import Messages from "@/_root/pages/Messages.tsx";
+import MessageBox from "@/components/message/messageBox/MessageBox.tsx";
+
+export interface RouteType {
+    path: string;
+    element: FunctionComponent;
+    index?: boolean;
+    child?: RouteType[];
+}
 
 export const routes = {
     home: "/",
@@ -21,6 +30,7 @@ export const routes = {
     explore: "/explore",
     saved: "/saved",
     messages: "/messages",
+    notifies: "/notifies",
     allUsers: "/all-users",
     createPost: "/create-post",
     updatePost: "/update-post/:id",
@@ -29,11 +39,6 @@ export const routes = {
     updateProfile: "update-profile/:id"
 };
 
-export interface RouteType {
-    path: string;
-    element: FunctionComponent;
-    index?: boolean;
-}
 
 export const publicRoutes: RouteType[] = [
     {path: routes.signin, element: SigninForm},
@@ -45,7 +50,13 @@ export const privateRoutes: RouteType[] = [
     {path: routes.explore, element: Explore},
     {path: routes.saved, element: Saved},
     {path: routes.allUsers, element: AllUsers},
-    {path: routes.messages, element: Messages},
+    {
+        path: routes.messages, element: Messages,
+        child: [
+            {path: ':type/:name', element: MessageBox},
+        ]
+    },
+    {path: routes.notifies, element: Notifies},
     {path: routes.createPost, element: CreatePost},
     {path: routes.updatePost, element: EditPost},
     {path: routes.posts, element: PostDetails},
