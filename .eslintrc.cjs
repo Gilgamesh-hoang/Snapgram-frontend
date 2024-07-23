@@ -24,5 +24,6 @@ module.exports = {
         "react/prop-types": "off",
         "@typescript-eslint/no-unused-vars": "off",
         "spaced-comment": "off",
+        "@typescript-eslint/no-explicit-any": "off",
     }
 }

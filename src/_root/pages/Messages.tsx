@@ -1,28 +1,30 @@
-import {Outlet} from "react-router-dom";
+import {Outlet, useLocation} from "react-router-dom";
 import React from "react";
 import {Sidebar} from "@/components/message/sidebar";
+import {routes} from "@/route";
 
 const Messages = () => {
-    const basePath = location.pathname === '/';
-
+    const location = useLocation();
+    const isMessagePath = location.pathname === routes.messages;
 
     return (
-        <div className='grid w-full h-screen max-h-screen px-2.5 py-6 lg:grid-cols-[300px,1fr]'>
-            <section className={!basePath ? 'lg:block' : 'hidden'}>
+        <div className='grid h-screen max-h-screen w-full px-2.5 py-6 lg:grid-cols-[300px,1fr]'>
+            <section className={'lg:block'}>
                 <Sidebar/>
             </section>
 
-            {/**message component**/}
-            <section className={`${basePath && "hidden"}`}>
-                <Outlet/>
-            </section>
-
-
-            <div className={`flex-col items-center justify-center gap-2 ${!basePath ? "hidden" : "lg:flex"}`}>
-                <p className='mt-2 text-lg text-slate-500'>Select user to send message</p>
-            </div>
+            {isMessagePath ? (
+                <div className={`flex-col items-center justify-center gap-2 lg:flex`}>
+                    <p className='mt-2 text-lg text-slate-500'>Select user to send message</p>
+                </div>
+            ) : (
+                <section className={``}>
+                    <Outlet/>
+                </section>
+            )}
         </div>
     )
 };
+
 
 export default Messages;
