@@ -1,12 +1,10 @@
 import {Outlet} from "react-router-dom";
-import {Toaster} from "react-hot-toast";
 
 
 export default function AuthLayout() {
     return (
 
         <>
-            <Toaster position="top-right" reverseOrder={false} />
             <section className="flex flex-1 flex-col items-center justify-center py-10">
                 <Outlet/>
             </section>

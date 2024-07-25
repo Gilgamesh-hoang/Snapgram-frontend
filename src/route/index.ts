@@ -1,6 +1,4 @@
 import {FunctionComponent} from "react";
-import SigninForm from "@/_auth/forms/SigninForm.tsx";
-import SignupForm from "@/_auth/forms/SignupForm.tsx";
 import {
     AllUsers,
     CreatePost,
@@ -15,6 +13,7 @@ import {
     UpdateProfile
 } from "@/_root/pages";
 import MessageBox from "@/components/message/messageBox/MessageBox.tsx";
+import {ForgotPassword, Signin, Signup,} from "@/_auth/forms";
 
 export interface RouteType {
     path: string;
@@ -27,6 +26,7 @@ export const routes = {
     home: "/",
     signin: "/sign-in",
     signup: "/sign-up",
+    forgotPassword: "/forgot-password",
     explore: "/explore",
     saved: "/saved",
     messages: "/messages",
@@ -41,8 +41,9 @@ export const routes = {
 
 
 export const publicRoutes: RouteType[] = [
-    {path: routes.signin, element: SigninForm},
-    {path: routes.signup, element: SignupForm},
+    {path: routes.signin, element: Signin},
+    {path: routes.signup, element: Signup},
+    {path: routes.forgotPassword, element: ForgotPassword},
 ]
 
 export const privateRoutes: RouteType[] = [

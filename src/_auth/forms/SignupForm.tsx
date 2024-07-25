@@ -76,14 +76,15 @@ const SignupForm: React.FC = () => {
             .then(response => {
                 // If the response status is 201 (Created), show a success alert and navigate to the signin page.
                 if (response.status === 201) {
-                    setTimeout(() => {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Đăng ký tài khoản thành công',
-                            text: 'Vui lòng kiểm tra email của bạn để xác thực tài khoản Snapgram',
-                        });
-                        navigate(routes.signin);
-                    }, 1500);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đăng ký tài khoản thành công',
+                        text: 'Vui lòng kiểm tra email của bạn để xác thực tài khoản Snapgram',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            navigate(routes.signin);
+                        }
+                    });
                 } else {
                     showAlert('error', 'Đăng ký tài khoản thất bại');
                 }

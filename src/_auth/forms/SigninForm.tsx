@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {Link} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {Button} from "@/components/ui/button.tsx";
 import Loader from "@/components/shared/Loader.tsx";
 import {SigninValidation} from "@/validation";
@@ -9,9 +9,63 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {routes} from "@/route";
+import {httpPost} from "@/utils/httpRequest.ts";
+import Swal from "sweetalert2";
 
 
 const SigninForm: React.FC = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const action = queryParams.get('action');
+        const code = queryParams.get('code');
+        const email = queryParams.get('email');
+
+        const verifyEmail = async () => {
+            return await httpPost<ApiResponse<boolean>>('/auth/verification-email', {
+                email, code
+            });
+
+        }
+        if (action === 'verify-email' && code && email) {
+            verifyEmail().then((response) => {
+                if (response.data) {
+                    console.log('Email verified');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Xác thực tài khoản thành công',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            navigate(routes.signin);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Hết hạn xác thực',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            navigate(routes.signin);
+                        }
+                    });
+                }
+
+            }).catch(() => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Xác thực tài khoản thất bại',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate(routes.signin);
+                    }
+                });
+            });
+        }
+    }, []);
+
+
     const [isLoading, setIsLoading] = useState(true);
     const form = useForm<z.infer<typeof SigninValidation>>({
         resolver: zodResolver(SigninValidation),
@@ -95,6 +149,14 @@ const SigninForm: React.FC = () => {
                             to={routes.signup}
                             className="ml-1 text-sm font-semibold text-primary-500">
                             Đăng ký ngay
+                        </Link>
+                    </p>
+
+                    <p className="text-center">
+                        <Link
+                            to={routes.forgotPassword}
+                            className="text-sm font-semibold text-primary-500">
+                            Quên mật khẩu?
                         </Link>
                     </p>
                 </form>
