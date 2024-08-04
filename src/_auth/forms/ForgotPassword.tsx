@@ -11,6 +11,7 @@ import {useForm} from "react-hook-form";
 import {routes} from "@/route";
 import {httpPost} from "@/utils/httpRequest.ts";
 import Swal from "sweetalert2";
+import {ApiResponse} from "@/model/response.ts";
 
 
 const ForgotPassword: React.FC = () => {

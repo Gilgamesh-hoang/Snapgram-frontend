@@ -3,7 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {Button} from "@/components/ui";
 import {PostStats} from "@/components/shared";
 
-import {multiFormatDateString} from "@/utils";
+import {multiFormatDateString} from "@/utils/dateUtil";
 import React from "react";
 
 const PostDetails: React.FC = () => {

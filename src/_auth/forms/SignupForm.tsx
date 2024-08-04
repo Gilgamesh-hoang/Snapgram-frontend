@@ -14,6 +14,7 @@ import {httpGet, httpPost} from "@/utils/httpRequest.ts";
 import {AxiosResponse} from "axios";
 import useDebounce from "@/hooks/useDebounce.ts";
 import Swal from 'sweetalert2'
+import {ApiResponse} from "@/model/response.ts";
 
 
 const SignupForm: React.FC = () => {
@@ -72,7 +73,7 @@ const SignupForm: React.FC = () => {
         }
         setIsLoading(true);
         // Send a POST request to the '/users/sign-up' endpoint with the user data.
-        await httpPost<ApiResponse>('/users/sign-up', user)
+        await httpPost<ApiResponse>('/users', user)
             .then(response => {
                 // If the response status is 201 (Created), show a success alert and navigate to the signin page.
                 if (response.status === 201) {

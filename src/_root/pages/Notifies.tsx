@@ -1,6 +1,6 @@
 import React from "react";
 import {Loader} from "@/components/shared";
-import {multiFormatDateString} from "@/utils";
+import {multiFormatDateString} from "@/utils/dateUtil";
 import {Link} from "react-router-dom";
 
 const Notifies: React.FC = () => {

@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom";
 
 import {PostStats} from "@/components/shared";
-import {multiFormatDateString} from "@/utils";
+import {multiFormatDateString} from "@/utils/dateUtil";
 import React, {useState} from "react";
 import {MediaUrl} from "@/types";
 import CarouselPost from "@/components/shared/CarouselPost.tsx";

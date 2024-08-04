@@ -11,12 +11,16 @@ import {useForm} from "react-hook-form";
 import {routes} from "@/route";
 import {httpPost} from "@/utils/httpRequest.ts";
 import Swal from "sweetalert2";
+import {ApiResponse, JwtResponse} from "@/model/response.ts";
+import axios from "axios";
+import {JWT_TOKEN} from "@/constants";
 
 
 const SigninForm: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
+    // Verify email when a user clicks on an email link
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const action = queryParams.get('action');
@@ -66,7 +70,7 @@ const SigninForm: React.FC = () => {
     }, []);
 
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const form = useForm<z.infer<typeof SigninValidation>>({
         resolver: zodResolver(SigninValidation),
         defaultValues: {
@@ -76,7 +80,36 @@ const SigninForm: React.FC = () => {
     });
 
     const handleSignin = async (user: z.infer<typeof SigninValidation>) => {
+        await httpPost<ApiResponse<JwtResponse>>('/auth/login', user)
+            .then(response => {
+                if (response.status === 200) {
+                    //save token and refresh token
+                    localStorage.setItem(JWT_TOKEN, response.data.token);
+                    navigate(routes.home);
+                }
+            }).catch((error) => {
+                // If the error is an Axios error, handle different status codes
+                if (axios.isAxiosError(error)) {
+                    if (error.response?.status === 400) {
+                        showAlert('error', 'Email hoặc mật khẩu không hợp lệ.');
+                    } else if (error.response?.status === 401) {
+                        showAlert('error', 'Mật khẩu không chính xác. Vui lòng thử lại.');
+                    } else if (error.response?.status === 404) {
+                        showAlert('error', 'Không tìm thấy người dùng. Vui lòng kiểm tra lại.');
+                    }
+                }
+            }).finally(() => {
+                setIsLoading(false);
+            });
+    }
 
+    function showAlert(type: 'success' | 'error', message: string, timeout = 1500) {
+        Swal.fire({
+            icon: type,
+            title: message,
+            showConfirmButton: false,
+            timer: timeout
+        });
     }
 
     return (
@@ -105,18 +138,6 @@ const SigninForm: React.FC = () => {
                                 <FormMessage className='error-message'/>
                             </FormItem>
                         )}
-                        // render={({field, fieldState: { error }}) => (
-                        //     <FormItem>
-                        //         <FormLabel className="shad-form_label">Email</FormLabel>
-                        //         <FormControl>
-                        //             <Input type="text" className="shad-input" {...field} />
-                        //         </FormControl>
-                        //         {/*<FormMessage className={error ? 'error-message' : ''}>*/}
-                        //         {/*    {error?.message}*/}
-                        //         {/*</FormMessage>*/}
-                        //         <FormMessage className='error-message'/>
-                        //     </FormItem>
-                        // )}
                     />
 
                     <FormField
