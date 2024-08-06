@@ -1,23 +1,39 @@
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 
-import { INavLink } from "@/types";
-import { sidebarLinks } from "@/constants";
-import { Button } from "@/components/ui/button";
+import {INavLink} from "@/types";
+import { sidebarLinks} from "@/constants";
+import {Button} from "@/components/ui/button";
 import React from "react";
 import {clsx} from "clsx";
 import {routes} from "@/route";
-
+import {httpPost} from "@/utils/httpRequest.ts";
+import {ApiResponse, JwtResponse} from "@/model/response.ts";
+import axios from "axios";
+import TokenService from "@/services/token";
 const LeftSidebar = () => {
     const navigate = useNavigate();
-    const { pathname } = useLocation();
+    const {pathname} = useLocation();
 
 
-    const handleSignOut = async (
-        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
-        e.preventDefault();
+    const handleSignOut = async () => {
+        const token : string|null = localStorage.getItem(TokenService.AUTH_TOKEN);
+        if (token) {
 
-        navigate(routes.signin);
+            await httpPost<ApiResponse>('/auth/logout', {token}, {withCredentials: true})
+                .catch((error) => {
+                console.log('Logout failed');
+                if (axios.isAxiosError(error)) {
+                    const status = error.response?.status;
+                    const errorData = error.response?.data;
+                    console.log('Status:', status);
+                    console.log('Error:', errorData);
+                }
+            }).finally(() => {
+                localStorage.removeItem(TokenService.AUTH_TOKEN);
+                navigate(routes.signin);
+            });
+        }
+
     };
 
     return (
@@ -32,22 +48,17 @@ const LeftSidebar = () => {
                     />
                 </Link>
 
-                {/*{isLoading || !user.email ? (*/}
-                {/*    <div className="h-14">*/}
-                {/*        <Loader />*/}
-                {/*    </div>*/}
-                {/*) : (*/}
-                    <Link to={`/profile/1`} className="flex items-center gap-3">
-                        <img
-                            src='https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg'
-                            alt="profile"
-                            className="size-12 rounded-full"
-                        />
-                        <div className="flex flex-col">
-                            <p className="body-bold">gilgamesh</p>
-                            <p className="small-regular text-light-3">Nguyen van a</p>
-                        </div>
-                    </Link>
+                <Link to={`/profile/1`} className="flex items-center gap-3">
+                    <img
+                        src='https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg'
+                        alt="profile"
+                        className="size-12 rounded-full"
+                    />
+                    <div className="flex flex-col">
+                        <p className="body-bold">gilgamesh</p>
+                        <p className="small-regular text-light-3">Nguyen van a</p>
+                    </div>
+                </Link>
                 {/*)}*/}
 
                 <ul className="flex flex-col gap-2">
@@ -88,8 +99,8 @@ const LeftSidebar = () => {
             <Button
                 variant="ghost"
                 className="shad-button_ghost flex justify-start gap-4"
-                onClick={(e) => handleSignOut(e)}>
-                <img src="/assets/icons/logout.svg" alt="logout" />
+                onClick={handleSignOut}>
+                <img src="/assets/icons/logout.svg" alt="logout"/>
                 <p className="small-medium lg:base-medium">Đăng xuất</p>
             </Button>
         </nav>

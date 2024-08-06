@@ -3,7 +3,11 @@ export interface ApiResponse<T = null> {
     message: string;
     data: T;
 }
+
 export interface JwtResponse {
     token: string;
-    refreshToken: string;
+}
+
+export interface User {
+    email: string;
 }

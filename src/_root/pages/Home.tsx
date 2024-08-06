@@ -1,7 +1,18 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {PostCard, UserCard} from "@/components/shared";
+import {httpGet} from "@/utils/httpRequest.ts";
+import {ApiResponse, User} from "@/model/response.ts";
 
 const Home: React.FC = () => {
+
+    useEffect(() => {
+        httpGet<ApiResponse<User>>('/users').then((response) => {
+            console.log(response.data);
+        })
+            .catch((error) => {
+                console.log('Error:', error);
+            });
+    }, []);
 
     const post = {
         creator: {
@@ -25,7 +36,7 @@ const Home: React.FC = () => {
                 src: "https://res.cloudinary.com/dvh2rphf4/video/upload/v1718880120/chatify/river_l1qf3t.mp4",
             },
 
-            ],
+        ],
         tags: ["#tag1", "#tag2"],
     };
     const post2 = {
@@ -46,7 +57,7 @@ const Home: React.FC = () => {
                 src: "https://res.cloudinary.com/dvh2rphf4/video/upload/v1718880120/chatify/river_l1qf3t.mp4",
             },
 
-            ],
+        ],
         tags: ["#tag1", "#tag2"],
     };
 

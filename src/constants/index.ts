@@ -1,6 +1,6 @@
 import {routes} from "@/route";
 
-export const JWT_TOKEN = 'token';
+
 export const sidebarLinks = [
     {
         imgURL: "/assets/icons/home.svg",

@@ -13,12 +13,12 @@ import {httpPost} from "@/utils/httpRequest.ts";
 import Swal from "sweetalert2";
 import {ApiResponse, JwtResponse} from "@/model/response.ts";
 import axios from "axios";
-import {JWT_TOKEN} from "@/constants";
-
+import TokenService from "@/services/token.ts";
 
 const SigninForm: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
 
     // Verify email when a user clicks on an email link
     useEffect(() => {
@@ -69,8 +69,6 @@ const SigninForm: React.FC = () => {
         }
     }, []);
 
-
-    const [isLoading, setIsLoading] = useState(false);
     const form = useForm<z.infer<typeof SigninValidation>>({
         resolver: zodResolver(SigninValidation),
         defaultValues: {
@@ -80,11 +78,12 @@ const SigninForm: React.FC = () => {
     });
 
     const handleSignin = async (user: z.infer<typeof SigninValidation>) => {
+        setIsLoading(true);
         await httpPost<ApiResponse<JwtResponse>>('/auth/login', user)
             .then(response => {
                 if (response.status === 200) {
                     //save token and refresh token
-                    localStorage.setItem(JWT_TOKEN, response.data.token);
+                    localStorage.setItem(TokenService.AUTH_TOKEN, response.data.token);
                     navigate(routes.home);
                 }
             }).catch((error) => {
