@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {Button} from "@/components/ui/button.tsx";
 import Loader from "@/components/shared/Loader.tsx";
 import {ForgotPasswordValidation} from "@/validation";
@@ -9,13 +9,10 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {routes} from "@/route";
-import {httpPost} from "@/utils/httpRequest.ts";
-import Swal from "sweetalert2";
-import {ApiResponse} from "@/model/response.ts";
+import {forgotPassword} from "@/services/user.ts";
 
 
 const ForgotPassword: React.FC = () => {
-    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
     const form = useForm<z.infer<typeof ForgotPasswordValidation>>({
@@ -27,25 +24,7 @@ const ForgotPassword: React.FC = () => {
 
     const handleSubmit = async (form: z.infer<typeof ForgotPasswordValidation>) => {
         setIsLoading(true);
-        await httpPost<ApiResponse>("/users/forgot-password", {
-            email: form.email,
-        }).then((response) => {
-            if (response.status === 201) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Gửi yêu cầu thành công!',
-                    text: 'Vui lòng kiểm tra email của bạn để nhận mật khẩu mới.',
-                }).then((result) => {
-                    navigate(routes.signin);
-                });
-            }
-        }).catch(() => {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Gửi yêu cầu thất bại',
-                text: 'Email không tồn tại hoặc đã bị khóa. Vui lòng thử lại.',
-            });
-        }).finally(() => {
+        forgotPassword(form.email).finally(() => {
             setIsLoading(false);
         });
     }

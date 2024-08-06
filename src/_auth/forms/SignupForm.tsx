@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import Loader from "@/components/shared/Loader.tsx";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {Button} from "@/components/ui/button.tsx";
 import {SignupValidation} from "@/validation";
 import {z} from "zod";
@@ -10,11 +10,10 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {routes} from "@/route";
 import GenderSelection from "@/components/shared/GenderSelection.tsx";
-import {httpGet, httpPost} from "@/utils/httpRequest.ts";
-import {AxiosResponse} from "axios";
 import useDebounce from "@/hooks/useDebounce.ts";
 import Swal from 'sweetalert2'
-import {ApiResponse} from "@/model/response.ts";
+import {SignUpRequest} from "@/model/request.ts";
+import {isEmailExist, isNicknameExist, signup} from "@/services/user.ts";
 
 
 const SignupForm: React.FC = () => {
@@ -28,7 +27,6 @@ const SignupForm: React.FC = () => {
     const emailDebounce = useDebounce(email, 500);
     const [emailExists, setEmailExists] = useState(false);
 
-    const navigate = useNavigate();
     const form = useForm<z.infer<typeof SignupValidation>>({
         resolver: zodResolver(SignupValidation),
         defaultValues: {
@@ -43,26 +41,21 @@ const SignupForm: React.FC = () => {
 
 
     useEffect(() => {
-        if (nicknameDebounce && nicknameDebounce.trim().length >= 2)
-            checkExists('/users/nickname-exists', 'nickname', nicknameDebounce, setNicknameExists);
+        if (nicknameDebounce && nicknameDebounce.trim().length >= 2){
+            isNicknameExist(nicknameDebounce).then((response) => {
+                setNicknameExists(response);
+            });
+        }
+
 
     }, [nicknameDebounce]);
     useEffect(() => {
-        if (emailDebounce && emailDebounce.trim().length > 0)
-            checkExists('/users/email-exists', 'email', emailDebounce, setEmailExists);
+        if (emailDebounce && emailDebounce.trim().length > 0){
+            isEmailExist(emailDebounce).then((response) => {
+                setEmailExists(response);
+            });
+        }
     }, [emailDebounce]);
-
-    /**
-     * Asynchronous function to check if a given value exists.
-     */
-    const checkExists = async (url: string, paramName: string, paramValue: string, setter: React.Dispatch<React.SetStateAction<boolean>>) => {
-        // Make an HTTP GET request to the given URL with the specified query parameters.
-        const response: AxiosResponse<boolean> = await httpGet(url, {
-            params: {[paramName]: paramValue}
-        });
-        // Use the setter function to update the state with the response data.
-        setter(response.data);
-    };
 
     /**
      * This is an asynchronous function that handles the user signup process.
@@ -73,27 +66,20 @@ const SignupForm: React.FC = () => {
         }
         setIsLoading(true);
         // Send a POST request to the '/users/sign-up' endpoint with the user data.
-        await httpPost<ApiResponse>('/users', user)
-            .then(response => {
-                // If the response status is 201 (Created), show a success alert and navigate to the signin page.
-                if (response.status === 201) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Đăng ký tài khoản thành công',
-                        text: 'Vui lòng kiểm tra email của bạn để xác thực tài khoản Snapgram',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            navigate(routes.signin);
-                        }
-                    });
-                } else {
-                    showAlert('error', 'Đăng ký tài khoản thất bại');
-                }
-            }).catch(() => {
-                showAlert('error', 'Đăng ký tài khoản thất bại');
-            }).finally(() => {
-                setIsLoading(false);
-            });
+        const request: SignUpRequest = {
+            nickname: user.nickname,
+            email: user.email,
+            password: user.password,
+            confirmPassword: user.confirmPassword,
+            fullName: user.fullName,
+            gender: user.gender
+        }
+        await signup(request).catch(() => {
+            showAlert('error', 'Đăng ký tài khoản thất bại');
+        }).finally(() => {
+            setIsLoading(false);
+        });
+
     }
 
     function showAlert(type: 'success' | 'error', message: string, timeout = 1500) {

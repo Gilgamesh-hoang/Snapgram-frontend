@@ -1,15 +1,18 @@
-import {Link, NavLink, useLocation} from "react-router-dom";
+import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 import {TopBarLinks} from "@/constants";
 import {INavLink} from "@/types";
 import {clsx} from "clsx";
 import React, {useEffect, useState} from "react";
 import {BiLogOut} from "react-icons/bi";
 import {IoMdClose} from "react-icons/io";
+import {logout} from "@/services/auth.ts";
+import {routes} from "@/route";
 
 const TopBar = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const {pathname} = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (showMenu) {
@@ -18,6 +21,14 @@ const TopBar = () => {
             setTimeout(() => setIsVisible(false), 300); // Delay matches the transition duration
         }
     }, [showMenu]);
+
+
+    const handleSignOut = async () => {
+        await logout()
+            .finally(() => {
+                navigate(routes.signin);
+            });
+    };
 
     return (
         <section className="topbar">
@@ -87,6 +98,7 @@ const TopBar = () => {
                     </ul>
 
                     <button
+                        onClick={handleSignOut}
                         className="mb-6 mt-4 flex w-full items-center justify-center gap-3 rounded-lg bg-red p-3 text-light-2">
                         <BiLogOut className="size-6"/>
                         <p className="small-medium lg:base-medium">Đăng xuất</p>

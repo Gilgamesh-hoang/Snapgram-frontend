@@ -1,7 +1,7 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios';
-import TokenService from "@/services/token.ts";
 import Swal from "sweetalert2";
 import {routes} from "@/route";
+import {getAccessToken, getRefreshToken, removeAccessToken, updateAccessToken} from "@/services/token.ts";
 
 const httpRequest: AxiosInstance = axios.create({
     baseURL: 'http://localhost:8182/api/v1',
@@ -11,7 +11,7 @@ const httpRequest: AxiosInstance = axios.create({
 httpRequest.interceptors.request.use(
     (config) => {
         // Get the token from localStorage
-        const token = TokenService.getAccessToken();
+        const token = getAccessToken();
 
         // If token exists, set the Authorization header
         if (token) {
@@ -39,10 +39,10 @@ httpRequest.interceptors.response.use(
             // it means the token has expired and we need to refresh it
             if (err.response.status === 401 && !originalConfig._retry) {
                 originalConfig._retry = true;
-                await TokenService.getRefreshToken()
+                await getRefreshToken()
                     .then((response) => {
                         const accessToken = response.data.token;
-                        TokenService.updateAccessToken(accessToken);
+                        updateAccessToken(accessToken);
                         return httpRequest(originalConfig);
                     })
                     .catch((_error) => {
@@ -50,10 +50,8 @@ httpRequest.interceptors.response.use(
                             icon: 'error',
                             title: 'Phiên làm việc hết hạn, vui lòng đăng nhập lại',
                         }).then((result) => {
-                            if (result.isConfirmed) {
-                                TokenService.removeAccessToken();
-                                window.location.href = routes.signin;
-                            }
+                            removeAccessToken();
+                            window.location.href = routes.signin;
                         });
                         // return Promise.reject(_error);
                     });
@@ -72,4 +70,3 @@ export const httpPost = async <T>(path: string, data?: any, option: AxiosRequest
     const response: AxiosResponse<T> = await httpRequest.post<T>(path, data, option);
     return response.data;
 }
-export default httpRequest;

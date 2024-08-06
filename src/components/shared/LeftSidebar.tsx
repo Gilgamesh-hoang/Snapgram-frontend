@@ -1,39 +1,22 @@
 import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 
 import {INavLink} from "@/types";
-import { sidebarLinks} from "@/constants";
+import {sidebarLinks} from "@/constants";
 import {Button} from "@/components/ui/button";
 import React from "react";
 import {clsx} from "clsx";
 import {routes} from "@/route";
-import {httpPost} from "@/utils/httpRequest.ts";
-import {ApiResponse, JwtResponse} from "@/model/response.ts";
-import axios from "axios";
-import TokenService from "@/services/token";
+import {logout} from "@/services/auth.ts";
+
 const LeftSidebar = () => {
     const navigate = useNavigate();
     const {pathname} = useLocation();
 
-
     const handleSignOut = async () => {
-        const token : string|null = localStorage.getItem(TokenService.AUTH_TOKEN);
-        if (token) {
-
-            await httpPost<ApiResponse>('/auth/logout', {token}, {withCredentials: true})
-                .catch((error) => {
-                console.log('Logout failed');
-                if (axios.isAxiosError(error)) {
-                    const status = error.response?.status;
-                    const errorData = error.response?.data;
-                    console.log('Status:', status);
-                    console.log('Error:', errorData);
-                }
-            }).finally(() => {
-                localStorage.removeItem(TokenService.AUTH_TOKEN);
+        await logout()
+            .finally(() => {
                 navigate(routes.signin);
             });
-        }
-
     };
 
     return (

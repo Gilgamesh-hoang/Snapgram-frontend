@@ -9,11 +9,11 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {routes} from "@/route";
-import {httpPost} from "@/utils/httpRequest.ts";
 import Swal from "sweetalert2";
-import {ApiResponse, JwtResponse} from "@/model/response.ts";
+import {login} from "@/services/auth.ts";
+import {verifyEmail} from "@/services/user.ts";
+import {updateAccessToken} from "@/services/token.ts";
 import axios from "axios";
-import TokenService from "@/services/token.ts";
 
 const SigninForm: React.FC = () => {
     const location = useLocation();
@@ -27,45 +27,8 @@ const SigninForm: React.FC = () => {
         const code = queryParams.get('code');
         const email = queryParams.get('email');
 
-        const verifyEmail = async () => {
-            return await httpPost<ApiResponse<boolean>>('/auth/verification-email', {
-                email, code
-            });
-
-        }
         if (action === 'verify-email' && code && email) {
-            verifyEmail().then((response) => {
-                if (response.data) {
-                    console.log('Email verified');
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Xác thực tài khoản thành công',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            navigate(routes.signin);
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Hết hạn xác thực',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            navigate(routes.signin);
-                        }
-                    });
-                }
-
-            }).catch(() => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Xác thực tài khoản thất bại',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        navigate(routes.signin);
-                    }
-                });
-            });
+            verifyEmail(email, code);
         }
     }, []);
 
@@ -79,11 +42,10 @@ const SigninForm: React.FC = () => {
 
     const handleSignin = async (user: z.infer<typeof SigninValidation>) => {
         setIsLoading(true);
-        await httpPost<ApiResponse<JwtResponse>>('/auth/login', user)
+        await login(user.email, user.password)
             .then(response => {
                 if (response.status === 200) {
-                    //save token and refresh token
-                    localStorage.setItem(TokenService.AUTH_TOKEN, response.data.token);
+                    updateAccessToken(response.data.token);
                     navigate(routes.home);
                 }
             }).catch((error) => {
