@@ -10,4 +10,8 @@ export interface JwtResponse {
 
 export interface User {
     email: string;
+    id: string;
+    nickname: string;
+    fullName: string;
+    avatarUrl: string;
 }

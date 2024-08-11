@@ -4,7 +4,7 @@ import {getAccessToken, removeAccessToken} from "@/services/token.ts";
 import axios from "axios";
 
 export const login = async (email: string, password: string) => {
-    return await httpPost<ApiResponse<JwtResponse>>('/auth/login', {email, password});
+    return httpPost<ApiResponse<JwtResponse>>('/auth/login', {email, password});
 };
 
 export const logout = async () => {
