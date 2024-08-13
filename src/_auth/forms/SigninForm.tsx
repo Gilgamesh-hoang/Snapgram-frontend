@@ -14,8 +14,11 @@ import {login} from "@/services/auth.ts";
 import {verifyEmail} from "@/services/user.ts";
 import {updateAccessToken} from "@/services/token.ts";
 import axios from "axios";
+import {GoogleOAuthProvider} from "@react-oauth/google";
+import OAuth2Google from "@/components/shared/OAuth2Google.tsx";
 
 const SigninForm: React.FC = () => {
+    const clientId = import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID || '';
     const location = useLocation();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -124,6 +127,11 @@ const SigninForm: React.FC = () => {
                             "Đăng nhập"
                         )}
                     </Button>
+                    <GoogleOAuthProvider
+                        clientId={clientId}>
+                        <OAuth2Google/>
+                    </GoogleOAuthProvider>
+
 
                     <p className="mt-2 text-center text-sm font-normal text-light-2">
                         Chưa có tài khoản?

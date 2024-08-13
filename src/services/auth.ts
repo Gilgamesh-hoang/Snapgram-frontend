@@ -6,6 +6,9 @@ import axios from "axios";
 export const login = async (email: string, password: string) => {
     return httpPost<ApiResponse<JwtResponse>>('/auth/login', {email, password});
 };
+export const loginGoogle = async (token: string) => {
+    return await httpPost<ApiResponse<JwtResponse>>('/auth/google', {token});
+};
 
 export const logout = async () => {
     const token: string | null = getAccessToken();
