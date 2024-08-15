@@ -1,20 +1,23 @@
 import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 
-import {INavLink} from "@/types";
 import {sidebarLinks} from "@/constants";
 import {Button} from "@/components/ui/button";
 import React from "react";
 import {clsx} from "clsx";
 import {routes} from "@/route";
 import {logout} from "@/services/auth.ts";
+import {INavLink} from "@/model/type.ts";
+import {useUserContext} from "@/context/AuthContext.tsx";
 
 const LeftSidebar = () => {
     const navigate = useNavigate();
     const {pathname} = useLocation();
+    const {logoutContext} = useUserContext();
 
     const handleSignOut = async () => {
         await logout()
             .finally(() => {
+                logoutContext();
                 navigate(routes.signin);
             });
     };

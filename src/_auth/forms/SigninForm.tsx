@@ -12,16 +12,18 @@ import {routes} from "@/route";
 import Swal from "sweetalert2";
 import {login} from "@/services/auth.ts";
 import {verifyEmail} from "@/services/user.ts";
-import {updateAccessToken} from "@/services/token.ts";
+import {getAccessToken, updateAccessToken} from "@/services/token.ts";
 import axios from "axios";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 import OAuth2Google from "@/components/shared/OAuth2Google.tsx";
+import {useUserContext} from "@/context/AuthContext.tsx";
 
 const SigninForm: React.FC = () => {
     const clientId = import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID || '';
     const location = useLocation();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const {setIsAuthenticated} = useUserContext();
 
     // Verify email when a user clicks on an email link
     useEffect(() => {
@@ -35,6 +37,13 @@ const SigninForm: React.FC = () => {
         }
     }, []);
 
+    // useEffect(() => {
+    //     const token = getAccessToken();
+    //     if (token) {
+    //         navigate(routes.home);
+    //     }
+    // }, []);
+
     const form = useForm<z.infer<typeof SigninValidation>>({
         resolver: zodResolver(SigninValidation),
         defaultValues: {
@@ -44,11 +53,13 @@ const SigninForm: React.FC = () => {
     });
 
     const handleSignin = async (user: z.infer<typeof SigninValidation>) => {
+        if (isLoading) return;
         setIsLoading(true);
         await login(user.email, user.password)
             .then(response => {
                 if (response.status === 200) {
                     updateAccessToken(response.data.token);
+                    setIsAuthenticated(true);
                     navigate(routes.home);
                 }
             }).catch((error) => {

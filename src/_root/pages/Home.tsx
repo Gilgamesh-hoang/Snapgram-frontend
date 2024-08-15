@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {PostCard, UserCard} from "@/components/shared";
 import {httpGet} from "@/utils/httpRequest.ts";
-import {ApiResponse, User} from "@/model/response.ts";
+import {ApiResponse, User} from "@/model/type.ts";
 
 const Home: React.FC = () => {
 

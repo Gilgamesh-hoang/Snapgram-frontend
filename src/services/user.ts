@@ -1,5 +1,5 @@
 import {httpGet, httpPost} from "@/utils/httpRequest.ts";
-import {ApiResponse} from "@/model/response.ts";
+import {ApiResponse, User} from "@/model/type.ts";
 import Swal from "sweetalert2";
 import {routes} from "@/route";
 import {SignUpRequest} from "@/model/request.ts";
@@ -70,6 +70,13 @@ export const signup = async (user: SignUpRequest) => {
                     window.location.href = routes.signin;
                 });
             }
+        });
+
+}
+export const getCurrentUser = async () => {
+    return await httpGet<ApiResponse<User>>('/users/me')
+        .then(response => {
+            return response.data;
         });
 
 }

@@ -1,5 +1,5 @@
 import {httpPost} from "@/utils/httpRequest.ts";
-import {ApiResponse, JwtResponse} from "@/model/response.ts";
+import {ApiResponse, JwtResponse} from "@/model/type.ts";
 import {getAccessToken, removeAccessToken} from "@/services/token.ts";
 import axios from "axios";
 

@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {clsx} from "clsx";
-import {MediaUrl} from "@/types";
 import {IoIosArrowDropleftCircle, IoIosArrowDroprightCircle} from "react-icons/io";
+import {MediaUrl} from "@/model/type.ts";
 
 type CarouselProps = {
     sources: MediaUrl[];

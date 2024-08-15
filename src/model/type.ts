@@ -14,4 +14,17 @@ export interface User {
     nickname: string;
     fullName: string;
     avatarUrl: string;
+    bio?: string;
 }
+
+export interface MediaUrl {
+    isImage?: boolean;
+    isVideo?: boolean;
+    src?: string;
+}
+
+export interface INavLink {
+    imgURL: string;
+    route: string;
+    label: string;
+};

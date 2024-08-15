@@ -41,26 +41,26 @@ export const routes = {
 
 
 export const publicRoutes: RouteType[] = [
-    {path: routes.signin, element: Signin},
-    {path: routes.signup, element: Signup},
-    {path: routes.forgotPassword, element: ForgotPassword},
+    {path: routes.signin, element: Signin,},
+    {path: routes.signup, element: Signup,},
+    {path: routes.forgotPassword, element: ForgotPassword,},
 ]
 
 export const privateRoutes: RouteType[] = [
-    {path: routes.home, element: Home, index: true},
-    {path: routes.explore, element: Explore},
-    {path: routes.saved, element: Saved},
-    {path: routes.allUsers, element: AllUsers},
+    {path: routes.home, element: Home, index: true,},
+    {path: routes.explore, element: Explore,},
+    {path: routes.saved, element: Saved,},
+    {path: routes.allUsers, element: AllUsers,},
     {
         path: routes.messages, element: Messages,
         child: [
-            {path: ':type/:name', element: MessageBox},
+            {path: ':type/:name', element: MessageBox,},
         ]
     },
-    {path: routes.notifies, element: Notifies},
-    {path: routes.createPost, element: CreatePost},
-    {path: routes.updatePost, element: EditPost},
-    {path: routes.posts, element: PostDetails},
-    {path: routes.profile, element: Profile},
-    {path: routes.updateProfile, element: UpdateProfile},
+    {path: routes.notifies, element: Notifies,},
+    {path: routes.createPost, element: CreatePost,},
+    {path: routes.updatePost, element: EditPost,},
+    {path: routes.posts, element: PostDetails,},
+    {path: routes.profile, element: Profile,},
+    {path: routes.updateProfile, element: UpdateProfile,},
 ]

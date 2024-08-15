@@ -5,7 +5,7 @@ import {Loader, UserCard} from "@/components/shared";
 import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import useDebounce from "@/hooks/useDebounce.ts";
 import {searchUsers} from "@/services/search.ts";
-import {User} from "@/model/response.ts";
+import {User} from "@/model/type.ts";
 import {useLocation, useNavigate} from "react-router-dom";
 
 

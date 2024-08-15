@@ -1,18 +1,20 @@
 import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 import {TopBarLinks} from "@/constants";
-import {INavLink} from "@/types";
 import {clsx} from "clsx";
 import React, {useEffect, useState} from "react";
 import {BiLogOut} from "react-icons/bi";
 import {IoMdClose} from "react-icons/io";
 import {logout} from "@/services/auth.ts";
 import {routes} from "@/route";
+import {INavLink} from "@/model/type.ts";
+import {useUserContext} from "@/context/AuthContext.tsx";
 
 const TopBar = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const {pathname} = useLocation();
     const navigate = useNavigate();
+    const {logoutContext} = useUserContext();
 
     useEffect(() => {
         if (showMenu) {
@@ -26,6 +28,7 @@ const TopBar = () => {
     const handleSignOut = async () => {
         await logout()
             .finally(() => {
+                logoutContext();
                 navigate(routes.signin);
             });
     };

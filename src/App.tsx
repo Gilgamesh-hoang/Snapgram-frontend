@@ -1,8 +1,26 @@
 import "./globals.css";
 import AuthLayout from "./_auth/AuthLayout";
 import RootLayout from "./_root/RootLayout";
-import {Route, Routes} from "react-router-dom";
-import {privateRoutes, publicRoutes, RouteType} from "@/route";
+import {Navigate, Outlet, Route, Routes} from "react-router-dom";
+import {privateRoutes, publicRoutes, routes, RouteType} from "@/route";
+import {useUserContext} from "@/context/AuthContext.tsx";
+import {Loader} from "@/components/shared";
+
+const Private = () => {
+    const {isAuthenticated, isLoading} = useUserContext();
+    if (isLoading) {
+        return <Loader/>;
+    }
+    return isAuthenticated ? <Outlet/> : <Navigate to={routes.signin}/>;
+};
+
+const Public = () => {
+    const {isAuthenticated, isLoading} = useUserContext();
+    if (isLoading) {
+        return <Loader/>;
+    }
+    return !isAuthenticated ? <Outlet/> : <Navigate to={routes.home}/>;
+};
 
 const App = () => {
 
@@ -21,29 +39,30 @@ const App = () => {
             </Route>
         )
     };
-
-
     return (
         <main className="flex h-screen">
             <Routes>
-                {/* public routes */}
-                <Route element={<AuthLayout/>}>
-                    {
-                        publicRoutes.map((routeObject) =>
-                            routeRender(routeObject)
-                        )
-                    }
-
-                </Route>
-
-                {/* private routes */}
                 <Route element={<RootLayout/>}>
-                    {
-                        privateRoutes.map((routeObject) =>
-                            routeRender(routeObject)
-                        )
-                    }
+                    <Route element={<Private/>}>
+                        {
+                            privateRoutes.map((routeObject) =>
+                                routeRender(routeObject)
+                            )
+                        }
+                    </Route>
                 </Route>
+
+                <Route element={<AuthLayout/>}>
+                    <Route element={<Public/>}>
+                        {
+                            publicRoutes.map((routeObject) =>
+                                routeRender(routeObject)
+                            )
+                        }
+                    </Route>
+                </Route>
+
+
             </Routes>
         </main>
     )

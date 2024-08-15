@@ -7,16 +7,18 @@ import {loginGoogle} from "@/services/auth.ts";
 import {updateAccessToken} from "@/services/token.ts";
 import {routes} from "@/route";
 import {useNavigate} from "react-router-dom";
+import {useUserContext} from "@/context/AuthContext.tsx";
 
 const OAuth2Google = () => {
     const navigate = useNavigate();
-
+    const {setIsAuthenticated} = useUserContext();
     const login = useGoogleLogin({
         onSuccess: tokenResponse => {
             loginGoogle(tokenResponse.access_token)
                 .then(response => {
                     if (response.status === 200) {
                         updateAccessToken(response.data.token);
+                        setIsAuthenticated(true);
                         navigate(routes.home);
                     }
                 })

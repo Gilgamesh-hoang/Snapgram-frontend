@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "@/App.tsx";
 import {BrowserRouter} from "react-router-dom";
+import {AuthProvider} from "@/context/AuthContext.tsx";
 
 
 const rootElement = document.getElementById("root");
@@ -9,9 +10,13 @@ const rootElement = document.getElementById("root");
 if (rootElement) {
     ReactDOM.createRoot(rootElement).render(
         // <React.StrictMode>
-            <BrowserRouter>
+
+        <BrowserRouter>
+            <AuthProvider>
                 <App/>
-            </BrowserRouter>
+            </AuthProvider>
+        </BrowserRouter>
+
         // </React.StrictMode>
     );
 } else {

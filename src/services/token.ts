@@ -1,4 +1,4 @@
-import {ApiResponse, JwtResponse} from "@/model/response.ts";
+import {ApiResponse, JwtResponse} from "@/model/type.ts";
 import {httpPost} from "@/utils/httpRequest.ts";
 
 const AUTH_TOKEN = 'auth_token';
