@@ -55,6 +55,15 @@ export const isNicknameExist = async (nickname: string): Promise<boolean> => {
         return response.data;
     });
 }
+export const friendSuggestions = async (pageNum: number, pageSize = 15) => {
+    return await httpGet<ApiResponse<User[]>>('/users/friend-suggestions', {
+        params: {
+            pageNum, pageSize
+        }
+    }).then(response => {
+        return response.data;
+    });
+}
 
 export const signup = async (user: SignUpRequest) => {
 

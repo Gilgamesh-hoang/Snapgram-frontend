@@ -7,6 +7,7 @@ import useDebounce from "@/hooks/useDebounce.ts";
 import {searchUsers} from "@/services/search.ts";
 import {User} from "@/model/type.ts";
 import {useLocation, useNavigate} from "react-router-dom";
+import {friendSuggestions} from "@/services/user.ts";
 
 
 const AllUsers: React.FC = () => {
@@ -22,21 +23,29 @@ const AllUsers: React.FC = () => {
     const [hasMore, setHasMore] = useState(true);
     const [users, setUsers] = useState<User[]>([]);
 
+    // This effect runs whenever the searchDebounce changes
     useEffect(() => {
+        // Reset the page number and clear the users array
         setPage(1);
         setUsers([]);
 
-        // Update the URL with the query parameter whenever searchDebounce changes
+        // If there's a debounced search value, set it as the 'q' query parameter in the URL
+        // Otherwise, remove the 'q' query parameter from the URL
         if (searchDebounce) {
             queryParams.set('q', encodeURIComponent(searchDebounce));
         } else {
             queryParams.delete('q');
         }
-        navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true });
+
+        // Navigate to the current path with the updated query parameters
+        navigate(`${location.pathname}?${queryParams.toString()}`, {replace: true});
     }, [searchDebounce, location.pathname, navigate]);
 
+    // This effect runs whenever the page number or searchDebounce changes
     useEffect(() => {
-        if (searchDebounce && searchDebounce.trim().length >= 1) {
+        // If there's a debounced search value, search for users with that value
+        // Otherwise, get friend suggestions
+        if (searchDebounce && searchDebounce.trim().length) {
             searchUsers(searchDebounce, page)
                 .then((res) => {
                     const data = res.data;
@@ -46,6 +55,14 @@ const AllUsers: React.FC = () => {
                         setUsers((prev) => [...prev, ...res.data]);
                     }
                 });
+        } else {
+            friendSuggestions(page).then((res: User[]) => {
+                if (res.length === 0) {
+                    setHasMore(false);
+                } else {
+                    setUsers((prev) => [...prev, ...res]);
+                }
+            });
         }
     }, [page, searchDebounce]);
 
