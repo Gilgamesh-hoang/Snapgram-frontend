@@ -35,6 +35,6 @@ export const ProfileValidation = z.object({
 // POST
 // ============================================================
 export const PostValidation = z.object({
-    caption: z.string().min(5, { message: "Nhập ít nhất 5 ký tự." }).max(2200, { message: "Đã quá 2,200 ký tự" }),
-    file: z.custom<File[]>(),
+    caption: z.string().max(2200, { message: "Đã quá 2,200 ký tự" }),
+    files: z.custom<File[]>(),
 });

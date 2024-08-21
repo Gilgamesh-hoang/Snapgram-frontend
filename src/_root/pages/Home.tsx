@@ -1,9 +1,11 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {PostCard, UserCard} from "@/components/shared";
 import {httpGet} from "@/utils/httpRequest.ts";
 import {ApiResponse, User} from "@/model/type.ts";
+import {friendSuggestions} from "@/services/user.ts";
 
 const Home: React.FC = () => {
+    const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
         httpGet<ApiResponse<User>>('/users').then((response) => {
@@ -26,14 +28,14 @@ const Home: React.FC = () => {
         location: "Lagos, Nigeria",
         imageUrl: [
             {
-                isImage: true,
-                isVideo: false,
-                src: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
+                id: "1",
+                type: "IMAGE",
+                url: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
             },
             {
-                isImage: false,
-                isVideo: true,
-                src: "https://res.cloudinary.com/dvh2rphf4/video/upload/v1718880120/chatify/river_l1qf3t.mp4",
+                id: "2",
+                type: "VIDEO",
+                url: "https://res.cloudinary.com/dvh2rphf4/video/upload/v1718880120/chatify/river_l1qf3t.mp4",
             },
 
         ],
@@ -52,8 +54,8 @@ const Home: React.FC = () => {
         imageUrl: [
 
             {
-                isImage: false,
-                isVideo: true,
+                id: "1",
+                type: "VIDEO",
                 src: "https://res.cloudinary.com/dvh2rphf4/video/upload/v1718880120/chatify/river_l1qf3t.mp4",
             },
 
@@ -61,13 +63,11 @@ const Home: React.FC = () => {
         tags: ["#tag1", "#tag2"],
     };
 
-    // fake data for user card
-    const creator = {
-        $id: "1",
-        name: "John Doe",
-        username: "john_doe",
-        imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-    };
+    useEffect(() => {
+        friendSuggestions(1, 6).then((res: User[]) => {
+            setUsers((prev) => [...prev, ...res]);
+        });
+    }, []);
 
 
     return (
@@ -88,18 +88,12 @@ const Home: React.FC = () => {
             <div className="home-creators">
                 <h3 className="h3-bold text-light-1">Gợi ý cho bạn</h3>
                 <ul className="grid grid-cols-2 gap-6">
-                    <li>
-                        <UserCard user={creator}/>
-                    </li>
-                    <li>
-                        <UserCard user={creator}/>
-                    </li>
-                    <li>
-                        <UserCard user={creator}/>
-                    </li>
-                    <li>
-                        <UserCard user={creator}/>
-                    </li>
+                    {users.map((user, index) => (
+                        <li key={index}>
+                            <UserCard id={user.id} name={user.fullName} imageUrl={user.avatarUrl}
+                                      nickname={user.nickname} key={index}/>
+                        </li>
+                    ))}
 
                 </ul>
             </div>

@@ -1,4 +1,4 @@
-import {useCallback, useState} from "react";
+import React, {useCallback, useState} from "react";
 import {FileWithPath, useDropzone} from "react-dropzone";
 
 import {Button} from "@/components/ui";
@@ -11,32 +11,36 @@ type FileUploaderProps = {
     mediaUrl: MediaUrl[];
 };
 
-const FileUploader = ({fieldChange, mediaUrl}: FileUploaderProps) => {
+const FileUploader: React.FC<FileUploaderProps> = ({fieldChange, mediaUrl}) => {
     const [files, setFiles] = useState<File[]>([]);
     const [fileUrl, setFileUrl] = useState<MediaUrl[]>(mediaUrl);
 
-    const handleFiles = (files : FileWithPath[]) :MediaUrl[]  => {
+    const handleFiles = (files: FileWithPath[]): MediaUrl[] => {
         let urls: MediaUrl[] = [...fileUrl];
         for (const file of files) {
-            const mediaUrl: MediaUrl = {};
+            const mediaUrl: MediaUrl = {
+                id: '',
+                type: 'IMAGE',
+                url: '',
+            };
 
             // get file's size
-            const fileSize : number = file.size;
+            const fileSize: number = file.size;
             // get the file type
             const fileType = file.type.split('/')[0];
 
             if (fileType === 'image') {
-                mediaUrl.isImage = true;
+                mediaUrl.type = 'IMAGE';
                 if (fileSize > 10000000) {
                     continue;
                 }
             } else if (fileType === 'video') {
-                mediaUrl.isVideo = true;
+                mediaUrl.type = 'VIDEO';
                 if (fileSize > 20000000) {
                     continue;
                 }
             }
-            mediaUrl.src = convertFileToUrl(file);
+            mediaUrl.url = convertFileToUrl(file);
             urls = [...urls, mediaUrl]
         }
         console.log(urls)

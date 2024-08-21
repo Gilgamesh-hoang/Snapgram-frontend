@@ -43,23 +43,23 @@ const App = () => {
         <main className="flex h-screen">
             <Routes>
                 <Route element={<RootLayout/>}>
-                    <Route element={<Private/>}>
+                    {/*<Route element={<Private/>}>*/}
                         {
                             privateRoutes.map((routeObject) =>
                                 routeRender(routeObject)
                             )
                         }
-                    </Route>
+                    {/*</Route>*/}
                 </Route>
 
                 <Route element={<AuthLayout/>}>
-                    <Route element={<Public/>}>
+                    {/*<Route element={<Public/>}>*/}
                         {
                             publicRoutes.map((routeObject) =>
                                 routeRender(routeObject)
                             )
                         }
-                    </Route>
+                    {/*</Route>*/}
                 </Route>
 
 

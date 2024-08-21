@@ -5,7 +5,6 @@ import {getAccessToken, getRefreshToken, removeAccessToken, updateAccessToken} f
 
 const httpRequest: AxiosInstance = axios.create({
     baseURL: 'http://localhost:8182/api/v1',
-    timeout: 2000,
     withCredentials: true,
 });
 httpRequest.interceptors.request.use(

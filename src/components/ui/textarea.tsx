@@ -5,10 +5,16 @@ import {cn} from "@/utils"
 
 export interface TextareaProps
     extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    formOption?: {
+        callback: (name:string, value:string, option:object)=>void,
+        name: string,
+        options: object,
+    },
+
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-    ({className, ...props}, ref) => {
+    ({className, formOption, ...props}, ref) => {
         const [numCharacters, setNumCharacters] = useState<number>(0)
         const [value, setValue] = useState<string>('')
 
@@ -16,6 +22,11 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             const newValue = e.target.value;
             setValue(newValue);
             setNumCharacters(newValue.length);
+
+
+            if(formOption) {
+                formOption.callback(formOption.name, newValue, formOption.options);
+            }
         };
         return (
             <div className='relative'>

@@ -18,13 +18,24 @@ export interface User {
 }
 
 export interface MediaUrl {
-    isImage?: boolean;
-    isVideo?: boolean;
-    src?: string;
+    id: string;
+    type: 'IMAGE' | 'VIDEO';
+    url: string;
+}
+export interface Tag {
+    name: string;
+}
+export interface Post {
+    id: string;
+    caption: string;
+    media:MediaUrl[];
+    tags: Tag[];
+    likeCount: number;
+    createdAt: Date;
 }
 
 export interface INavLink {
     imgURL: string;
     route: string;
     label: string;
-};
+}

@@ -34,18 +34,18 @@ const Carousel: React.FC<CarouselProps> = ({sources, callback, isShowClose = fal
             {sources.map((item, idx) => {
                 return (
                     <div className='relative' key={idx}>
-                        {item.isImage && (
+                        {item.type === 'IMAGE' && (
                             <img
-                                src={item.src}
-                                alt={item.src}
+                                src={item.url}
+                                alt={item.url}
                                 key={idx}
                                 className={clsx('slide', {'hidden': slide !== idx})}
                             />
                         )}
 
-                        {item.isVideo && (
+                        {item.type === 'VIDEO' && (
                             <video
-                                src={item.src}
+                                src={item.url}
                                 className={clsx('slide', {'hidden': slide !== idx})}
                                 controls
                                 muted

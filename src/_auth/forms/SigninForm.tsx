@@ -37,12 +37,6 @@ const SigninForm: React.FC = () => {
         }
     }, []);
 
-    // useEffect(() => {
-    //     const token = getAccessToken();
-    //     if (token) {
-    //         navigate(routes.home);
-    //     }
-    // }, []);
 
     const form = useForm<z.infer<typeof SigninValidation>>({
         resolver: zodResolver(SigninValidation),
