@@ -5,7 +5,6 @@ interface InfiniteScrollProps {
     fetchMore: () => void;
     hasMore: boolean;
     endMessage?: React.ReactNode;
-    className?: string;
 }
 const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
                                                            children,
@@ -13,7 +12,6 @@ const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
                                                            fetchMore,
                                                            hasMore,
                                                            endMessage,
-                                                           className,
                                                        }) => {
     const pageEndRef = useRef(null);
     useEffect(() => {
@@ -36,11 +34,11 @@ const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
         }
     }, [hasMore]);
     return (
-        <div className={className}>
+        <>
             {children}
 
             {hasMore ? <div ref={pageEndRef}>{loader}</div> : endMessage}
-        </div>
+        </>
     );
 };
 

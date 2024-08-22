@@ -1,18 +1,15 @@
 import {FC, useState} from "react";
 import {Link, useLocation} from "react-router-dom";
-
-import {checkIsLiked} from "@/utils";
+import {Post} from "@/model/type.ts";
 
 type PostStatsProps = {
     userId?: string;
-    post?: string;
+    post: Post;
     isShowShare?: boolean;
 };
 
-const PostStats: FC<PostStatsProps> = ({post, userId, isShowShare = false}: PostStatsProps) => {
+const PostStats: FC<PostStatsProps> = ({post, userId, isShowShare = false}) => {
     const location = useLocation();
-
-    const [likes, setLikes] = useState<string[]>(['a', 'b', 'c']);
 
 
     const containerStyles = location.pathname.startsWith("/profile")
@@ -26,16 +23,14 @@ const PostStats: FC<PostStatsProps> = ({post, userId, isShowShare = false}: Post
                 <div className="mr-7 flex gap-2">
                     <img
                         src={`${
-                            checkIsLiked(likes, userId || '')
-                                ? "/assets/icons/liked.svg"
-                                : "/assets/icons/like.svg"
+                            post.isLiked ? "/assets/icons/liked.svg" : "/assets/icons/like.svg"
                         }`}
                         alt="like"
                         width={20}
                         height={20}
                         className="cursor-pointer"
                     />
-                    <p className="small-medium lg:base-medium">100</p>
+                    <p className="small-medium lg:base-medium">{post.likeCount}</p>
                 </div>
                 <Link
                     to={`/posts/1`}
@@ -48,7 +43,7 @@ const PostStats: FC<PostStatsProps> = ({post, userId, isShowShare = false}: Post
                             height={20}
                             className="cursor-pointer"
                         />
-                        <p className="small-medium lg:base-medium">5</p>
+                        <p className="small-medium lg:base-medium">{post.commentCount}</p>
                     </div>
                 </Link>
                 {isShowShare && (

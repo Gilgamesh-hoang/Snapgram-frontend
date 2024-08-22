@@ -35,8 +35,8 @@ export const routes = {
     createPost: "/create-post",
     updatePost: "/update-post/:id",
     posts: "/posts/:id",
-    profile: "/profile/:id/*",
-    updateProfile: "update-profile/:id"
+    profile: "/users/profile/:nickname/*",
+    updateProfile: "/users/update-profile/:nickname"
 };
 
 

@@ -15,6 +15,9 @@ export interface User {
     fullName: string;
     avatarUrl: string;
     bio?: string;
+    followerNumber?: number;
+    followeeNumber?: number;
+    postNumber?: number;
 }
 
 export interface MediaUrl {
@@ -22,15 +25,19 @@ export interface MediaUrl {
     type: 'IMAGE' | 'VIDEO';
     url: string;
 }
+
 export interface Tag {
     name: string;
 }
+
 export interface Post {
     id: string;
     caption: string;
-    media:MediaUrl[];
+    media: MediaUrl[];
     tags: Tag[];
     likeCount: number;
+    commentCount: number;
+    isLiked: boolean;
     createdAt: Date;
 }
 

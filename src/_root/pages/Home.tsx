@@ -8,12 +8,12 @@ const Home: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
-        httpGet<ApiResponse<User>>('/users').then((response) => {
-            console.log(response.data);
-        })
-            .catch((error) => {
-                console.log('Error:', error);
-            });
+        // httpGet<ApiResponse<User>>('/users').then((response) => {
+        //     console.log(response.data);
+        // })
+        //     .catch((error) => {
+        //         console.log('Error:', error);
+        //     });
     }, []);
 
     const post = {

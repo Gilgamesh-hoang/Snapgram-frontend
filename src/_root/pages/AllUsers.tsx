@@ -46,15 +46,16 @@ const AllUsers: React.FC = () => {
         // If there's a debounced search value, search for users with that value
         // Otherwise, get friend suggestions
         if (searchDebounce && searchDebounce.trim().length) {
-            searchUsers(searchDebounce, page)
-                .then((res) => {
-                    const data = res.data;
-                    if (data.length === 0) {
-                        setHasMore(false);
-                    } else {
-                        setUsers((prev) => [...prev, ...res.data]);
-                    }
-                });
+            searchUsers(searchDebounce, page).then((res) => {
+                const data = res.data;
+                if (data.length === 0) {
+                    setHasMore(false);
+                } else {
+                    setUsers((prev) => [...prev, ...res.data]);
+                }
+            }).catch(() => {
+                setHasMore(false);
+            });
         } else {
             friendSuggestions(page).then((res: User[]) => {
                 if (res.length === 0) {
@@ -62,6 +63,8 @@ const AllUsers: React.FC = () => {
                 } else {
                     setUsers((prev) => [...prev, ...res]);
                 }
+            }).catch(() => {
+                setHasMore(false);
             });
         }
     }, [page, searchDebounce]);
@@ -100,21 +103,22 @@ const AllUsers: React.FC = () => {
                     </div>
                 </div>
 
-                {users.length > 0 && (
-                    <InfiniteScroll
-                        loader={<Loader/>}
-                        fetchMore={() => setPage((prev) => prev + 1)}
-                        hasMore={hasMore}
-                        className='user-grid'
-                    >
-                        {users.map((user, index) => (
-                            <div key={index} className="w-full min-w-[200px] flex-1  ">
-                                <UserCard id={user.id} name={user.fullName} imageUrl={user.avatarUrl}
-                                          nickname={user.nickname} key={index}/>
-                            </div>
-                        ))}
-                    </InfiniteScroll>
-                )}
+                <div className='user-grid'>
+                    {users.length > 0 && (
+                        <InfiniteScroll
+                            loader={<Loader/>}
+                            fetchMore={() => setPage((prev) => prev + 1)}
+                            hasMore={hasMore}
+                        >
+                            {users.map((user, index) => (
+                                <div key={index} className="w-full min-w-[200px] flex-1  ">
+                                    <UserCard id={user.id} name={user.fullName} imageUrl={user.avatarUrl}
+                                              nickname={user.nickname} key={index}/>
+                                </div>
+                            ))}
+                        </InfiniteScroll>
+                    )}
+                </div>
             </div>
 
         </div>

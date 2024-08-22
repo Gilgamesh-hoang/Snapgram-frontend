@@ -89,6 +89,13 @@ export const getCurrentUser = async () => {
         });
 
 }
+export const getUserInfo = async (nickname:string) => {
+    return await httpGet<ApiResponse<User>>('/users' ,{params: {nickname}})
+        .then(response => {
+            return response.data;
+        });
+
+}
 export const forgotPassword = async (email: string) => {
     return await httpPost<ApiResponse>("/users/forgot-password", {email})
         .then((response) => {

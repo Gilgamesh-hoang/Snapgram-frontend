@@ -12,7 +12,7 @@ import {useUserContext} from "@/context/AuthContext.tsx";
 const LeftSidebar = () => {
     const navigate = useNavigate();
     const {pathname} = useLocation();
-    const {logoutContext} = useUserContext();
+    const {logoutContext, user} = useUserContext();
 
     const handleSignOut = async () => {
         await logout()
@@ -34,7 +34,10 @@ const LeftSidebar = () => {
                     />
                 </Link>
 
-                <Link to={`/profile/1`} className="flex items-center gap-3">
+                <Link
+                    to={`/users/profile/1`}
+                    // to={`${routes.profile.replace(':nickname', user.nickname)}`}
+                    className="flex items-center gap-3">
                     <img
                         src='https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg'
                         alt="profile"

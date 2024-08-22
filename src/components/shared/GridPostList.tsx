@@ -1,46 +1,69 @@
 import {Link} from "react-router-dom";
 
-import {PostStats} from "@/components/shared";
+import {Loader, PostStats} from "@/components/shared";
 import {routes} from "@/route";
+import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
+import React, {FC} from "react";
+import {Post, User} from "@/model/type.ts";
 
 type GridPostListProps = {
     showUser?: boolean;
     showStats?: boolean;
-    posts: any[];
+    hasMore: boolean;
+    setPage: (prev: number) => void;
+    page: number;
+    posts: Post[];
+    creator?: User;
 };
 
-const GridPostList = ({posts, showUser = true, showStats = true,}: GridPostListProps) => {
+const GridPostList: FC<GridPostListProps> = ({
+                                                 posts,
+                                                 creator,
+                                                 showUser = true,
+                                                 showStats = true,
+                                                 page,
+                                                 setPage,
+                                                 hasMore
+                                             }) => {
 
     return (
         <ul className="grid-container">
-            {posts.map((post) => (
-                <li key={post.id} className="relative min-w-80 h-80">
-                    <Link to={`${routes.posts}/${post.id}`} className="grid-post_link">
-                        <img
-                            src={post.imageUrl}
-                            alt="post"
-                            className="h-full w-full object-cover"
-                        />
-                    </Link>
-
-                    <div className="grid-post_user">
-                        {showUser && (
-                            <div className="flex items-center justify-start gap-2 flex-1">
+            {posts.length > 0 && (
+                <InfiniteScroll
+                    loader={<Loader/>}
+                    fetchMore={() => setPage(page + 1)}
+                    hasMore={hasMore}
+                >
+                    {posts.map((post) => (
+                        <li key={post.id} className="relative h-80 min-w-80">
+                            <Link to={`${routes.posts}/${post.id}`} className="grid-post_link">
                                 <img
-                                    src={
-                                        post.creator.imageUrl ||
-                                        "/assets/icons/profile-placeholder.svg"
-                                    }
-                                    alt="creator"
-                                    className="w-8 h-8 rounded-full"
+                                    src={post.media[0].url}
+                                    alt="post"
+                                    className="size-full object-cover"
                                 />
-                                <p className="line-clamp-1">{post.creator.name}</p>
+                            </Link>
+
+                            <div className="grid-post_user">
+                                {showUser && creator && (
+                                    <div className="flex flex-1 items-center justify-start gap-2">
+                                        <img
+                                            src={
+                                                creator.avatarUrl ||
+                                                "/assets/icons/profile-placeholder.svg"
+                                            }
+                                            alt="creator"
+                                            className="size-8 rounded-full"
+                                        />
+                                        <p className="line-clamp-1">{creator.fullName}</p>
+                                    </div>
+                                )}
+                                {showStats && <PostStats post={post}/>}
                             </div>
-                        )}
-                        {showStats && <PostStats/>}
-                    </div>
-                </li>
-            ))}
+                        </li>
+                    ))}
+                </InfiniteScroll>
+            )}
         </ul>
     );
 };

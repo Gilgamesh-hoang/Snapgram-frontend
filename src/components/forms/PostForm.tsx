@@ -43,8 +43,8 @@ const PostForm = ({post, action}: PostFormProps) => {
             return navigate(`/posts/`);
         } else if (action === "Create") {
             await createPost(value.caption, value.files, tags)
-                .then((post) => {
-                    navigate(`/posts/${post.id}`);
+                .then(() => {
+                    navigate(`/posts`);
                 }).catch((error) => {
                     console.log('error, ', error);
                     // If the error is an Axios error, handle different status codes

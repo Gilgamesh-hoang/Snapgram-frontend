@@ -1,4 +1,4 @@
-import {httpPost} from "@/utils/httpRequest.ts";
+import {httpGet, httpPost} from "@/utils/httpRequest.ts";
 import {ApiResponse, Post} from "@/model/type.ts";
 
 
@@ -12,10 +12,14 @@ export const createPost = async (caption: string, media: File[], tags: string[])
     tags.forEach((tag) => {
         formData.append("tags", tag);
     });
-    return await httpPost<ApiResponse<Post>>("/posts", formData,
-        {headers: {"Content-Type": "multipart/form-data"}})
-        .then((res) => {
-            return res.data;
-        });
+    return await httpPost<ApiResponse>("/posts", formData,
+        {headers: {"Content-Type": "multipart/form-data"}});
 }
 
+export const getPostsByUser = async (nickname: string,pageNum: number, pageSize = 10) => {
+    return await httpGet<ApiResponse<Post[]>>("/posts/user", {params:{nickname, pageNum, pageSize}})
+        .then(response => {
+            return response.data;
+        });
+
+}
