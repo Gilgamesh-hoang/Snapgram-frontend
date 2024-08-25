@@ -69,3 +69,7 @@ export const httpPost = async <T>(path: string, data?: any, option: AxiosRequest
     const response: AxiosResponse<T> = await httpRequest.post<T>(path, data, option);
     return response.data;
 }
+export const httpPut = async <T>(path: string, data?: any, option: AxiosRequestConfig = {}): Promise<T> => {
+    const response: AxiosResponse<T> = await httpRequest.put<T>(path, data, option);
+    return response.data;
+}

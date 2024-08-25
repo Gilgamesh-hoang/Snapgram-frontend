@@ -25,6 +25,7 @@ const INITIAL_USER: User = {
     email: "",
     avatarUrl: "",
     bio: "",
+    gender: 'MALE',
 };
 
 const Profile: React.FC = () => {
@@ -37,7 +38,7 @@ const Profile: React.FC = () => {
 
     useEffect(() => {
         if (nickname) {
-            getUserInfo('vwunschz').then((res) => {
+            getUserInfo('vwunschz_sadas').then((res) => {
                 setUser(res);
             });
         }
@@ -45,7 +46,7 @@ const Profile: React.FC = () => {
     useEffect(() => {
         if (nickname) {
             console.log(page);
-            getPostsByUser('vwunschz', page).then((res) => {
+            getPostsByUser('vwunschz_sadas', page).then((res) => {
                 if (res.length === 0) {
                     console.log('no more posts')
                     setHasMore(false);
@@ -92,7 +93,7 @@ const Profile: React.FC = () => {
                     <div className="flex justify-center gap-4">
                         <div>
                             <Link
-                                to={`/update-profile/`}
+                                to={routes.updateProfile}
                                 className={`flex-center h-12 gap-2 rounded-lg bg-dark-4 px-5 text-light-1`}>
                                 <img
                                     src={"/assets/icons/edit-profile.svg"}

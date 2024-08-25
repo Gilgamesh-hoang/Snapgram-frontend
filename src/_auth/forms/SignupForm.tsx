@@ -177,7 +177,8 @@ const SignupForm: React.FC = () => {
                                 <FormItem className='ml-2 flex-1'>
                                     <FormLabel className="shad-form_label">Giới tính</FormLabel>
                                     <FormControl>
-                                        <GenderSelection setValue={form.setValue}/>
+                                        {/*<GenderSelection setValue={form.setValue}/>*/}
+                                        <GenderSelection<z.infer<typeof SignupValidation>> setValue={form.setValue} />
                                     </FormControl>
                                     <FormMessage className='error-message'/>
                                 </FormItem>

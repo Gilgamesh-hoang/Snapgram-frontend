@@ -89,7 +89,7 @@ const PostForm = ({post, action}: PostFormProps) => {
                                     {...field}
                                     maxLength={2200}
                                     formOption={{
-                                        name: 'caption', // use the name from the form field
+                                        name: 'caption',
                                         options: {shouldValidate: true},
                                         callback: (name, value, options) => form.setValue('caption', value, options),
                                     }}

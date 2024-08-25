@@ -1,19 +1,20 @@
 import React, {ReactElement, useState} from 'react';
 import {IoMdFemale, IoMdMale} from "react-icons/io";
-import {UseFormSetValue} from "react-hook-form";
-import {SignupValidation} from "@/validation";
-import {z} from "zod";
+import {FieldValues, Path, UseFormSetValue} from "react-hook-form";
 
-type GenderSelectionProps = {
-    setValue: UseFormSetValue<z.infer<typeof SignupValidation>>;
+type GenderSelectionProps<T extends FieldValues> = {
+    setValue: UseFormSetValue<T>;
+    value? : "MALE" | "FEMALE";
+    className?: string;
 };
-const GenderSelection: React.FC<GenderSelectionProps> = ({setValue}) => {
-    const [selectedSex, setSelectedSex] = useState<"MALE" | "FEMALE">('MALE');
+const GenderSelection = <T extends FieldValues, >({setValue,value='MALE',className=''}: GenderSelectionProps<T>) => {
 
-    const handleSexChange = (value: "MALE" | "FEMALE") => {
-        setSelectedSex(value);
-        setValue('gender', value, {shouldValidate: true})
+    const [selectedSex, setSelectedSex] = useState<"MALE" | "FEMALE">(value);
+    const handleSexChange = (gender: "MALE" | "FEMALE") => {
+        setSelectedSex(gender);
+        setValue('gender' as Path<T>, gender as T[Path<T>], { shouldValidate: true });
     };
+
 
     const renderRadioButton = (value: "MALE" | "FEMALE", icon: ReactElement) => (
         <label className=" inline-block">
@@ -36,8 +37,8 @@ const GenderSelection: React.FC<GenderSelectionProps> = ({setValue}) => {
     );
 
     return (
-        <div className="flex h-10 items-center justify-around">
-            {renderRadioButton('MALE', <IoMdMale size={30}/>)}
+        <div className={`flex h-10 items-center justify-around ${className}`}>            {renderRadioButton('MALE',
+            <IoMdMale size={30}/>)}
             {renderRadioButton('FEMALE', <IoMdFemale size={30}/>)}
         </div>
     );

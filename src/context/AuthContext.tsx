@@ -6,13 +6,14 @@ import {getCurrentUser} from "@/services/user.ts";
 import {routes} from "@/route";
 import {User} from "@/model/type.ts";
 
-export const INITIAL_USER = {
+export const INITIAL_USER : User = {
     id: "",
     fullName: "",
     nickname: "",
     email: "",
     avatarUrl: "",
     bio: "",
+    gender: "MALE",
 };
 
 const INITIAL_STATE = {

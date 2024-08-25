@@ -75,12 +75,12 @@ const Home: React.FC = () => {
             <div className="home-container">
                 <div className="home-posts">
                     <ul className="flex w-full flex-1 flex-col gap-9">
-                        <li className="flex w-full justify-center">
-                            <PostCard post={post}/>
-                        </li>
-                        <li className="flex w-full justify-center">
-                            <PostCard post={post2}/>
-                        </li>
+                        {/*<li className="flex w-full justify-center">*/}
+                        {/*    <PostCard post={post}/>*/}
+                        {/*</li>*/}
+                        {/*<li className="flex w-full justify-center">*/}
+                        {/*    <PostCard post={post2}/>*/}
+                        {/*</li>*/}
                     </ul>
                 </div>
             </div>

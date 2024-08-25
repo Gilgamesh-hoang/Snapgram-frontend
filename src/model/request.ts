@@ -6,3 +6,10 @@ export interface SignUpRequest {
     fullName: string;
     gender: 'MALE' | 'FEMALE';
 }
+export interface ProfileRequest {
+    nickname: string;
+    email: string;
+    fullName: string;
+    gender: 'MALE' | 'FEMALE';
+    bio: string;
+}

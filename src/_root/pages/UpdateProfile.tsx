@@ -1,38 +1,113 @@
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import {Button, Input, Textarea} from "@/components/ui";
-import {ProfileUploader} from "@/components/shared";
+import {Loader, ProfileUploader} from "@/components/shared";
 
 import {ProfileValidation} from "@/validation";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {useUserContext} from "@/context/AuthContext.tsx";
+import GenderSelection from "@/components/shared/GenderSelection.tsx";
+import {editUserInfo, getUserInfo, isEmailExist, isNicknameExist} from "@/services/user.ts";
+import useDebounce from "@/hooks/useDebounce.ts";
+import {routes} from "@/route";
+import Swal from "sweetalert2";
 
 const UpdateProfile: React.FC = () => {
     const navigate = useNavigate();
-    const {id} = useParams();
-    const user = {
-        name: 'nguyen van a',
-        username: 'gilgamesh',
-        email: 'sdegnriung gnru',
-        bio: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus alias commodi eos exercitationem fugiat iusto minima molestiae nam nesciunt nihil nobis nostrum, nulla quae quis saepe unde veniam! Odit, voluptates!'
-    }
+    const {user, isLoading} = useUserContext();
+    const [nickname, setNickname] = useState('');
+    const nicknameDebounce = useDebounce(nickname, 500);
+    const [nicknameExists, setNicknameExists] = useState(false);
+
+    const [bio, setBio] = useState('');
+    const [email, setEmail] = useState('');
+    const emailDebounce = useDebounce(email, 500);
+    const [emailExists, setEmailExists] = useState(false);
+    const [isLoadingState, setIsLoadingState] = useState(false);
+
     const form = useForm<z.infer<typeof ProfileValidation>>({
         resolver: zodResolver(ProfileValidation),
         defaultValues: {
             file: undefined,
-            name: user.name,
-            username: user.username,
+            fullName: user.fullName,
+            nickname: user.nickname,
             email: user.email,
             bio: user.bio || "",
+            gender: "MALE",
         },
     });
 
-    // Handler
+
+    useEffect(() => {
+        if (nicknameDebounce === user.nickname) {
+            setNicknameExists(false);
+            return;
+        }
+        if (nicknameDebounce && nicknameDebounce.trim().length >= 2) {
+            isNicknameExist(nicknameDebounce).then((response) => {
+                setNicknameExists(response);
+            });
+        }
+    }, [nicknameDebounce]);
+
+    useEffect(() => {
+        if (emailDebounce === user.email) {
+            setEmailExists(false);
+            return;
+        }
+        if (emailDebounce && emailDebounce.trim().length > 0) {
+            isEmailExist(emailDebounce).then((response) => {
+                setEmailExists(response);
+            });
+        }
+    }, [emailDebounce]);
+
+
+    useEffect(() => {
+        if (!isLoading) {
+            form.reset({
+                file: undefined,
+                fullName: user.fullName,
+                nickname: user.nickname,
+                email: user.email,
+                gender: user.gender,
+                bio: user.bio || "",
+            });
+        }
+    }, [isLoading, user, form]);
+    useEffect(() => {
+        // Only call the API if user data is available and `bio` is not already set
+        if (user && user.nickname && !bio) {
+            getUserInfo(user.nickname).then((res) => {
+                setBio(res.bio || '');
+                form.setValue('bio', res.bio || '')
+            });
+        }
+    }, [user, bio]);
+    if (isLoading || !bio) {
+        return <Loader/>;
+    }
+
     const handleUpdate = async (value: z.infer<typeof ProfileValidation>) => {
-        return navigate(`/profile/{id}`);
+        if (nicknameExists || emailExists || isLoadingState) {
+            return;
+        }
+        setIsLoadingState(true);
+        editUserInfo(value).then((response) => {
+            navigate(routes.profile.replace(':nickname/*', response.nickname));
+        }).catch(() => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Thay đổi thông tin thất bại',
+                // text: 'Email không tồn tại hoặc đã bị khóa. Vui lòng thử lại.',
+            });
+        }).finally(() => {
+            setIsLoadingState(false)
+        });
     };
 
     return (
@@ -46,7 +121,7 @@ const UpdateProfile: React.FC = () => {
                         alt="edit"
                         className="invert-white"
                     />
-                    <h2 className="h3-bold md:h2-bold text-left w-full">Chỉnh sửa thông tin</h2>
+                    <h2 className="h3-bold md:h2-bold w-full text-left">Chỉnh sửa thông tin</h2>
 
                     <div className="flex justify-center gap-4">
                         <div>
@@ -71,7 +146,7 @@ const UpdateProfile: React.FC = () => {
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(handleUpdate)}
-                        className="flex flex-col gap-7 w-full mt-4 max-w-5xl">
+                        className="mt-4 flex w-full max-w-5xl flex-col gap-7">
                         <FormField
                             control={form.control}
                             name="file"
@@ -80,17 +155,17 @@ const UpdateProfile: React.FC = () => {
                                     <FormControl>
                                         <ProfileUploader
                                             fieldChange={field.onChange}
-                                            mediaUrl={'https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg'}
+                                            mediaUrl={user.avatarUrl}
                                         />
                                     </FormControl>
-                                    <FormMessage className="shad-form_message"/>
+                                    <FormMessage/>
                                 </FormItem>
                             )}
                         />
 
                         <FormField
                             control={form.control}
-                            name="name"
+                            name="fullName"
                             render={({field}) => (
                                 <FormItem>
                                     <FormLabel className="shad-form_label">Tên</FormLabel>
@@ -104,23 +179,49 @@ const UpdateProfile: React.FC = () => {
 
                         <FormField
                             control={form.control}
-                            name="username"
+                            name="nickname"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel className="shad-form_label">Tên đăng nhập</FormLabel>
+                                    <FormLabel className="shad-form_label">Biệt danh</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="text"
                                             className="shad-input"
                                             {...field}
-                                            disabled
+                                            onChange={(e) => {
+                                                setNickname(e.target.value.normalize('NFD')
+                                                    .replace(/[\u0300-\u036f]/g, ''))
+                                                form.setValue('nickname', e.target.value, {shouldValidate: true});
+                                            }}
+                                            onKeyDown={(e) => {
+                                                if (!/^[a-zA-Z0-9_]/i.test(e.key)) {
+                                                    e.preventDefault();
+                                                }
+                                            }}
+                                            value={form.getValues('nickname')}
                                         />
                                     </FormControl>
-                                    <FormMessage/>
+                                    <FormMessage className='error-message'>
+                                        {nicknameExists ? 'Biệt danh đã tồn tại' : ''}
+                                    </FormMessage>
                                 </FormItem>
                             )}
                         />
-
+                        <FormField
+                            control={form.control}
+                            name="gender"
+                            render={({field}) => (
+                                <FormItem className='ml-2 flex-1'>
+                                    <FormLabel className="shad-form_label">Giới tính</FormLabel>
+                                    <FormControl>
+                                        <GenderSelection<z.infer<typeof ProfileValidation>> value={user.gender}
+                                                                                            setValue={form.setValue}
+                                                                                            className='w-1/2'/>
+                                    </FormControl>
+                                    <FormMessage className='error-message'/>
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="email"
@@ -132,9 +233,16 @@ const UpdateProfile: React.FC = () => {
                                             type="text"
                                             className="shad-input"
                                             {...field}
+                                            onChange={(e) => {
+                                                setEmail(e.target.value)
+                                                form.setValue('email', e.target.value, {shouldValidate: true});
+                                            }}
+                                            value={form.getValues('email')}
                                         />
                                     </FormControl>
-                                    <FormMessage/>
+                                    <FormMessage className='error-message'>
+                                        {emailExists ? 'Email đã tồn tại' : ''}
+                                    </FormMessage>
                                 </FormItem>
                             )}
                         />
@@ -149,15 +257,21 @@ const UpdateProfile: React.FC = () => {
                                         <Textarea
                                             className="shad-textarea custom-scrollbar"
                                             {...field}
-                                            maxLength={200}
+                                            maxLength={400}
+                                            initValue={bio}
+                                            formOption={{
+                                                name: 'bio',
+                                                options: {shouldValidate: true},
+                                                callback: (name, value, options) => form.setValue('bio', value, options),
+                                            }}
                                         />
                                     </FormControl>
-                                    <FormMessage className="shad-form_message"/>
+                                    <FormMessage/>
                                 </FormItem>
                             )}
                         />
 
-                        <div className="flex gap-4 items-center justify-end">
+                        <div className="flex items-center justify-end gap-4">
                             <Button
                                 type="button"
                                 className="shad-button_dark_4"
@@ -167,7 +281,13 @@ const UpdateProfile: React.FC = () => {
                             <Button
                                 type="submit"
                                 className="shad-button_primary whitespace-nowrap bg-primary-500 hover:bg-primary-600">
-                                Cập nhật
+                                {isLoadingState ? (
+                                    <div className="flex-center gap-2">
+                                        <Loader/> Loading...
+                                    </div>
+                                ) : (
+                                    "Cập nhật"
+                                )}
                             </Button>
                         </div>
                     </form>

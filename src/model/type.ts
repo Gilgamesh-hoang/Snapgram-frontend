@@ -13,6 +13,7 @@ export interface User {
     id: string;
     nickname: string;
     fullName: string;
+    gender: 'MALE' | 'FEMALE';
     avatarUrl: string;
     bio?: string;
     followerNumber?: number;

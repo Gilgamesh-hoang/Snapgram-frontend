@@ -26,11 +26,13 @@ export const ForgotPasswordValidation = z.object({
 
 export const ProfileValidation = z.object({
     file: z.custom<File>(),
-    name: z.string().min(2, { message: "Tên phải có ít nhất 2 ký tự." }),
-    username: z.string().min(2, { message: "username phải có ít nhất 2 ký tự." }),
+    fullName: z.string().min(2, { message: "Tên phải có ít nhất 2 ký tự." }),
+    nickname: z.string().min(2, {message: "Biệt danh phải có ít nhất 2 ký tự"}),
     email: z.string().email({message: 'Email không hợp lệ'}),
-    bio: z.string(),
+    bio: z.string().max(400,{ message: "Đã quá 400 ký tự" }),
+    gender: z.enum(["MALE", "FEMALE"], { message: "Vui lòng chọn giới tính." })
 });
+
 // ============================================================
 // POST
 // ============================================================

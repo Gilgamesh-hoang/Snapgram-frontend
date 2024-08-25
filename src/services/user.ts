@@ -1,8 +1,10 @@
-import {httpGet, httpPost} from "@/utils/httpRequest.ts";
+import {httpGet, httpPost, httpPut} from "@/utils/httpRequest.ts";
 import {ApiResponse, User} from "@/model/type.ts";
 import Swal from "sweetalert2";
 import {routes} from "@/route";
-import {SignUpRequest} from "@/model/request.ts";
+import {ProfileRequest, SignUpRequest} from "@/model/request.ts";
+import * as z from "zod";
+import {ProfileValidation} from "@/validation";
 
 export const verifyEmail = async (email: string, code: string) => {
     await httpPost<ApiResponse<boolean>>('/auth/verification-email', {
@@ -89,12 +91,34 @@ export const getCurrentUser = async () => {
         });
 
 }
-export const getUserInfo = async (nickname:string) => {
-    return await httpGet<ApiResponse<User>>('/users' ,{params: {nickname}})
+export const getUserInfo = async (nickname: string) => {
+    return await httpGet<ApiResponse<User>>('/users', {params: {nickname}})
         .then(response => {
             return response.data;
         });
 
+}
+export const editUserInfo = async (value: z.infer<typeof ProfileValidation>) => {
+    const requestBody: ProfileRequest = {
+        nickname: value.nickname,
+        email: value.email,
+        fullName: value.fullName,
+        bio: value.bio,
+        // avatar: value.file,
+        gender: value.gender
+    }
+    // Create a new FormData object
+    const formData = new FormData();
+
+    formData.append('profile', JSON.stringify(requestBody));
+    // Append the avatar file to the FormData object
+    formData.append('avatar', value.file);
+
+    return await httpPut<ApiResponse<User>>('/users', formData, {
+        headers: {'Content-Type': 'multipart/form-data'},
+    }).then(response => {
+        return response.data;
+    });
 }
 export const forgotPassword = async (email: string) => {
     return await httpPost<ApiResponse>("/users/forgot-password", {email})

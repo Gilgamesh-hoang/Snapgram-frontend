@@ -1,5 +1,5 @@
 import * as React from "react"
-import {useState} from "react"
+import {useEffect, useState} from "react"
 
 import {cn} from "@/utils"
 
@@ -10,19 +10,23 @@ export interface TextareaProps
         name: string,
         options: object,
     },
+    initValue?: string,
 
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-    ({className, formOption, ...props}, ref) => {
+    ({className, formOption,initValue='', ...props}, ref) => {
         const [numCharacters, setNumCharacters] = useState<number>(0)
-        const [value, setValue] = useState<string>('')
+        const [value, setValue] = useState<string>(initValue)
+
+        useEffect(() => {
+            setNumCharacters(initValue.length);
+        }, []);
 
         const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
             const newValue = e.target.value;
             setValue(newValue);
             setNumCharacters(newValue.length);
-
 
             if(formOption) {
                 formOption.callback(formOption.name, newValue, formOption.options);
