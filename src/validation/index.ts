@@ -15,6 +15,14 @@ export const SignupValidation = z.object({
     message: "Mật khẩu xác nhận không khớp",
     path: ["confirmPassword"],
 });
+export const ChangePasswordValidation = z.object({
+    currentPassword: z.string().min(8, {message: "Mật khẩu cần dài ít nhất 8 ký tự."}),
+    newPassword: z.string().min(8, {message: "Mật khẩu cần dài ít nhất 8 ký tự."}),
+    confirmNewPassword: z.string().min(8, {message: "Mật khẩu cần dài ít nhất 8 ký tự."}),
+}).refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "Mật khẩu xác nhận không khớp",
+    path: ["confirmNewPassword"],
+});
 
 export const SigninValidation = z.object({
     email: z.string().email({message: 'Email không hợp lệ'}),

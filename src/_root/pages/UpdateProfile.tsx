@@ -1,13 +1,13 @@
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import {Button, Input, Textarea} from "@/components/ui";
 import {Loader, ProfileUploader} from "@/components/shared";
 
-import {ProfileValidation} from "@/validation";
+import {ProfileValidation, SignupValidation} from "@/validation";
 import React, {useEffect, useState} from "react";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import GenderSelection from "@/components/shared/GenderSelection.tsx";
@@ -15,6 +15,7 @@ import {editUserInfo, getUserInfo, isEmailExist, isNicknameExist} from "@/servic
 import useDebounce from "@/hooks/useDebounce.ts";
 import {routes} from "@/route";
 import Swal from "sweetalert2";
+import ChangePasswordPopup from "@/components/shared/ChangePasswordPopup.tsx";
 
 const UpdateProfile: React.FC = () => {
     const navigate = useNavigate();
@@ -22,12 +23,13 @@ const UpdateProfile: React.FC = () => {
     const [nickname, setNickname] = useState('');
     const nicknameDebounce = useDebounce(nickname, 500);
     const [nicknameExists, setNicknameExists] = useState(false);
-
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [bio, setBio] = useState('');
     const [email, setEmail] = useState('');
     const emailDebounce = useDebounce(email, 500);
     const [emailExists, setEmailExists] = useState(false);
     const [isLoadingState, setIsLoadingState] = useState(false);
+
 
     const form = useForm<z.infer<typeof ProfileValidation>>({
         resolver: zodResolver(ProfileValidation),
@@ -88,10 +90,14 @@ const UpdateProfile: React.FC = () => {
             });
         }
     }, [user, bio]);
+
+
+    function togglePopup() {
+        setIsPopupOpen(!isPopupOpen);
+    }
     if (isLoading || !bio) {
         return <Loader/>;
     }
-
     const handleUpdate = async (value: z.infer<typeof ProfileValidation>) => {
         if (nicknameExists || emailExists || isLoadingState) {
             return;
@@ -103,13 +109,11 @@ const UpdateProfile: React.FC = () => {
             Swal.fire({
                 icon: 'error',
                 title: 'Thay đổi thông tin thất bại',
-                // text: 'Email không tồn tại hoặc đã bị khóa. Vui lòng thử lại.',
             });
         }).finally(() => {
             setIsLoadingState(false)
         });
     };
-
     return (
         <div className="flex flex-1">
             <div className="common-container ">
@@ -125,9 +129,8 @@ const UpdateProfile: React.FC = () => {
 
                     <div className="flex justify-center gap-4">
                         <div>
-                            <Link
-                                to={`/update-profile/`}
-                                className={`flex-center h-12 gap-2 rounded-lg bg-dark-4 px-5 text-light-1`}>
+                            <button onClick={togglePopup}
+                                    className={`flex-center h-12 gap-2 rounded-lg bg-dark-4 px-5 text-light-1`}>
                                 <img
                                     src={"/assets/icons/edit-profile.svg"}
                                     alt="edit"
@@ -136,9 +139,11 @@ const UpdateProfile: React.FC = () => {
                                 />
                                 <i></i>
                                 <p className="small-medium flex whitespace-nowrap">
-                                    Thay dổi mật khẩu
+                                    Thay đổi mật khẩu
                                 </p>
-                            </Link>
+                            </button>
+
+                            {isPopupOpen && <ChangePasswordPopup isOpen={isPopupOpen} onClose={togglePopup}/>}
                         </div>
                     </div>
                 </div>

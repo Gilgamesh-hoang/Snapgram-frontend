@@ -1,10 +1,11 @@
 import {httpGet, httpPost, httpPut} from "@/utils/httpRequest.ts";
-import {ApiResponse, User} from "@/model/type.ts";
+import {ApiResponse, JwtResponse, User} from "@/model/type.ts";
 import Swal from "sweetalert2";
 import {routes} from "@/route";
 import {ProfileRequest, SignUpRequest} from "@/model/request.ts";
 import * as z from "zod";
-import {ProfileValidation} from "@/validation";
+import {ChangePasswordValidation, ProfileValidation} from "@/validation";
+import {updateAccessToken} from "@/services/token.ts";
 
 export const verifyEmail = async (email: string, code: string) => {
     await httpPost<ApiResponse<boolean>>('/auth/verification-email', {
@@ -139,4 +140,13 @@ export const forgotPassword = async (email: string) => {
                 text: 'Email không tồn tại hoặc đã bị khóa. Vui lòng thử lại.',
             });
         });
+}
+export const changePassword = async (form: z.infer<typeof ChangePasswordValidation>) => {
+    return await httpPost<ApiResponse<JwtResponse>>("/users/change-password", {
+        currentPassword: form.currentPassword,
+        newPassword: form.newPassword,
+        confirmNewPassword: form.confirmNewPassword
+    },{withCredentials: true}).then(response => {
+        updateAccessToken(response.data.token);
+    });
 }

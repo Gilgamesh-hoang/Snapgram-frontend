@@ -4,7 +4,6 @@ import App from "@/App.tsx";
 import {BrowserRouter} from "react-router-dom";
 import {AuthProvider} from "@/context/AuthContext.tsx";
 
-
 const rootElement = document.getElementById("root");
 
 if (rootElement) {
@@ -13,7 +12,9 @@ if (rootElement) {
 
         <BrowserRouter>
             <AuthProvider>
-                <App/>
+                {/*<PrimeReactProvider>*/}
+                    <App/>
+                {/*</PrimeReactProvider>*/}
             </AuthProvider>
         </BrowserRouter>
 
