@@ -7,7 +7,7 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@
 import {Button, Input, Textarea} from "@/components/ui";
 import {Loader, ProfileUploader} from "@/components/shared";
 
-import {ProfileValidation, SignupValidation} from "@/validation";
+import {ProfileValidation} from "@/validation";
 import React, {useEffect, useState} from "react";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import GenderSelection from "@/components/shared/GenderSelection.tsx";
@@ -19,7 +19,7 @@ import ChangePasswordPopup from "@/components/shared/ChangePasswordPopup.tsx";
 
 const UpdateProfile: React.FC = () => {
     const navigate = useNavigate();
-    const {user, isLoading} = useUserContext();
+    const {user, isLoadingContext} = useUserContext();
     const [nickname, setNickname] = useState('');
     const nicknameDebounce = useDebounce(nickname, 500);
     const [nicknameExists, setNicknameExists] = useState(false);
@@ -70,7 +70,7 @@ const UpdateProfile: React.FC = () => {
 
 
     useEffect(() => {
-        if (!isLoading) {
+        if (!isLoadingContext) {
             form.reset({
                 file: undefined,
                 fullName: user.fullName,
@@ -80,7 +80,7 @@ const UpdateProfile: React.FC = () => {
                 bio: user.bio || "",
             });
         }
-    }, [isLoading, user, form]);
+    }, [isLoadingContext, user, form]);
     useEffect(() => {
         // Only call the API if user data is available and `bio` is not already set
         if (user && user.nickname && !bio) {
@@ -95,7 +95,7 @@ const UpdateProfile: React.FC = () => {
     function togglePopup() {
         setIsPopupOpen(!isPopupOpen);
     }
-    if (isLoading || !bio) {
+    if (isLoadingContext || !bio) {
         return <Loader/>;
     }
     const handleUpdate = async (value: z.infer<typeof ProfileValidation>) => {

@@ -31,7 +31,25 @@ export interface Tag {
     name: string;
 }
 
+export interface Creator {
+    id: string;
+    nickname: string;
+    fullName: string;
+    avatarUrl: string;
+}
+
+export interface Comment {
+    id: string;
+    creator: Creator;
+    content: string;
+    parentComment: Comment;
+    createdAt: string;
+    likeCount: number;
+}
+
+
 export interface Post {
+    creator: Creator;
     id: string;
     caption: string;
     media: MediaUrl[];
@@ -39,7 +57,7 @@ export interface Post {
     likeCount: number;
     commentCount: number;
     isLiked: boolean;
-    createdAt: Date;
+    createdAt: string;
 }
 
 export interface INavLink {

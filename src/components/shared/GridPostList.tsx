@@ -36,7 +36,7 @@ const GridPostList: FC<GridPostListProps> = ({
                 >
                     {posts.map((post) => (
                         <li key={post.id} className="relative h-80 min-w-80">
-                            <Link to={`${routes.posts}/${post.id}`} className="grid-post_link">
+                            <Link to={`${routes.posts.replace(':id', post.id)}`} className="grid-post_link">
                                 <img
                                     src={post.media[0].url}
                                     alt="post"

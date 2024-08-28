@@ -87,7 +87,7 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
             {/*    alt="post image"*/}
             {/*    className="post-card_img"*/}
             {/*/>*/}
-            <PostStats isShowShare={true}/>
+            <PostStats isShowShare={true} post={null}/>
 
             {/*comment*/}
             <div className='mt-6 flex h-7 w-full items-center'>

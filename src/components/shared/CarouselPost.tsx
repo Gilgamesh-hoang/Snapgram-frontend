@@ -9,7 +9,7 @@ type CarouselProps = {
 const CarouselPost: React.FC<CarouselProps> = ({sources}) => {
     const [slide, setSlide] = useState(0);
     const [isShowArrow, setIsShowArrow] = useState(sources.length > 1);
-    const isShowIndicator = sources[slide]?.isImage;
+    const isShowIndicator = sources[slide]?.type === 'IMAGE';
 
     const nextSlide = () => {
         setSlide(slide === sources.length - 1 ? 0 : slide + 1);
@@ -38,17 +38,17 @@ const CarouselPost: React.FC<CarouselProps> = ({sources}) => {
             {sources.map((item, idx) => {
                 return (
                     <div className='' key={idx}>
-                        {item.isImage && (
+                        {item.type === 'IMAGE' && (
                             <img
-                                src={item.src}
-                                alt={item.src}
+                                src={item.url}
+                                alt={item.url}
                                 key={idx}
                                 className={clsx('post-card_img', {'hidden': slide !== idx})}
                             />
                         )}
-                        {item.isVideo && (
+                        {item.type === 'VIDEO' && (
                             <video
-                                src={item.src}
+                                src={item.url}
                                 className={clsx('post-card_img', {'hidden': slide !== idx})}
                                 controls
                                 muted

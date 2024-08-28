@@ -161,7 +161,7 @@
 
     /* Post Details */
     .post_details-container {
-        @apply flex flex-col flex-1 gap-10 overflow-scroll py-10 px-5 md:p-14 custom-scrollbar items-center;
+        @apply flex flex-col flex-1 gap-10 overflow-scroll py-10 px-5 custom-scrollbar items-center;
     }
 
     .post_details-card {
@@ -351,7 +351,7 @@
     }
 
     .tag-title {
-        @apply my-1
+        @apply my-1 text-white text-sm
     }
 
     .tag-close-icon {

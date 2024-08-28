@@ -8,16 +8,16 @@ import {useUserContext} from "@/context/AuthContext.tsx";
 import {Loader} from "@/components/shared";
 
 const Private = () => {
-    const {isAuthenticated, isLoading} = useUserContext();
-    if (isLoading) {
+    const {isAuthenticated, isLoadingContext} = useUserContext();
+    if (isLoadingContext) {
         return <Loader/>;
     }
     return isAuthenticated ? <Outlet/> : <Navigate to={routes.signin}/>;
 };
 
 const Public = () => {
-    const {isAuthenticated, isLoading} = useUserContext();
-    if (isLoading) {
+    const {isAuthenticated, isLoadingContext} = useUserContext();
+    if (isLoadingContext) {
         return <Loader/>;
     }
     return !isAuthenticated ? <Outlet/> : <Navigate to={routes.home}/>;

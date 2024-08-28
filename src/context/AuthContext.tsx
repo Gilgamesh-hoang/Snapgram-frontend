@@ -19,7 +19,7 @@ export const INITIAL_USER : User = {
 const INITIAL_STATE = {
     user: INITIAL_USER,
     isAuthenticated: false,
-    isLoading: true,
+    isLoadingContext: true,
     setUser: () => {
     },
     setIsAuthenticated: () => {
@@ -34,7 +34,7 @@ type IContextType = {
     user: User;
     setUser: Dispatch<SetStateAction<User>>;
     isAuthenticated: boolean;
-    isLoading: boolean;
+    isLoadingContext: boolean;
     setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
     loginContext: (user: User) => void;
     logoutContext: () => void;
@@ -46,7 +46,7 @@ export function AuthProvider({children}: { children: ReactNode }) {
     const navigate = useNavigate();
     const [user, setUser] = useState<User>(INITIAL_USER);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingContext, setIsLoading] = useState(true);
 
     useEffect(() => {
 
@@ -95,7 +95,7 @@ export function AuthProvider({children}: { children: ReactNode }) {
         isAuthenticated,
         setIsAuthenticated,
         logoutContext,
-        isLoading,
+        isLoadingContext,
         loginContext,
     };
 

@@ -1,20 +1,65 @@
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 
 import {Button} from "@/components/ui";
-import {PostStats} from "@/components/shared";
+import {Loader, PostStats} from "@/components/shared";
 
-import {multiFormatDateString} from "@/utils/dateUtil";
-import React from "react";
+import {formatDateString, multiFormatDateString2} from "@/utils/dateUtil";
+import React, {useEffect, useState} from "react";
+import {getPostsById} from "@/services/post.ts";
+import {Comment, Post} from "@/model/type.ts";
+import {getCommentsByPostId} from "@/services/comment.ts";
+import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
+import {routes} from "@/route";
+import Tippy from "@tippyjs/react";
+import {useUserContext} from "@/context/AuthContext.tsx";
+import CarouselPost from "@/components/shared/CarouselPost.tsx";
 
 const PostDetails: React.FC = () => {
     const navigate = useNavigate();
+    const {user, isLoadingContext} = useUserContext();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [post, setPost] = useState<Post | null>(null);
+    const [comments, setComments] = useState<Comment[]>([]);
+    const {id} = useParams();
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    useEffect(() => {
+        if (id) {
+            getPostsById(id).then((data) => {
+                setPost(data);
+                setIsLoading(false)
+            }).catch(() => {
+                navigate(-1);
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        if (id) {
+            getCommentsByPostId(id, page).then((data) => {
+                if (data.length === 0) {
+                    setHasMore(false);
+                } else {
+                    setComments((prev) => [...prev, ...data]);
+                }
+            }).catch(() => {
+                setHasMore(false);
+            });
+        }
+    }, [page]);
+
+    if (!post || isLoading || isLoadingContext) {
+        return <Loader/>;
+    }
+
     const handleDeletePost = () => {
         navigate(-1);
     };
 
+
     return (
         <div className="post_details-container">
-            <div className="hidden md:flex max-w-5xl w-full">
+            <div className="hidden w-full max-w-5xl md:flex">
                 <Button
                     onClick={() => navigate(-1)}
                     variant="ghost"
@@ -29,64 +74,72 @@ const PostDetails: React.FC = () => {
                 </Button>
             </div>
 
-            {/*{isLoading || !post ? (*/}
-            {/*    <Loader />*/}
-            {/*) : (*/}
             <div className="post_details-card">
-                <img
-                    src='https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg'
-                    alt="creator"
-                    className="post_details-img"
-                />
+                <div className="post_details-img">
+                    <CarouselPost sources={post.media}/>
 
+                </div>
                 <div className="post_details-info">
                     <div className="flex-between w-full">
-                        <Link
-                            to={`/profile/`}
-                            className="flex items-center gap-3">
-                            <img
-                                src={"/assets/icons/profile-placeholder.svg"}
-                                alt="creator"
-                                className="w-8 h-8 lg:w-12 lg:h-12 rounded-full"
-                            />
-                            <div className="flex gap-1 flex-col">
-                                <p className="base-medium lg:body-bold text-light-1">
-                                    Nguyen van a
-                                </p>
-                                <div className="flex-center gap-2 text-light-3">
-                                    <p className="subtle-semibold lg:small-regular ">
-                                        {multiFormatDateString(new Date().toDateString())}
-                                    </p>
-                                    •
-                                    <p className="subtle-semibold lg:small-regular">
-                                        location
-                                    </p>
-                                </div>
-                            </div>
-                        </Link>
-
-                        <div className="flex-center gap-4">
-                            <Link
-                                to={`/update-post/`}>
+                        <div className="flex items-center gap-3">
+                            <Link to={routes.profile.replace(":nickname/*", post.creator.nickname)}>
                                 <img
-                                    src={"/assets/icons/edit.svg"}
-                                    alt="edit"
-                                    width={24}
-                                    height={24}
+                                    src={post.creator.avatarUrl || "/assets/icons/profile-placeholder.svg"}
+                                    alt="creator"
+                                    className="size-8 rounded-full lg:size-12"
                                 />
                             </Link>
+                            <div className="flex flex-col gap-1">
+                                <Link to={routes.profile.replace(":nickname/*", post.creator.nickname)}>
+                                    <p className="base-medium lg:body-bold text-light-1">
+                                        {post.creator.nickname}
+                                    </p>
+                                </Link>
+                                <div className=" gap-2 text-light-3">
+                                    <Tippy
+                                        placement={"bottom-end"}
+                                        delay={[200, 0]}
+                                        offset={[0, -2]}
+                                        content={
+                                            <div className="subtle-semibold rounded-xl bg-white p-2 text-dark-2">
+                                                {formatDateString(post.createdAt)}
+                                            </div>}
+                                    >
+                                        <p className="subtle-semibold lg:small-regular">
+                                            {multiFormatDateString2(post.createdAt)}
+                                        </p>
+                                    </Tippy>
+                                </div>
+                            </div>
+                        </div>
 
-                            <Button
-                                onClick={handleDeletePost}
-                                variant="ghost"
-                                className={`ost_details-delete_btn`}>
-                                <img
-                                    src={"/assets/icons/delete.svg"}
-                                    alt="delete"
-                                    width={24}
-                                    height={24}
-                                />
-                            </Button>
+                        <div className="flex-center gap-4">
+                            {user.id === post.creator.id && (
+                                <>
+                                    <Link
+                                        to={`/update-post/`}>
+                                        <img
+                                            src={"/assets/icons/edit.svg"}
+                                            alt="edit"
+                                            width={24}
+                                            height={24}
+                                        />
+                                    </Link>
+
+                                    <Button
+                                        onClick={handleDeletePost}
+                                        variant="ghost"
+                                        className='post_details-delete_btn'>
+                                        <img
+                                            src={"/assets/icons/delete.svg"}
+                                            alt="delete"
+                                            width={24}
+                                            height={24}
+                                        />
+                                    </Button>
+                                </>
+                            )}
+
                             <div className="flex gap-2">
                                 <img
                                     src={"/assets/icons/saved.svg"}
@@ -100,135 +153,91 @@ const PostDetails: React.FC = () => {
 
                     </div>
                     <div className="w-full">
-                        <p className="small-regular lg:base-regular">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus alias commodi eos
-                            exercitationem fugiat iusto minima molestiae nam nesciunt nihil nobis nostrum, nulla quae
-                            quis saepe unde veniam! Odit, voluptates!</p>
+                        <p className="small-regular lg:base-regular">{post.caption}</p>
+                        <div className="w-full">
+                            <ul className='mt-2 flex flex-wrap p-0'>
+                                {post.tags.map((tag, index) => (
+                                    <Link to={tag.name} key={index}>
+                                        <li key={index}
+                                            className="my-2 mr-4 flex list-none items-center justify-center rounded-md bg-primary-500 px-2">
+                                            <span className='tag-title'>{tag.name}</span>
+                                        </li>
+                                    </Link>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
-
-                    <hr className="border w-full border-dark-4/80"/>
+                    <div className="w-full">
+                        <hr className=" border border-dark-4/80"/>
+                        <div className=" my-4">
+                            <PostStats post={post}/>
+                        </div>
+                        <hr className=" border border-dark-4/80"/>
+                    </div>
                     {/*show comments*/}
                     <div className='show_comments-container'>
                         <ul className='flex flex-col'>
-                            <li className='mb-7'>
-                                <div className='flex items-center mb-3'>
-                                    <img
-                                        src={"/assets/icons/profile-placeholder.svg"}
-                                        alt="user"
-                                        className="mr-3 size-7 rounded-full"
-                                    />
-                                    <p className='text-light-3'>Jack Swagger</p>
-                                </div>
+                            {comments.length > 0 && (
+                                <InfiniteScroll
+                                    loader={<Loader/>}
+                                    fetchMore={() => setPage((prev) => prev + 1)}
+                                    hasMore={hasMore}
+                                >
+                                    {comments.map((comment, index) => (
+                                        <li className='mb-7' key={index}>
+                                            <Link className='mb-3 flex items-center'
+                                                  to={routes.profile.replace(":nickname/*", comment.creator.nickname)}>
+                                                <img
+                                                    src={comment.creator.avatarUrl || "/assets/icons/profile-placeholder.svg"}
+                                                    alt="user"
+                                                    className="mr-3 size-7 rounded-full"
+                                                />
+                                                <p className='text-light-3'>{comment.creator.nickname}</p>
+                                            </Link>
+                                            {/*<div className='mb-3 flex items-center'>*/}
+                                            {/*    <img*/}
+                                            {/*        src={comment.creator.avatarUrl || "/assets/icons/profile-placeholder.svg"}*/}
+                                            {/*        alt="user"*/}
+                                            {/*        className="mr-3 size-7 rounded-full"*/}
+                                            {/*    />*/}
+                                            {/*    <p className='text-light-3'>{comment.creator.nickname}</p>*/}
+                                            {/*</div>*/}
 
-                                <div>
-                                    <p className='small-regular mb-2'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus alias commodi
-                                        eos exercitationem fugiat iusto minima</p>
-                                    <div className="flex-start gap-2 text-light-3">
-                                        <p className="subtle-semibold lg:small-regular me-3">
-                                            {multiFormatDateString(new Date().toDateString())}
-                                        </p>
+                                            <div>
+                                                <p className='small-regular mb-2'>{comment.content}</p>
+                                                <div className="flex-start gap-2 text-light-3">
+                                                    <Tippy
+                                                        placement={"bottom-start"}
+                                                        delay={[200, 0]}
+                                                        offset={[0, -2]}
+                                                        content={
+                                                            <div
+                                                                className="subtle-semibold rounded-xl bg-white p-2 text-dark-2">
+                                                                {formatDateString(post.createdAt)}
+                                                            </div>}
+                                                    >
+                                                        <p className="subtle-semibold lg:small-regular me-3">
+                                                            {multiFormatDateString2(comment.createdAt)}
+                                                        </p>
+                                                    </Tippy>
 
-                                        <div className='flex items-center cursor-pointer'>
-                                            <img
-                                                src={"/assets/icons/reply.svg"}
-                                                alt="reply"
-                                            />
-                                            <span className='ms-1.5 text-light-2'>Trả lời</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li className='mb-7'>
-                                <div className='flex items-center mb-3'>
-                                    <img
-                                        src={"/assets/icons/profile-placeholder.svg"}
-                                        alt="user"
-                                        className="mr-3 size-7 rounded-full"
-                                    />
-                                    <p className='text-light-3'>Jack Swagger</p>
-                                </div>
-
-                                <div>
-                                    <p className='small-regular mb-2'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus alias commodi
-                                        eos exercitationem fugiat iusto minima</p>
-                                    <div className="flex-start gap-2 text-light-3">
-                                        <p className="subtle-semibold lg:small-regular me-3">
-                                            {multiFormatDateString(new Date().toDateString())}
-                                        </p>
-
-                                        <div className='flex items-center cursor-pointer'>
-                                            <img
-                                                src={"/assets/icons/reply.svg"}
-                                                alt="reply"
-                                            />
-                                            <span className='ms-1.5 text-light-2'>Trả lời</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li className='mb-7'>
-                                <div className='flex items-center mb-3'>
-                                    <img
-                                        src={"/assets/icons/profile-placeholder.svg"}
-                                        alt="user"
-                                        className="mr-3 size-7 rounded-full"
-                                    />
-                                    <p className='text-light-3'>Jack Swagger</p>
-                                </div>
-
-                                <div>
-                                    <p className='small-regular mb-2'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus alias commodi
-                                        eos exercitationem fugiat iusto minima</p>
-                                    <div className="flex-start gap-2 text-light-3">
-                                        <p className="subtle-semibold lg:small-regular me-3">
-                                            {multiFormatDateString(new Date().toDateString())}
-                                        </p>
-
-                                        <div className='flex items-center cursor-pointer'>
-                                            <img
-                                                src={"/assets/icons/reply.svg"}
-                                                alt="reply"
-                                            />
-                                            <span className='ms-1.5 text-light-2'>Trả lời</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li className='mb-7'>
-                                <div className='flex items-center mb-3'>
-                                    <img
-                                        src={"/assets/icons/profile-placeholder.svg"}
-                                        alt="user"
-                                        className="mr-3 size-7 rounded-full"
-                                    />
-                                    <p className='text-light-3'>Jack Swagger</p>
-                                </div>
-
-                                <div>
-                                    <p className='small-regular mb-2'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus alias commodi
-                                        eos exercitationem fugiat iusto minima</p>
-                                    <div className="flex-start gap-2 text-light-3">
-                                        <p className="subtle-semibold lg:small-regular me-3">
-                                            {multiFormatDateString(new Date().toDateString())}
-                                        </p>
-
-                                        <div className='flex items-center cursor-pointer'>
-                                            <img
-                                                src={"/assets/icons/reply.svg"}
-                                                alt="reply"
-                                            />
-                                            <span className='ms-1.5 text-light-2'>Trả lời</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
+                                                    <div className='flex cursor-pointer items-center'>
+                                                        <img
+                                                            src={"/assets/icons/reply.svg"}
+                                                            alt="reply"
+                                                        />
+                                                        <span className='ms-1.5 text-light-2'>Trả lời</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </InfiniteScroll>
+                            )}
                         </ul>
                     </div>
 
-                    <div className="w-full">
-                        <PostStats isShowShare={true}/>
-                    </div>
-
-                    {/*comment*/}
+                    {/*comment input*/}
                     <div className='flex h-7 w-full items-center'>
                         <img
                             src={"/assets/icons/profile-placeholder.svg"}
@@ -255,10 +264,10 @@ const PostDetails: React.FC = () => {
                     </div>
                 </div>
             </div>
-            {/*)}*/}
 
         </div>
-    );
+    )
+        ;
 };
 
 export default PostDetails;
