@@ -123,9 +123,10 @@ const Profile: React.FC = () => {
             <div className="flex w-full max-w-5xl">
                 <Link
                     to={`${routes.profile.replace(':nickname', user.nickname)}`}
-                    className={`profile-tab rounded-l-lg ${
-                        pathname === `${routes.profile.replace(':nickname', user.nickname)}` && "!bg-dark-3"
-                    }`}>
+                    className={`profile-tab rounded-l-lg !bg-dark-3`}>
+                    {/*className={`profile-tab rounded-l-lg ${*/}
+                    {/*    pathname === `${routes.profile.replace(':nickname', user.nickname)}` && "!bg-dark-3"*/}
+                    {/*}`}>*/}
                     <img
                         src={"/assets/icons/posts.svg"}
                         alt="posts"

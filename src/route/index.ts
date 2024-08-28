@@ -33,7 +33,7 @@ export const routes = {
     notifies: "/notifies",
     allUsers: "/all-users",
     createPost: "/create-post",
-    updatePost: "/update-post/:id",
+    updatePost: "/posts/update-post/:id",
     posts: "/posts/:id",
     profile: "/users/profile/:nickname/*",
     updateProfile: "/users/update-profile"

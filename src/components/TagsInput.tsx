@@ -2,10 +2,11 @@ import React, {FC} from "react";
 
 interface TagsInputProps {
     selectedTags: (tags: string[]) => void;
+    initTags?: string[];
 }
 
-const TagsInput: FC<TagsInputProps> = ({selectedTags}) => {
-    const [tags, setTags] = React.useState<string[]>([]);
+const TagsInput: FC<TagsInputProps> = ({selectedTags,initTags=[]}) => {
+    const [tags, setTags] = React.useState<string[]>(initTags);
 
     const removeTags = (indexToRemove: number) => {
         const newValues = [...tags.filter((_, index) => index !== indexToRemove)];

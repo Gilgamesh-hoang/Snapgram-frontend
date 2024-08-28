@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from "react";
+import {Dispatch, FC, SetStateAction, useCallback, useState} from "react";
 import {FileWithPath, useDropzone} from "react-dropzone";
 
 import {Button} from "@/components/ui";
@@ -9,9 +9,10 @@ import {MediaUrl} from "@/model/type.ts";
 type FileUploaderProps = {
     fieldChange: (files: File[]) => void;
     mediaUrl: MediaUrl[];
+    setRemoveMedia?: Dispatch<SetStateAction<string[]>>;
 };
 
-const FileUploader: React.FC<FileUploaderProps> = ({fieldChange, mediaUrl}) => {
+const FileUploader: FC<FileUploaderProps> = ({fieldChange, mediaUrl,setRemoveMedia }) => {
     const [files, setFiles] = useState<File[]>([]);
     const [fileUrl, setFileUrl] = useState<MediaUrl[]>(mediaUrl);
 
@@ -43,7 +44,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({fieldChange, mediaUrl}) => {
             mediaUrl.url = convertFileToUrl(file);
             urls = [...urls, mediaUrl]
         }
-        console.log(urls)
         return urls;
     }
 
@@ -68,6 +68,11 @@ const FileUploader: React.FC<FileUploaderProps> = ({fieldChange, mediaUrl}) => {
     const rootProps = fileUrl && fileUrl.length > 0 ? {} : getRootProps();
 
     function removeItem(itemIndex: number): void {
+        const removedItem = fileUrl[itemIndex];
+        if (removedItem.id && setRemoveMedia) {
+            setRemoveMedia(prev => [...prev, removedItem.id]);
+        }
+
         setFileUrl(fileUrl.filter((value, index) => index !== itemIndex));
         setFiles(files.filter((value, index) => index !== itemIndex));
     }
