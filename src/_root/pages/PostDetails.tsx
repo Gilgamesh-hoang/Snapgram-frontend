@@ -5,7 +5,7 @@ import {Loader, PostStats} from "@/components/shared";
 
 import {formatDateString, multiFormatDateString2} from "@/utils/dateUtil";
 import React, {useEffect, useState} from "react";
-import {getPostsById} from "@/services/post.ts";
+import {getPostsById, savedPost} from "@/services/post.ts";
 import {Comment, Post} from "@/model/type.ts";
 import {getCommentsByPostId} from "@/services/comment.ts";
 import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
@@ -23,11 +23,13 @@ const PostDetails: React.FC = () => {
     const {id} = useParams();
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [isSaved, setIsSaved] = useState(false);
     useEffect(() => {
         if (id) {
             getPostsById(id).then((data) => {
                 setPost(data);
                 setIsLoading(false)
+                setIsSaved(data.isSaved)
             }).catch(() => {
                 navigate(-1);
             });
@@ -56,6 +58,14 @@ const PostDetails: React.FC = () => {
         navigate(-1);
     };
 
+    const handleSavePost = () => {
+        const oldValue = isSaved;
+        const newValue = !isSaved;
+        setIsSaved(newValue);
+        savedPost(post.id, newValue).catch(() => {
+            setIsSaved(oldValue);
+        })
+    }
 
     return (
         <div className="post_details-container">
@@ -75,7 +85,8 @@ const PostDetails: React.FC = () => {
             </div>
 
             <div className="post_details-card">
-                <div className="post_details-img">
+                <div
+                    className="h-64 rounded-t-[30px] bg-dark-1 object-cover p-5 xs:h-[400px] lg:h-[450px] xl:w-[48%] xl:rounded-l-[24px] xl:rounded-tr-none">
                     <CarouselPost sources={post.media}/>
 
                 </div>
@@ -116,8 +127,7 @@ const PostDetails: React.FC = () => {
                         <div className="flex-center gap-4">
                             {user.id === post.creator.id && (
                                 <>
-                                    <Link
-                                        to={`/update-post/`}>
+                                    <Link to={routes.updatePost.replace(":id", post.id)}>
                                         <img
                                             src={"/assets/icons/edit.svg"}
                                             alt="edit"
@@ -140,14 +150,27 @@ const PostDetails: React.FC = () => {
                                 </>
                             )}
 
-                            <div className="flex gap-2">
-                                <img
-                                    src={"/assets/icons/saved.svg"}
-                                    alt="share"
-                                    width={20}
-                                    height={20}
-                                    className="cursor-pointer"
-                                />
+                            <div className="flex gap-2"
+                                 onClick={handleSavePost}
+                            >
+                                {isSaved ? (
+                                    <img
+                                        src={"/assets/icons/saved.svg"}
+                                        alt="share"
+                                        width={20}
+                                        height={20}
+                                        className="cursor-pointer"
+                                    />
+                                ) : (
+                                    <img
+                                        src={"/assets/icons/save.svg"}
+                                        alt="save"
+                                        width={20}
+                                        height={20}
+                                        className="cursor-pointer"
+                                    />
+                                )}
+
                             </div>
                         </div>
 

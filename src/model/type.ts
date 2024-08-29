@@ -57,6 +57,7 @@ export interface Post {
     likeCount: number;
     commentCount: number;
     isLiked: boolean;
+    isSaved: boolean;
     createdAt: string;
 }
 

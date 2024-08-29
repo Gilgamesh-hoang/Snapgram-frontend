@@ -2,7 +2,7 @@ import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Textarea,} from "@/components/ui";
+import {Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui";
 import {PostValidation} from "@/validation";
 import {FileUploader, Loader} from "@/components/shared";
 import {Post} from "@/model/type.ts";
@@ -13,6 +13,8 @@ import {BsFillTagsFill} from "react-icons/bs";
 import axios from "axios";
 import Swal from "sweetalert2";
 
+import {Editor, EditorTextChangeEvent} from 'primereact/editor';
+
 type PostFormProps = {
     post: Post | null;
     action: "Create" | "Update";
@@ -22,6 +24,7 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
         const navigate = useNavigate();
         const [isLoading, setIsLoading] = useState(false);
         const [tags, setTags] = useState<string[]>([]);
+        const [text, setText] = useState<string>( '');
         const [removeMedia, setRemoveMedia] = useState<string[]>([]);
         const form = useForm<z.infer<typeof PostValidation>>({
             resolver: zodResolver(PostValidation),
@@ -35,6 +38,7 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
                 form.reset({
                     caption: post.caption,
                 });
+                setText(post.caption);
                 setTags(post.tags.map(tag => tag.name));
             }
         }, [post]);
@@ -45,6 +49,10 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
         // Handler
         const handleSubmit = async (value: z.infer<typeof PostValidation>) => {
             if (isLoading) return;
+            if (text.trim().length > 2200) {
+                showAlert('error', 'Nội dung không được vượt quá 2200 ký tự.');
+                return;
+            }
             setIsLoading(true);
             // ACTION = UPDATE
             if (post && action === "Update") {
@@ -52,7 +60,8 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
                 // console.log('tag', tags)
                 // console.log('removeMedia', removeMedia)
                 // console.log('caption', value.caption)
-                updatePost(post.id, value.caption, value.files, tags, removeMedia).then((post) => {
+                updatePost(post.id, text, value.files, tags, removeMedia).then((post) => {
+                    // updatePost(post.id, value.caption, value.files, tags, removeMedia).then((post) => {
 
                 }).catch(() => {
 
@@ -91,6 +100,53 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
             });
         }
 
+        const renderHeader = () => {
+            return (
+                <>
+                    <span className="ql-formats">
+                      <select className="ql-font"></select>
+                      <select className="ql-size"></select>
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-bold"></button>
+                      <button className="ql-italic"></button>
+                      <button className="ql-underline"></button>
+                      <button className="ql-strike"></button>
+                    </span>
+                    <span className="ql-formats">
+                      <select className="ql-color"></select>
+                      <select className="ql-background"></select>
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-script" value="sub"></button>
+                      <button className="ql-script" value="super"></button>
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-header" value="1"></button>
+                      <button className="ql-header" value="2"></button>
+                      <button className="ql-blockquote"></button>
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-list" value="ordered"></button>
+                      <button className="ql-list" value="bullet"></button>
+                      <button className="ql-indent" value="-1"></button>
+                      <button className="ql-indent" value="+1"></button>
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-direction" value="rtl"></button>
+                      <select className="ql-align"></select>
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-link"></button>
+                      <button className="ql-formula"></button>
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-clean"></button>
+                    </span>
+                </>
+            );
+        }
+        const header = renderHeader();
         return (
             <Form {...form}>
                 <form
@@ -103,16 +159,21 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
                             <FormItem>
                                 <FormLabel className="shad-form_label">Nội dung</FormLabel>
                                 <FormControl>
-                                    <Textarea
-                                        className="shad-textarea custom-scrollbar min-h-[200px]"
-                                        {...field}
-                                        maxLength={2200}
-                                        initValue={post ? post.caption : ''}
-                                        formOption={{
-                                            name: 'caption',
-                                            options: {shouldValidate: true},
-                                            callback: (name, value, options) => form.setValue('caption', value, options),
-                                        }}
+                                    {/*<Textarea*/}
+                                    {/*    className="shad-textarea custom-scrollbar min-h-[200px]"*/}
+                                    {/*    {...field}*/}
+                                    {/*    maxLength={2200}*/}
+                                    {/*    initValue={post ? post.caption : ''}*/}
+                                    {/*    formOption={{*/}
+                                    {/*        name: 'caption',*/}
+                                    {/*        options: {shouldValidate: true},*/}
+                                    {/*        callback: (name, value, options) => form.setValue('caption', value, options),*/}
+                                    {/*    }}*/}
+                                    {/*/>*/}
+                                    <Editor value={text}
+                                            onTextChange={(e: EditorTextChangeEvent) => setText(e.htmlValue || '')}
+                                            style={{height: '320px'}}
+                                            headerTemplate={header}
                                     />
                                 </FormControl>
                                 <FormMessage className="error-message"/>

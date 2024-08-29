@@ -35,6 +35,10 @@ export const getPostsById = async (id: string) => {
 
 }
 
+export const savedPost = async (postId: string, isSaved: boolean) => {
+    return await httpPut<ApiResponse>(`/posts/save`, {postId, isSaved});
+}
+
 export const getPostsByUser = async (nickname: string, pageNum: number, pageSize = 10) => {
     return await httpGet<ApiResponse<Post[]>>("/posts/user", {params: {nickname, pageNum, pageSize}})
         .then(response => {
