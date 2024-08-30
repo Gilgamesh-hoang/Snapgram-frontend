@@ -28,7 +28,7 @@ export const routes = {
     signup: "/sign-up",
     forgotPassword: "/forgot-password",
     explore: "/explore",
-    saved: "/saved",
+    saved: "/posts/saved",
     messages: "/messages",
     notifies: "/notifies",
     allUsers: "/all-users",

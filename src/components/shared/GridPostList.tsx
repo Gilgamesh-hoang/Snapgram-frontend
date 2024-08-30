@@ -13,12 +13,12 @@ type GridPostListProps = {
     setPage: (prev: number) => void;
     page: number;
     posts: Post[];
-    creator?: User;
+    // creator?: User;
 };
 
 const GridPostList: FC<GridPostListProps> = ({
                                                  posts,
-                                                 creator,
+                                                 // creator,
                                                  showUser = true,
                                                  showStats = true,
                                                  page,
@@ -45,17 +45,17 @@ const GridPostList: FC<GridPostListProps> = ({
                             </Link>
 
                             <div className="grid-post_user">
-                                {showUser && creator && (
+                                {showUser  && (
                                     <div className="flex flex-1 items-center justify-start gap-2">
                                         <img
                                             src={
-                                                creator.avatarUrl ||
+                                                post.creator.avatarUrl ||
                                                 "/assets/icons/profile-placeholder.svg"
                                             }
                                             alt="creator"
                                             className="size-8 rounded-full"
                                         />
-                                        <p className="line-clamp-1">{creator.fullName}</p>
+                                        <p className="line-clamp-1 xl:w-[100px]">{post.creator.nickname}</p>
                                     </div>
                                 )}
                                 {showStats && <PostStats post={post}/>}

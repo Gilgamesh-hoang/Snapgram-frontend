@@ -13,6 +13,7 @@ import {routes} from "@/route";
 import Tippy from "@tippyjs/react";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import CarouselPost from "@/components/shared/CarouselPost.tsx";
+import {PAGE_SIZE_COMMENT} from "@/constants";
 
 const PostDetails: React.FC = () => {
     const navigate = useNavigate();
@@ -38,11 +39,10 @@ const PostDetails: React.FC = () => {
 
     useEffect(() => {
         if (id) {
-            getCommentsByPostId(id, page).then((data) => {
-                if (data.length === 0) {
+            getCommentsByPostId(id, page, PAGE_SIZE_COMMENT).then((data) => {
+                setComments((prev) => [...prev, ...data]);
+                if (data.length < PAGE_SIZE_COMMENT) {
                     setHasMore(false);
-                } else {
-                    setComments((prev) => [...prev, ...data]);
                 }
             }).catch(() => {
                 setHasMore(false);

@@ -8,11 +8,14 @@ import {routes} from "@/route";
 import {logout} from "@/services/auth.ts";
 import {INavLink} from "@/model/type.ts";
 import {useUserContext} from "@/context/AuthContext.tsx";
+import {Loader} from "@/components/shared/index.tsx";
 
 const LeftSidebar = () => {
     const navigate = useNavigate();
     const {pathname} = useLocation();
-    const {logoutContext, user} = useUserContext();
+    const {logoutContext, user, isLoadingContext} = useUserContext();
+
+    if (isLoadingContext) return <Loader/>;
 
     const handleSignOut = async () => {
         await logout()
@@ -25,7 +28,7 @@ const LeftSidebar = () => {
     return (
         <nav className="leftsidebar">
             <div className="flex flex-col gap-11">
-                <Link to="/" className="flex items-center gap-3">
+                <Link to={routes.home} className="flex items-center gap-3">
                     <img
                         src="/assets/images/logo.svg"
                         alt="logo"
@@ -35,20 +38,18 @@ const LeftSidebar = () => {
                 </Link>
 
                 <Link
-                    to={`/users/profile/1`}
-                    // to={`${routes.profile.replace(':nickname', user.nickname)}`}
+                    to={routes.profile.replace(':nickname/*', user.nickname)}
                     className="flex items-center gap-3">
                     <img
-                        src='https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg'
+                        src={user.avatarUrl}
                         alt="profile"
                         className="size-12 rounded-full"
                     />
                     <div className="flex flex-col">
-                        <p className="body-bold">gilgamesh</p>
-                        <p className="small-regular text-light-3">Nguyen van a</p>
+                        <p className="body-bold">{user.nickname}</p>
+                        <p className="small-regular text-light-3">{user.fullName}</p>
                     </div>
                 </Link>
-                {/*)}*/}
 
                 <ul className="flex flex-col gap-2">
                     {sidebarLinks.map((link: INavLink) => {

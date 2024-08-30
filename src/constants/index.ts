@@ -1,6 +1,11 @@
 import {routes} from "@/route";
 
-
+export const PAGE_SIZE_COMMENT:number = 30;
+export const PAGE_SIZE_POST_IN_PROFILE:number = 10;
+export const PAGE_SIZE_POST_IN_SAVED:number = 10;
+export const PAGE_SIZE_ALL_USER:number = 10;
+export const PAGE_SIZE_FRIEND_SUGGESTION:number = 15;
+export const PAGE_SIZE_HOME_FRIEND:number = 6;
 export const sidebarLinks = [
     {
         imgURL: "/assets/icons/home.svg",

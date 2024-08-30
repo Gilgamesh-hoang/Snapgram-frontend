@@ -8,6 +8,7 @@ import {searchUsers} from "@/services/search.ts";
 import {User} from "@/model/type.ts";
 import {useLocation, useNavigate} from "react-router-dom";
 import {friendSuggestions} from "@/services/user.ts";
+import {PAGE_SIZE_ALL_USER, PAGE_SIZE_FRIEND_SUGGESTION} from "@/constants";
 
 
 const AllUsers: React.FC = () => {
@@ -46,22 +47,20 @@ const AllUsers: React.FC = () => {
         // If there's a debounced search value, search for users with that value
         // Otherwise, get friend suggestions
         if (searchDebounce && searchDebounce.trim().length) {
-            searchUsers(searchDebounce, page).then((res) => {
+            searchUsers(searchDebounce, page, PAGE_SIZE_ALL_USER).then((res) => {
                 const data = res.data;
-                if (data.length === 0) {
+                setUsers((prev) => [...prev, ...data]);
+                if (data.length < PAGE_SIZE_ALL_USER) {
                     setHasMore(false);
-                } else {
-                    setUsers((prev) => [...prev, ...res.data]);
                 }
             }).catch(() => {
                 setHasMore(false);
             });
         } else {
-            friendSuggestions(page).then((res: User[]) => {
-                if (res.length === 0) {
+            friendSuggestions(page,PAGE_SIZE_FRIEND_SUGGESTION).then((res: User[]) => {
+                setUsers((prev) => [...prev, ...res]);
+                if (res.length < PAGE_SIZE_FRIEND_SUGGESTION) {
                     setHasMore(false);
-                } else {
-                    setUsers((prev) => [...prev, ...res]);
                 }
             }).catch(() => {
                 setHasMore(false);

@@ -36,11 +36,18 @@ export const getPostsById = async (id: string) => {
 }
 
 export const savedPost = async (postId: string, isSaved: boolean) => {
-    return await httpPut<ApiResponse>(`/posts/save`, {postId, isSaved});
+    return await httpPut<ApiResponse>(`/posts/saved`, {postId, isSaved});
 }
 
-export const getPostsByUser = async (nickname: string, pageNum: number, pageSize = 10) => {
+export const getPostsByUser = async (nickname: string, pageNum: number, pageSize:number) => {
     return await httpGet<ApiResponse<Post[]>>("/posts/user", {params: {nickname, pageNum, pageSize}})
+        .then(response => {
+            return response.data;
+        });
+
+}
+export const getSavedPostsByUser = async (pageNum: number, pageSize: number) => {
+    return await httpGet<ApiResponse<Post[]>>("/posts/saved", {params: {pageNum, pageSize}})
         .then(response => {
             return response.data;
         });

@@ -3,6 +3,7 @@ import {PostCard, UserCard} from "@/components/shared";
 import {httpGet} from "@/utils/httpRequest.ts";
 import {ApiResponse, User} from "@/model/type.ts";
 import {friendSuggestions} from "@/services/user.ts";
+import {PAGE_SIZE_HOME_FRIEND} from "@/constants";
 
 const Home: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -16,55 +17,8 @@ const Home: React.FC = () => {
         //     });
     }, []);
 
-    const post = {
-        creator: {
-            id: "1",
-            name: "John Doe",
-            imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-        },
-        createdAt: new Date().toDateString(),
-        id: "1",
-        caption: "This is a caption",
-        location: "Lagos, Nigeria",
-        imageUrl: [
-            {
-                id: "1",
-                type: "IMAGE",
-                url: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-            },
-            {
-                id: "2",
-                type: "VIDEO",
-                url: "https://res.cloudinary.com/dvh2rphf4/video/upload/v1718880120/chatify/river_l1qf3t.mp4",
-            },
-
-        ],
-        tags: ["#tag1", "#tag2"],
-    };
-    const post2 = {
-        creator: {
-            id: "1",
-            name: "John Doe",
-            imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-        },
-        createdAt: new Date().toDateString(),
-        id: "1",
-        caption: "This is a caption",
-        location: "Lagos, Nigeria",
-        imageUrl: [
-
-            {
-                id: "1",
-                type: "VIDEO",
-                src: "https://res.cloudinary.com/dvh2rphf4/video/upload/v1718880120/chatify/river_l1qf3t.mp4",
-            },
-
-        ],
-        tags: ["#tag1", "#tag2"],
-    };
-
     useEffect(() => {
-        friendSuggestions(1, 6).then((res: User[]) => {
+        friendSuggestions(1, PAGE_SIZE_HOME_FRIEND).then((res: User[]) => {
             setUsers((prev) => [...prev, ...res]);
         });
     }, []);

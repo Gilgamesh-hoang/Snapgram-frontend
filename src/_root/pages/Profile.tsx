@@ -6,6 +6,7 @@ import {getUserInfo} from "@/services/user.ts";
 import {Post, User} from "@/model/type.ts";
 import {routes} from "@/route";
 import {getPostsByUser} from "@/services/post.ts";
+import {PAGE_SIZE_POST_IN_PROFILE} from "@/constants";
 
 interface StabBlockProps {
     value: number;
@@ -45,14 +46,11 @@ const Profile: React.FC = () => {
     }, []);
     useEffect(() => {
         if (nickname) {
-            console.log(page);
-            getPostsByUser('vwunschz_sadas', page).then((res) => {
-                if (res.length === 0) {
-                    console.log('no more posts')
+            getPostsByUser('vwunschz_sadas', page,PAGE_SIZE_POST_IN_PROFILE).then((res) => {
+                const newValues= [...posts, ...res];
+                setPosts(newValues);
+                if (res.length < PAGE_SIZE_POST_IN_PROFILE) {
                     setHasMore(false);
-                } else {
-                    console.log('more posts')
-                    return setPosts(res);
                 }
             }).catch(() => {
                 setHasMore(false);
@@ -154,7 +152,8 @@ const Profile: React.FC = () => {
             <Routes>
                 <Route
                     index
-                    element={<GridPostList page={page} setPage={setPage} hasMore={hasMore} posts={posts} showUser={false}/>}
+                    element={<GridPostList page={page} setPage={setPage} hasMore={hasMore} posts={posts}
+                                           showUser={false}/>}
                 />
                 {/*{currentUser.$id === user.id && (*/}
                 <Route path="/liked-posts" element={<LikedPosts/>}/>

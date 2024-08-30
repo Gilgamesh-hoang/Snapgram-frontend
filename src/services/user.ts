@@ -58,7 +58,7 @@ export const isNicknameExist = async (nickname: string): Promise<boolean> => {
         return response.data;
     });
 }
-export const friendSuggestions = async (pageNum: number, pageSize = 15) => {
+export const friendSuggestions = async (pageNum: number, pageSize:number) => {
     return await httpGet<ApiResponse<User[]>>('/users/friend-suggestions', {
         params: {
             pageNum, pageSize

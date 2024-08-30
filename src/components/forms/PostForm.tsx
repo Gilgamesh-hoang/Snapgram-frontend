@@ -14,6 +14,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 import {Editor, EditorTextChangeEvent} from 'primereact/editor';
+import {useUserContext} from "@/context/AuthContext.tsx";
 
 type PostFormProps = {
     post: Post | null;
@@ -22,9 +23,10 @@ type PostFormProps = {
 
 const PostForm: FC<PostFormProps> = ({post, action}) => {
         const navigate = useNavigate();
+        const {user} = useUserContext();
         const [isLoading, setIsLoading] = useState(false);
         const [tags, setTags] = useState<string[]>([]);
-        const [text, setText] = useState<string>( '');
+        const [text, setText] = useState<string>('');
         const [removeMedia, setRemoveMedia] = useState<string[]>([]);
         const form = useForm<z.infer<typeof PostValidation>>({
             resolver: zodResolver(PostValidation),
@@ -56,6 +58,9 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
             setIsLoading(true);
             // ACTION = UPDATE
             if (post && action === "Update") {
+                if (post.creator.id !== user.id) {
+                    return;
+                }
                 // console.log('id', post.id)
                 // console.log('tag', tags)
                 // console.log('removeMedia', removeMedia)

@@ -98,6 +98,7 @@ const UpdateProfile: React.FC = () => {
     if (isLoadingContext || !bio) {
         return <Loader/>;
     }
+
     const handleUpdate = async (value: z.infer<typeof ProfileValidation>) => {
         if (nicknameExists || emailExists || isLoadingState) {
             return;

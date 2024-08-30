@@ -1,50 +1,30 @@
 import {GridPostList} from "@/components/shared";
-import React from "react";
+import {FC, useEffect, useState} from "react";
+import {Post} from "@/model/type.ts";
+import {getSavedPostsByUser} from "@/services/post.ts";
+import {PAGE_SIZE_POST_IN_SAVED} from "@/constants";
 
-const Saved: React.FC = () => {
+const Saved: FC = () => {
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [posts, setPosts] = useState<Post[]>([]);
 
-    const savePosts = [
-        {
-            id: "1",
-            imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-            creator: {
-                id: "1",
-                name: "John Doe",
-                imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-            },
-        },
-        {
-            id: "2",
-            imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-            creator: {
-                id: "2",
-                name: "Jane Doe",
-                imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-            },
-        },
-        {
-            id: "2",
-            imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-            creator: {
-                id: "2",
-                name: "Jane Doe",
-                imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-            },
-        },
-        {
-            id: "2",
-            imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-            creator: {
-                id: "2",
-                name: "Jane Doe",
-                imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-            },
-        },
-    ]
+    useEffect(() => {
+        getSavedPostsByUser(page, PAGE_SIZE_POST_IN_SAVED).then((res) => {
+            const newValues = [...posts, ...res];
+            setPosts(newValues);
+            if (res.length < PAGE_SIZE_POST_IN_SAVED) {
+                setHasMore(false);
+            }
+        }).catch(() => {
+            setHasMore(false);
+        });
+
+    }, [page]);
 
     return (
         <div className="saved-container">
-            <div className="flex gap-2 w-full max-w-5xl">
+            <div className="flex w-full max-w-5xl gap-2">
                 <img
                     src="/assets/icons/save.svg"
                     width={36}
@@ -52,12 +32,12 @@ const Saved: React.FC = () => {
                     alt="edit"
                     className="invert-white"
                 />
-                <h2 className="h3-bold md:h2-bold text-left w-full">Đã lưu</h2>
+                <h2 className="h3-bold md:h2-bold w-full text-left">Đã lưu</h2>
             </div>
 
             <div className="flex w-full max-w-5xl">
                 <div
-                    className="flex items-center justify-center gap-3 bg-dark-3 rounded-s-md px-8 py-2 cursor-pointer hover:bg-dark-3">
+                    className="flex cursor-pointer items-center justify-center gap-3 rounded-s-md bg-dark-3 px-8 py-2 hover:bg-dark-3">
                     <img
                         src="/assets/icons/posts.svg"
                         width={20}
@@ -68,7 +48,7 @@ const Saved: React.FC = () => {
                 </div>
 
                 <div
-                    className="flex items-center justify-center gap-3 bg-dark-2 px-8 py-2 cursor-pointer border-2 border-dark-3 hover:bg-dark-3">
+                    className="flex cursor-pointer items-center justify-center gap-3 border-2 border-dark-3 bg-dark-2 px-8 py-2 hover:bg-dark-3">
                     <img
                         src="/assets/icons/reel.svg"
                         width={20}
@@ -78,7 +58,7 @@ const Saved: React.FC = () => {
                     <p className="small-medium md:base-medium text-light-2">Video</p>
                 </div>
                 <div
-                    className="flex items-center justify-center gap-3 bg-dark-2 rounded-e-md px-8 py-2 cursor-pointer  border-2 border-dark-3 hover:bg-dark-3">
+                    className="flex cursor-pointer items-center justify-center gap-3 rounded-e-md border-2 border-dark-3 bg-dark-2  px-8 py-2 hover:bg-dark-3">
                     <img
                         src="/assets/icons/collection.svg"
                         width={20}
@@ -89,11 +69,11 @@ const Saved: React.FC = () => {
                 </div>
             </div>
 
-            <ul className="w-full flex justify-center max-w-5xl gap-9">
-                {savePosts.length === 0 ? (
+            <ul className="flex w-full max-w-5xl justify-center gap-9">
+                {posts.length === 0 ? (
                     <p className="text-light-4">Chưa có lưu bài viết nào</p>
                 ) : (
-                    <GridPostList posts={savePosts} showStats={false}/>
+                    <GridPostList page={page} setPage={setPage} hasMore={hasMore} posts={posts} showUser={true}/>
                 )}
             </ul>
         </div>
