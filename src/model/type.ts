@@ -47,7 +47,10 @@ export interface Comment {
     likeCount: number;
 }
 
-
+export interface PostMetric {
+    likeCount: number;
+    commentCount: number;
+}
 export interface Post {
     creator: Creator;
     id: string;

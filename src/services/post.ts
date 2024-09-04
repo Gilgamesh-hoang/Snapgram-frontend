@@ -1,5 +1,5 @@
 import {httpGet, httpPost, httpPut} from "@/utils/httpRequest.ts";
-import {ApiResponse, Post} from "@/model/type.ts";
+import {ApiResponse, Post, PostMetric} from "@/model/type.ts";
 
 
 export const createPost = async (caption: string, media: File[], tags: string[]) => {
@@ -38,8 +38,14 @@ export const getPostsById = async (id: string) => {
 export const savedPost = async (postId: string, isSaved: boolean) => {
     return await httpPut<ApiResponse>(`/posts/saved`, {postId, isSaved});
 }
+export const likedPost = async (postId: string, isLiked: boolean) => {
+    return await httpPut<ApiResponse<PostMetric>>(`/posts/liked`, {postId, isLiked})
+        .then(response => {
+            return response.data;
+        });
+}
 
-export const getPostsByUser = async (nickname: string, pageNum: number, pageSize:number) => {
+export const getPostsByUser = async (nickname: string, pageNum: number, pageSize: number) => {
     return await httpGet<ApiResponse<Post[]>>("/posts/user", {params: {nickname, pageNum, pageSize}})
         .then(response => {
             return response.data;
