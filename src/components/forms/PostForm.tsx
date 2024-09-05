@@ -23,7 +23,7 @@ type PostFormProps = {
 
 const PostForm: FC<PostFormProps> = ({post, action}) => {
         const navigate = useNavigate();
-        const {user} = useUserContext();
+        const {userContext} = useUserContext();
         const [isLoading, setIsLoading] = useState(false);
         const [tags, setTags] = useState<string[]>([]);
         const [text, setText] = useState<string>('');
@@ -58,7 +58,7 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
             setIsLoading(true);
             // ACTION = UPDATE
             if (post && action === "Update") {
-                if (post.creator.id !== user.id) {
+                if (post.creator.id !== userContext.id) {
                     return;
                 }
                 // console.log('id', post.id)

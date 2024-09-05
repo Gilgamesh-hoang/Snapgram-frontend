@@ -13,7 +13,7 @@ import {Loader} from "@/components/shared/index.tsx";
 const LeftSidebar = () => {
     const navigate = useNavigate();
     const {pathname} = useLocation();
-    const {logoutContext, user, isLoadingContext} = useUserContext();
+    const {logoutContext, userContext, isLoadingContext} = useUserContext();
 
     if (isLoadingContext) return <Loader/>;
 
@@ -38,16 +38,16 @@ const LeftSidebar = () => {
                 </Link>
 
                 <Link
-                    to={routes.profile.replace(':nickname/*', user.nickname)}
+                    to={routes.profile.replace(':nickname/*', userContext.nickname)}
                     className="flex items-center gap-3">
                     <img
-                        src={user.avatarUrl}
+                        src={userContext.avatarUrl}
                         alt="profile"
                         className="size-12 rounded-full"
                     />
                     <div className="flex flex-col">
-                        <p className="body-bold">{user.nickname}</p>
-                        <p className="small-regular text-light-3">{user.fullName}</p>
+                        <p className="body-bold">{userContext.nickname}</p>
+                        <p className="small-regular text-light-3">{userContext.fullName}</p>
                     </div>
                 </Link>
 

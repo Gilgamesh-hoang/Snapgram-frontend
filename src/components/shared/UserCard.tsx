@@ -1,6 +1,7 @@
 import {Link} from "react-router-dom";
 import {Button} from "@/components/ui";
 import React from "react";
+import {routes} from "@/route";
 
 
 type UserCardProps = {
@@ -13,12 +14,11 @@ type UserCardProps = {
 const UserCard: React.FC<UserCardProps> = ({id, name, nickname, imageUrl}) => {
     function handleFollow(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
-        console.log("Followed");
     }
 
     return (
         <div className="user-card">
-            <Link to={`/profile/${nickname}`}
+            <Link to={`${routes.profile.replace(':nickname/*', nickname)}`}
                   className="flex flex-col items-center gap-4 "
             >
                 <img

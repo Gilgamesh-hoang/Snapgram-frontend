@@ -17,10 +17,10 @@ export const INITIAL_USER : User = {
 };
 
 const INITIAL_STATE = {
-    user: INITIAL_USER,
+    userContext: INITIAL_USER,
     isAuthenticated: false,
     isLoadingContext: true,
-    setUser: () => {
+    setUserContext: () => {
     },
     setIsAuthenticated: () => {
     },
@@ -31,8 +31,8 @@ const INITIAL_STATE = {
 };
 
 type IContextType = {
-    user: User;
-    setUser: Dispatch<SetStateAction<User>>;
+    userContext: User;
+    setUserContext: Dispatch<SetStateAction<User>>;
     isAuthenticated: boolean;
     isLoadingContext: boolean;
     setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
@@ -44,7 +44,7 @@ const AuthContext = createContext<IContextType>(INITIAL_STATE);
 
 export function AuthProvider({children}: { children: ReactNode }) {
     const navigate = useNavigate();
-    const [user, setUser] = useState<User>(INITIAL_USER);
+    const [userContext, setUserContext] = useState<User>(INITIAL_USER);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoadingContext, setIsLoading] = useState(true);
 
@@ -59,11 +59,11 @@ export function AuthProvider({children}: { children: ReactNode }) {
         checkAuthUser();
     }, []);
     const loginContext = (user: User) => {
-        setUser(user);
+        setUserContext(user);
         setIsAuthenticated(true);
     }
     const logoutContext = () => {
-        setUser(INITIAL_USER);
+        setUserContext(INITIAL_USER);
         setIsAuthenticated(false);
     }
     const checkAuthUser = async () => {
@@ -71,16 +71,16 @@ export function AuthProvider({children}: { children: ReactNode }) {
         await getCurrentUser()
             .then(response => {
                 if (response === null) {
-                    setUser(INITIAL_USER);
+                    setUserContext(INITIAL_USER);
                     setIsAuthenticated(false);
                 } else {
-                    setUser(response);
+                    setUserContext(response);
                     setIsAuthenticated(true);
                 }
                 return true;
             })
             .catch(() => {
-                setUser(INITIAL_USER);
+                setUserContext(INITIAL_USER);
                 setIsAuthenticated(false);
                 return false;
             }).finally(() => {
@@ -90,8 +90,8 @@ export function AuthProvider({children}: { children: ReactNode }) {
 
 
     const value = {
-        user,
-        setUser,
+        userContext,
+        setUserContext,
         isAuthenticated,
         setIsAuthenticated,
         logoutContext,

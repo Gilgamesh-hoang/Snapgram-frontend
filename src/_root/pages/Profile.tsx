@@ -7,6 +7,10 @@ import {Post, User} from "@/model/type.ts";
 import {routes} from "@/route";
 import {getPostsByUser} from "@/services/post.ts";
 import {PAGE_SIZE_POST_IN_PROFILE} from "@/constants";
+import QRCode from "@/components/shared/QRCode.tsx";
+import {BsQrCodeScan} from "react-icons/bs";
+import {useUserContext} from "@/context/AuthContext.tsx";
+import {Button} from "@/components/ui";
 
 interface StabBlockProps {
     value: number;
@@ -32,6 +36,7 @@ const INITIAL_USER: User = {
 const Profile: React.FC = () => {
     const {pathname} = useLocation();
     const {nickname} = useParams();
+    const {userContext} = useUserContext();
     const [user, setUser] = useState<User>(INITIAL_USER);
     const [posts, setPosts] = useState<Post[]>([]);
     const [page, setPage] = useState(1);
@@ -39,14 +44,14 @@ const Profile: React.FC = () => {
 
     useEffect(() => {
         if (nickname) {
-            getUserInfo('vwunschz_sadas').then((res) => {
+            getUserInfo(nickname).then((res) => {
                 setUser(res);
             });
         }
     }, []);
     useEffect(() => {
         if (nickname) {
-            getPostsByUser('vwunschz_sadas', page,PAGE_SIZE_POST_IN_PROFILE).then((res) => {
+            getPostsByUser(nickname, page,PAGE_SIZE_POST_IN_PROFILE).then((res) => {
                 const newValues= [...posts, ...res];
                 setPosts(newValues);
                 if (res.length < PAGE_SIZE_POST_IN_PROFILE) {
@@ -89,42 +94,43 @@ const Profile: React.FC = () => {
                     </div>
 
                     <div className="flex justify-center gap-4">
-                        <div>
-                            <Link
-                                to={routes.updateProfile}
-                                className={`flex-center h-12 gap-2 rounded-lg bg-dark-4 px-5 text-light-1`}>
-                                <img
-                                    src={"/assets/icons/edit-profile.svg"}
-                                    alt="edit"
-                                    width={20}
-                                    height={20}
-                                />
-                                <i></i>
-                                <p className="small-medium flex whitespace-nowrap">
-                                    Thay dổi thông tin
-                                </p>
-                            </Link>
-                        </div>
-                        {/*<div className={``}>*/}
-                        {/*    <Button type="button" className="shad-button_primary px-8 bg-primary-500">*/}
-                        {/*        Theo dõi*/}
-                        {/*    </Button>*/}
-                        {/*    <Button type="button" className="text-dark-2 px-8 bg-light-2 ms-3 hover:text-light-2">*/}
-                        {/*        Nhắn tin*/}
-                        {/*    </Button>*/}
-                        {/*</div>*/}
+                        {userContext?.nickname === user.nickname ? (
+                            <div>
+                                <Link
+                                    to={routes.updateProfile}
+                                    className={`flex-center h-12 gap-2 rounded-lg bg-dark-4 px-5 text-light-1`}>
+                                    <img
+                                        src={"/assets/icons/edit-profile.svg"}
+                                        alt="edit"
+                                        width={20}
+                                        height={20}
+                                    />
+                                    <i></i>
+                                    <p className="small-medium flex whitespace-nowrap">
+                                        Thay dổi thông tin
+                                    </p>
+                                </Link>
+                            </div>
+                        ) : (
+                            <div className={``}>
+                                <Button type="button" className="shad-button_primary bg-primary-500 px-8">
+                                    Theo dõi
+                                </Button>
+                                <Button type="button" className="ms-3 bg-light-2 px-8 text-dark-2 hover:text-light-2">
+                                    Nhắn tin
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/*{currentUser.$id === user.id && (*/}
             <div className="flex w-full max-w-5xl">
                 <Link
-                    to={`${routes.profile.replace(':nickname', user.nickname)}`}
-                    className={`profile-tab rounded-l-lg !bg-dark-3`}>
-                    {/*className={`profile-tab rounded-l-lg ${*/}
-                    {/*    pathname === `${routes.profile.replace(':nickname', user.nickname)}` && "!bg-dark-3"*/}
-                    {/*}`}>*/}
+                    to={`${routes.profile.replace(':nickname/*', user.nickname)}`}
+                    className={`profile-tab rounded-l-lg ${
+                        pathname === `${routes.profile.replace(':nickname/*', user.nickname)}` && "!bg-dark-3"
+                    }`}>
                     <img
                         src={"/assets/icons/posts.svg"}
                         alt="posts"
@@ -133,21 +139,14 @@ const Profile: React.FC = () => {
                     />
                     Bài viết
                 </Link>
-                <Link
-                    to={`${routes.profile.replace(':nickname', user.nickname).concat('/liked-posts')}`}
+                <Link to={`${routes.profile.replace(':nickname/*', user.nickname)}/qr`}
                     className={`profile-tab rounded-r-lg ${
-                        pathname === `/profile/${nickname}/liked-posts` && "!bg-dark-3"
+                        pathname === `${routes.profile.replace(':nickname/*', user.nickname)}/qr` && "!bg-dark-3"
                     }`}>
-                    <img
-                        src={"/assets/icons/like.svg"}
-                        alt="like"
-                        width={20}
-                        height={20}
-                    />
-                    Bài viết đã thích
+                    <BsQrCodeScan size={20} />
+                    Mã QR
                 </Link>
             </div>
-            {/*)}*/}
 
             <Routes>
                 <Route
@@ -155,9 +154,7 @@ const Profile: React.FC = () => {
                     element={<GridPostList page={page} setPage={setPage} hasMore={hasMore} posts={posts}
                                            showUser={false}/>}
                 />
-                {/*{currentUser.$id === user.id && (*/}
-                <Route path="/liked-posts" element={<LikedPosts/>}/>
-                {/*)}*/}
+                <Route path="/qr" element={<QRCode nickname={user.nickname}/>}/>
             </Routes>
             <Outlet/>
         </div>

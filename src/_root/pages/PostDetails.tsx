@@ -17,7 +17,7 @@ import {PAGE_SIZE_COMMENT} from "@/constants";
 
 const PostDetails: React.FC = () => {
     const navigate = useNavigate();
-    const {user, isLoadingContext} = useUserContext();
+    const {userContext, isLoadingContext} = useUserContext();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [post, setPost] = useState<Post | null>(null);
     const [comments, setComments] = useState<Comment[]>([]);
@@ -125,7 +125,7 @@ const PostDetails: React.FC = () => {
                         </div>
 
                         <div className="flex-center gap-4">
-                            {user.id === post.creator.id && (
+                            {userContext.id === post.creator.id && (
                                 <>
                                     <Link to={routes.updatePost.replace(":id", post.id)}>
                                         <img
