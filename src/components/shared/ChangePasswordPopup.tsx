@@ -9,8 +9,6 @@ import {MdOutlineClose} from "react-icons/md";
 import {Toast} from 'primereact/toast';
 import {changePassword} from "@/services/user.ts";
 import Swal from "sweetalert2";
-import {useNavigate} from "react-router-dom";
-import {routes} from "@/route";
 
 function ChangePasswordPopup({isOpen, onClose}) {
     const [isLoading, setIsLoading] = useState(false);

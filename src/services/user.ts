@@ -83,7 +83,24 @@ export const signup = async (user: SignUpRequest) => {
                 });
             }
         });
-
+}
+export const getFollowers = async (userId: string, pageNum: number, pageSize: number) => {
+    return await httpGet<ApiResponse<User[]>>(`/users/${userId}/followers`, {
+        params: {
+            pageNum, pageSize
+        }
+    }).then(response => {
+        return response.data;
+    });
+}
+export const getFollowings = async (userId: string, pageNum: number, pageSize: number) => {
+    return await httpGet<ApiResponse<User[]>>(`/users/${userId}/following`, {
+        params: {
+            pageNum, pageSize
+        }
+    }).then(response => {
+        return response.data;
+    });
 }
 export const getCurrentUser = async () => {
     return await httpGet<ApiResponse<User>>('/users/me')

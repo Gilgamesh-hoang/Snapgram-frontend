@@ -1,5 +1,4 @@
 import {Link, Outlet, Route, Routes, useLocation, useParams,} from "react-router-dom";
-import {LikedPosts} from "@/_root/pages";
 import {GridPostList} from "@/components/shared";
 import React, {useEffect, useState} from "react";
 import {getUserInfo} from "@/services/user.ts";
@@ -11,14 +10,18 @@ import QRCode from "@/components/shared/QRCode.tsx";
 import {BsQrCodeScan} from "react-icons/bs";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import {Button} from "@/components/ui";
+import FollowPopup from "@/components/shared/FollowPopup.tsx";
+
 
 interface StabBlockProps {
     value: number;
     label: string;
+    callback?: () => void;
+    className?: string;
 }
 
-const StatBlock = ({value, label}: StabBlockProps) => (
-    <div className="flex flex-col items-center justify-center gap-2">
+const StatBlock = ({value, label, callback, className = ''}: StabBlockProps) => (
+    <div onClick={callback} className={`flex flex-col items-center justify-center gap-2 ${className}`}>
         <p className="small-semibold lg:body-bold text-primary-500">{value}</p>
         <p className="small-medium lg:base-medium text-light-2">{label}</p>
     </div>
@@ -41,6 +44,9 @@ const Profile: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [isFollowerPopupOpen, setIsFollowerPopupOpen] = useState(false);
+    const [isFollowingPopupOpen, setIsFollowingPopupOpen] = useState(false);
+
 
     useEffect(() => {
         if (nickname) {
@@ -51,8 +57,8 @@ const Profile: React.FC = () => {
     }, []);
     useEffect(() => {
         if (nickname) {
-            getPostsByUser(nickname, page,PAGE_SIZE_POST_IN_PROFILE).then((res) => {
-                const newValues= [...posts, ...res];
+            getPostsByUser(nickname, page, PAGE_SIZE_POST_IN_PROFILE).then((res) => {
+                const newValues = [...posts, ...res];
                 setPosts(newValues);
                 if (res.length < PAGE_SIZE_POST_IN_PROFILE) {
                     setHasMore(false);
@@ -82,10 +88,16 @@ const Profile: React.FC = () => {
                             </p>
                         </div>
 
-                        <div className="z-20 mt-10 flex flex-wrap items-center justify-center gap-8 xl:justify-start">
+                        <div className="mt-10 flex flex-wrap items-center justify-center gap-8 xl:justify-start">
                             <StatBlock value={user.postNumber || 0} label="bài viết"/>
-                            <StatBlock value={user.followerNumber || 0} label="người theo dõi"/>
-                            <StatBlock value={user.followeeNumber || 0} label="đang theo dõi"/>
+                            <StatBlock value={user.followerNumber || 0} callback={() => {
+                                setIsFollowerPopupOpen(!isFollowerPopupOpen)
+                            }}
+                                       className='cursor-pointer' label="người theo dõi"/>
+                            <StatBlock value={user.followeeNumber || 0} callback={() => {
+                                setIsFollowingPopupOpen(!isFollowingPopupOpen)
+                            }}
+                                       className='cursor-pointer' label="đang theo dõi"/>
                         </div>
 
                         <p className="small-medium md:base-medium mt-7 max-w-screen-sm text-center xl:text-left">
@@ -140,14 +152,19 @@ const Profile: React.FC = () => {
                     Bài viết
                 </Link>
                 <Link to={`${routes.profile.replace(':nickname/*', user.nickname)}/qr`}
-                    className={`profile-tab rounded-r-lg ${
-                        pathname === `${routes.profile.replace(':nickname/*', user.nickname)}/qr` && "!bg-dark-3"
-                    }`}>
-                    <BsQrCodeScan size={20} />
+                      className={`profile-tab rounded-r-lg ${
+                          pathname === `${routes.profile.replace(':nickname/*', user.nickname)}/qr` && "!bg-dark-3"
+                      }`}>
+                    <BsQrCodeScan size={20}/>
                     Mã QR
                 </Link>
             </div>
-
+            {isFollowerPopupOpen && <FollowPopup userId={user.id} action={'FOLLOWER'} onClose={() => {
+                setIsFollowerPopupOpen(!isFollowerPopupOpen)
+            }}/>}
+            {isFollowingPopupOpen && <FollowPopup userId={user.id} action={'FOLLOWING'} onClose={() => {
+                setIsFollowingPopupOpen(!isFollowingPopupOpen)
+            }}/>}
             <Routes>
                 <Route
                     index
@@ -162,3 +179,4 @@ const Profile: React.FC = () => {
 };
 
 export default Profile;
+
