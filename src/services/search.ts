@@ -8,19 +8,19 @@ export const searchUsers = async (keyword: string, pageNum: number, pageSize: nu
         }
     });
 };
-export const searchUserFollowers = async (nickname: string, keyword: string, pageNum: number, pageSize: number) => {
+export const searchUserFollowers = async (userId: string, keyword: string, pageNum: number, pageSize: number) => {
     return await httpGet<ApiResponse<User[]>>('/search/users/followers', {
         params: {
-            nickname, keyword, pageNum, pageSize
+            userId, keyword, pageNum, pageSize
         }
     }).then(response => {
         return response.data;
     });
 };
-export const searchUserFollowings = async (nickname: string, keyword: string, pageNum: number, pageSize: number) => {
-    return await httpGet<ApiResponse<User[]>>('/search/users/followings', {
+export const searchUserFollowing = async (userId: string, keyword: string, pageNum: number, pageSize: number) => {
+    return await httpGet<ApiResponse<User[]>>('/search/users/following', {
         params: {
-            nickname, keyword, pageNum, pageSize
+            userId, keyword, pageNum, pageSize
         }
     }).then(response => {
         return response.data;

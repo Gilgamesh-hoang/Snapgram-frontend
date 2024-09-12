@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import Avatar from "@/components/shared/Avatar.tsx";
-import { Button } from "@/components/ui";
+import {Button} from "@/components/ui";
 import {routes} from "@/route";
 
 interface UserItemProps {

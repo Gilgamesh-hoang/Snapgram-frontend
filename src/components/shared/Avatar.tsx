@@ -29,7 +29,7 @@ const Avatar: React.FC<AvatarProps> = ({type, name, imageUrl, style}) => {
         // If the type prop is 'room', render a group icon.
         if (type === 1) {
             return (
-                <div className={`rounded-full flex justify-center items-center border-2 border-gray-700`}>
+                <div className={`flex items-center justify-center rounded-full border-2 border-gray-700`}>
                     <HiMiniUserGroup className={style}/>
                 </div>
             );
@@ -49,7 +49,7 @@ const Avatar: React.FC<AvatarProps> = ({type, name, imageUrl, style}) => {
         else if (name) {
             return (
                 <div
-                    className={clsx(`overflow-hidden rounded-full flex justify-center items-center text-lg bg-cyan-200`, style)}>
+                    className={clsx(`flex items-center justify-center overflow-hidden rounded-full bg-primary-500 text-lg`, style)}>
                     {avatarName}
                 </div>
             );
@@ -61,7 +61,7 @@ const Avatar: React.FC<AvatarProps> = ({type, name, imageUrl, style}) => {
     };
 
     return (
-        <div className={clsx(`rounded-full relative`, style)}>
+        <div className={clsx(`relative rounded-full`, style)}>
             {renderAvatar()}
         </div>
     );

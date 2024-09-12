@@ -1,13 +1,12 @@
 import React, {FC, useEffect, useState} from "react";
 import {MdOutlineClose} from "react-icons/md";
-import {useParams} from "react-router-dom";
 import {User} from "@/model/type.ts";
 import useDebounce from "@/hooks/useDebounce.ts";
 import {getFollowers, getFollowings} from "@/services/user.ts";
-import {PAGE_SIZE_ALL_USER, PAGE_SIZE_USER_FOLLOW} from "@/constants";
-import {searchUserFollowers, searchUserFollowings} from "@/services/search.ts";
+import {PAGE_SIZE_USER_FOLLOW} from "@/constants";
+import {searchUserFollowers, searchUserFollowing} from "@/services/search.ts";
 import UserItem from "@/components/shared/UserItem.tsx";
-import {Loader, UserCard} from "@/components/shared/index.tsx";
+import {Loader} from "@/components/shared/index.tsx";
 import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 
 interface FollowPopupProps {
@@ -17,7 +16,6 @@ interface FollowPopupProps {
 }
 
 const FollowPopup: FC<FollowPopupProps> = ({onClose, action, userId}) => {
-    const {nickname} = useParams();
     const [users, setUsers] = useState<User[]>([]);
     const [searchValue, setSearchValue] = useState('');
     const searchDebounce = useDebounce(searchValue, 500);
@@ -34,12 +32,12 @@ const FollowPopup: FC<FollowPopupProps> = ({onClose, action, userId}) => {
 
     // This effect runs whenever the page number or searchDebounce changes
     useEffect(() => {
-        if (!nickname || !userId)
+        if (!userId)
             return;
 
         if (searchDebounce && searchDebounce.trim().length) {
             if (action === 'FOLLOWER') {
-                searchUserFollowers(nickname, searchDebounce, page, PAGE_SIZE_ALL_USER).then((res) => {
+                searchUserFollowers(userId, searchDebounce, page, PAGE_SIZE_USER_FOLLOW).then((res) => {
                     setUsers((prev) => [...prev, ...res]);
                     if (res.length < PAGE_SIZE_USER_FOLLOW) {
                         setHasMore(false);
@@ -48,7 +46,7 @@ const FollowPopup: FC<FollowPopupProps> = ({onClose, action, userId}) => {
                     setHasMore(false);
                 });
             } else if (action === 'FOLLOWING') {
-                searchUserFollowings(nickname, searchDebounce, page, PAGE_SIZE_ALL_USER).then((res) => {
+                searchUserFollowing(userId, searchDebounce, page, PAGE_SIZE_USER_FOLLOW).then((res) => {
                     setUsers((prev) => [...prev, ...res]);
                     if (res.length < PAGE_SIZE_USER_FOLLOW) {
                         setHasMore(false);
@@ -99,11 +97,15 @@ const FollowPopup: FC<FollowPopupProps> = ({onClose, action, userId}) => {
                         type="text"
                         placeholder="Tìm kiếm"
                         className="h-9 w-full rounded-md bg-dark-4 pl-10 pr-4"
+                        value={searchValue}
                         maxLength={20}
+                        onChange={(e) => {
+                            setSearchValue(e.target.value);
+                        }}
                     />
 
                 </div>
-                <div className="custom-scrollbar mt-4 flex max-h-[26rem] flex-col gap-4 overflow-y-scroll">
+                <div className="custom-scrollbar mt-4 flex h-[26rem] max-h-[26rem] flex-col gap-4 overflow-y-scroll pe-1.5">
                     <InfiniteScroll
                         loader={<Loader/>}
                         fetchMore={() => setPage((prev) => prev + 1)}

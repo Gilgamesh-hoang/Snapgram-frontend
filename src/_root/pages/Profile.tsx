@@ -2,7 +2,7 @@ import {Link, Outlet, Route, Routes, useLocation, useParams,} from "react-router
 import {GridPostList} from "@/components/shared";
 import React, {useEffect, useState} from "react";
 import {getUserInfo} from "@/services/user.ts";
-import {Post, User, UserInfo} from "@/model/type.ts";
+import {Post, UserInfo} from "@/model/type.ts";
 import {routes} from "@/route";
 import {getPostsByUser} from "@/services/post.ts";
 import {PAGE_SIZE_POST_IN_PROFILE} from "@/constants";
@@ -46,28 +46,41 @@ const Profile: React.FC = () => {
     const [hasMore, setHasMore] = useState(true);
     const [isFollowerPopupOpen, setIsFollowerPopupOpen] = useState(false);
     const [isFollowingPopupOpen, setIsFollowingPopupOpen] = useState(false);
-
+    const [isNicknameChanged, setIsNicknameChanged] = useState(false); // State mới để theo dõi khi nickname thay đổi
 
     useEffect(() => {
         if (nickname) {
             getUserInfo(nickname).then((res) => {
                 setUser(res);
             });
+
+            setIsFollowingPopupOpen(false);
+            setIsFollowerPopupOpen(false);
+            setPosts([]);
+            setPage(1);
+            setHasMore(true);
+            setIsNicknameChanged(true); // Đánh dấu rằng nickname đã thay đổi
         }
-    }, []);
+    }, [nickname]);
+
     useEffect(() => {
-        if (nickname) {
-            getPostsByUser(nickname, page, PAGE_SIZE_POST_IN_PROFILE).then((res) => {
-                const newValues = [...posts, ...res];
-                setPosts(newValues);
-                if (res.length < PAGE_SIZE_POST_IN_PROFILE) {
-                    setHasMore(false);
-                }
-            }).catch(() => {
+        if (!nickname || !isNicknameChanged) return;
+
+        getPostsByUser(nickname, page, PAGE_SIZE_POST_IN_PROFILE).then((res) => {
+            if (page === 1) {
+                setPosts(res);
+            } else {
+                setPosts((prevPosts) => [...prevPosts, ...res]);
+            }
+
+            if (res.length < PAGE_SIZE_POST_IN_PROFILE) {
                 setHasMore(false);
-            });
-        }
-    }, [page]);
+            }
+            setIsNicknameChanged(false);
+        }).catch(() => {
+            setHasMore(false);
+        });
+    }, [page, nickname, isNicknameChanged]);
 
     return (
         <div className="profile-container">
