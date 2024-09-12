@@ -54,7 +54,8 @@ const SigninForm: React.FC = () => {
                 if (response.status === 200) {
                     updateAccessToken(response.data.token);
                     setIsAuthenticated(true);
-                    navigate(routes.home);
+                    // navigate(routes.home);
+                    // window.location.href = routes.home;
                 }
             }).catch((error) => {
                 // If the error is an Axios error, handle different status codes

@@ -12,8 +12,6 @@ export const INITIAL_USER : User = {
     nickname: "",
     email: "",
     avatarUrl: "",
-    bio: "",
-    gender: "MALE",
 };
 
 const INITIAL_STATE = {

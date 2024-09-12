@@ -117,7 +117,6 @@ const FollowPopup: FC<FollowPopupProps> = ({onClose, action, userId}) => {
                             />
                         ))}
                     </InfiniteScroll>
-
                 </div>
             </div>
         </div>

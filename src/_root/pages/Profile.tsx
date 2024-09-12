@@ -2,7 +2,7 @@ import {Link, Outlet, Route, Routes, useLocation, useParams,} from "react-router
 import {GridPostList} from "@/components/shared";
 import React, {useEffect, useState} from "react";
 import {getUserInfo} from "@/services/user.ts";
-import {Post, User} from "@/model/type.ts";
+import {Post, User, UserInfo} from "@/model/type.ts";
 import {routes} from "@/route";
 import {getPostsByUser} from "@/services/post.ts";
 import {PAGE_SIZE_POST_IN_PROFILE} from "@/constants";
@@ -26,7 +26,7 @@ const StatBlock = ({value, label, callback, className = ''}: StabBlockProps) => 
         <p className="small-medium lg:base-medium text-light-2">{label}</p>
     </div>
 );
-const INITIAL_USER: User = {
+const INITIAL_USER: UserInfo = {
     id: "",
     fullName: "",
     nickname: "",
@@ -40,7 +40,7 @@ const Profile: React.FC = () => {
     const {pathname} = useLocation();
     const {nickname} = useParams();
     const {userContext} = useUserContext();
-    const [user, setUser] = useState<User>(INITIAL_USER);
+    const [user, setUser] = useState<UserInfo>(INITIAL_USER);
     const [posts, setPosts] = useState<Post[]>([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);

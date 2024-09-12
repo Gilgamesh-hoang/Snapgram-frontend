@@ -25,6 +25,7 @@ const UpdateProfile: React.FC = () => {
     const [nicknameExists, setNicknameExists] = useState(false);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [bio, setBio] = useState('');
+    const [gender, setGender] = useState<'MALE' | 'FEMALE'>('MALE')
     const [email, setEmail] = useState('');
     const emailDebounce = useDebounce(email, 500);
     const [emailExists, setEmailExists] = useState(false);
@@ -35,10 +36,10 @@ const UpdateProfile: React.FC = () => {
         resolver: zodResolver(ProfileValidation),
         defaultValues: {
             file: undefined,
-            fullName: userContext.fullName,
-            nickname: userContext.nickname,
-            email: userContext.email,
-            bio: userContext.bio || "",
+            fullName: "",
+            nickname: "",
+            email: "",
+            bio: "",
             gender: "MALE",
         },
     });
@@ -70,31 +71,29 @@ const UpdateProfile: React.FC = () => {
 
 
     useEffect(() => {
-        if (!isLoadingContext) {
-            form.reset({
-                file: undefined,
-                fullName: userContext.fullName,
-                nickname: userContext.nickname,
-                email: userContext.email,
-                gender: userContext.gender,
-                bio: userContext.bio || "",
-            });
-        }
-    }, [isLoadingContext, userContext, form]);
-    useEffect(() => {
         // Only call the API if user data is available and `bio` is not already set
         if (userContext && userContext.nickname && !bio) {
             getUserInfo(userContext.nickname).then((res) => {
                 setBio(res.bio || '');
-                form.setValue('bio', res.bio || '')
+                setGender(res.gender);
+                // form.setValue('bio', res.bio || '')
+                form.reset({
+                    file: undefined,
+                    fullName: res.fullName,
+                    nickname: res.nickname,
+                    email: res.email,
+                    gender: res.gender,
+                    bio: res.bio || "",
+                });
             });
         }
-    }, [userContext, bio]);
+    }, [userContext.nickname]);
 
 
     function togglePopup() {
         setIsPopupOpen(!isPopupOpen);
     }
+
     if (isLoadingContext || !bio) {
         return <Loader/>;
     }
@@ -220,7 +219,7 @@ const UpdateProfile: React.FC = () => {
                                 <FormItem className='ml-2 flex-1'>
                                     <FormLabel className="shad-form_label">Giới tính</FormLabel>
                                     <FormControl>
-                                        <GenderSelection<z.infer<typeof ProfileValidation>> value={userContext.gender}
+                                        <GenderSelection<z.infer<typeof ProfileValidation>> value={gender}
                                                                                             setValue={form.setValue}
                                                                                             className='w-1/2'/>
                                     </FormControl>

@@ -1,5 +1,5 @@
 import {httpGet, httpPost, httpPut} from "@/utils/httpRequest.ts";
-import {ApiResponse, JwtResponse, User} from "@/model/type.ts";
+import {ApiResponse, JwtResponse, User, UserInfo} from "@/model/type.ts";
 import Swal from "sweetalert2";
 import {routes} from "@/route";
 import {ProfileRequest, SignUpRequest} from "@/model/request.ts";
@@ -110,7 +110,7 @@ export const getCurrentUser = async () => {
 
 }
 export const getUserInfo = async (nickname: string) => {
-    return await httpGet<ApiResponse<User>>('/users', {params: {nickname}})
+    return await httpGet<ApiResponse<UserInfo>>('/users', {params: {nickname}})
         .then(response => {
             return response.data;
         });

@@ -3,51 +3,6 @@ import {GridPostList} from "@/components/shared";
 
 const Explore: React.FC = () => {
 
-    // fake data for posts
-    const [posts, setPosts] = useState({
-        pages: [
-            {
-                documents: [
-                    {
-                        id: "1",
-                        imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-                        creator: {
-                            id: "1",
-                            name: "John Doe",
-                            imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-                        },
-                    },
-                    {
-                        id: "2",
-                        imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-                        creator: {
-                            id: "2",
-                            name: "Jane Doe",
-                            imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-                        },
-                    },
-                    {
-                        id: "2",
-                        imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-                        creator: {
-                            id: "2",
-                            name: "Jane Doe",
-                            imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-                        },
-                    },
-                    {
-                        id: "2",
-                        imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-                        creator: {
-                            id: "2",
-                            name: "Jane Doe",
-                            imageUrl: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Beautiful-Full-HD-Images.jpg",
-                        },
-                    },
-                ],
-            },
-        ],
-    });
 
     return (
         <div className="explore-container">
@@ -69,11 +24,11 @@ const Explore: React.FC = () => {
             </div>
 
             <div className="flex w-full max-w-5xl flex-wrap gap-9">
-                {
-                    posts.pages.map((item, index) => (
-                        <GridPostList key={`page-${index}`} posts={item.documents}/>
-                    ))
-                }
+                {/*{*/}
+                {/*    posts.pages.map((item, index) => (*/}
+                {/*        <GridPostList key={`page-${index}`} posts={item.documents}/>*/}
+                {/*    ))*/}
+                {/*}*/}
             </div>
         </div>
     );

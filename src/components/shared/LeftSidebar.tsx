@@ -2,7 +2,7 @@ import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 
 import {sidebarLinks} from "@/constants";
 import {Button} from "@/components/ui/button";
-import React from "react";
+import React, {useEffect} from "react";
 import {clsx} from "clsx";
 import {routes} from "@/route";
 import {logout} from "@/services/auth.ts";
@@ -15,8 +15,9 @@ const LeftSidebar = () => {
     const {pathname} = useLocation();
     const {logoutContext, userContext, isLoadingContext} = useUserContext();
 
-    if (isLoadingContext) return <Loader/>;
-
+    if (isLoadingContext || !userContext.nickname) {
+        return <Loader/>;
+    }
     const handleSignOut = async () => {
         await logout()
             .finally(() => {

@@ -13,8 +13,11 @@ export interface User {
     id: string;
     nickname: string;
     fullName: string;
-    gender: 'MALE' | 'FEMALE';
     avatarUrl: string;
+}
+
+export interface UserInfo extends User {
+    gender: 'MALE' | 'FEMALE';
     bio?: string;
     followerNumber?: number;
     followeeNumber?: number;
@@ -51,6 +54,7 @@ export interface PostMetric {
     likeCount: number;
     commentCount: number;
 }
+
 export interface Post {
     creator: Creator;
     id: string;
