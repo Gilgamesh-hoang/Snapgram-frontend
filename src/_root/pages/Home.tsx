@@ -22,7 +22,10 @@ const Home: React.FC = () => {
             setUsers((prev) => [...prev, ...res]);
         });
     }, []);
-
+    const onFollowSuccess = (userId: string) => {
+        // filter out the user who has been followed
+        setUsers((prev) => prev.filter((user) => user.id !== userId));
+    }
 
     return (
         <div className="flex flex-1">
@@ -45,7 +48,9 @@ const Home: React.FC = () => {
                     {users.map((user, index) => (
                         <li key={index}>
                             <UserCard id={user.id} name={user.fullName} imageUrl={user.avatarUrl}
-                                      nickname={user.nickname} key={index}/>
+                                      nickname={user.nickname} key={index}
+                                      onFollowSuccess={onFollowSuccess}
+                            />
                         </li>
                     ))}
 

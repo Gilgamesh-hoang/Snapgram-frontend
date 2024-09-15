@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useState} from "react";
 import * as z from "zod";
 import {ChangePasswordValidation} from "@/validation";
 import {useForm} from "react-hook-form";
@@ -6,13 +6,12 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input} from "@/components/ui";
 import {Loader} from "@/components/shared/index.tsx";
 import {MdOutlineClose} from "react-icons/md";
-import {Toast} from 'primereact/toast';
 import {changePassword} from "@/services/user.ts";
 import Swal from "sweetalert2";
 
 function ChangePasswordPopup({isOpen, onClose}) {
     const [isLoading, setIsLoading] = useState(false);
-    const toast = useRef<Toast>(null);
+    // const toast = useRef<Toast>(null);
     const handleChangePass = async (form: z.infer<typeof ChangePasswordValidation>) => {
         if (isLoading || !isOpen) {
             return;
@@ -54,8 +53,9 @@ function ChangePasswordPopup({isOpen, onClose}) {
     return (
         <>
 
-            <div className="fixed inset-0 flex items-center justify-center backdrop-blur"><Toast ref={toast}
-                                                                                                 position='top-right'/>
+            <div className="fixed inset-0 flex items-center justify-center backdrop-blur">
+                {/*<Toast ref={toast}*/}
+                {/*       position='top-right'/>*/}
                 <div className="relative max-w-lg rounded-lg bg-dark-3 p-8 shadow-lg backdrop-filter-none">
                     <button className='absolute right-2.5 top-2.5'
                             onClick={onClose}

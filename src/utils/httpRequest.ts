@@ -73,3 +73,7 @@ export const httpPut = async <T>(path: string, data?: any, option: AxiosRequestC
     const response: AxiosResponse<T> = await httpRequest.put<T>(path, data, option);
     return response.data;
 }
+export const httpDelete = async <T>(path: string, option: AxiosRequestConfig = {}): Promise<T> => {
+    const response: AxiosResponse<T> = await httpRequest.delete<T>(path, option);
+    return response.data;
+}

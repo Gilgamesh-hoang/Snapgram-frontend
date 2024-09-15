@@ -14,6 +14,7 @@ import Tippy from "@tippyjs/react";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import CarouselPost from "@/components/shared/CarouselPost.tsx";
 import {PAGE_SIZE_COMMENT} from "@/constants";
+import {generateProfileLink} from "@/utils/common.ts";
 
 const PostDetails: React.FC = () => {
     const navigate = useNavigate();
@@ -93,7 +94,7 @@ const PostDetails: React.FC = () => {
                 <div className="post_details-info">
                     <div className="flex-between w-full">
                         <div className="flex items-center gap-3">
-                            <Link to={routes.profile.replace(":nickname/*", post.creator.nickname)}>
+                            <Link to={generateProfileLink(post.creator.nickname)}>
                                 <img
                                     src={post.creator.avatarUrl || "/assets/icons/profile-placeholder.svg"}
                                     alt="creator"
@@ -101,7 +102,7 @@ const PostDetails: React.FC = () => {
                                 />
                             </Link>
                             <div className="flex flex-col gap-1">
-                                <Link to={routes.profile.replace(":nickname/*", post.creator.nickname)}>
+                                <Link to={generateProfileLink(post.creator.nickname)}>
                                     <p className="base-medium lg:body-bold text-light-1">
                                         {post.creator.nickname}
                                     </p>
@@ -209,7 +210,7 @@ const PostDetails: React.FC = () => {
                                     {comments.map((comment, index) => (
                                         <li className='mb-7' key={index}>
                                             <Link className='mb-3 flex items-center'
-                                                  to={routes.profile.replace(":nickname/*", comment.creator.nickname)}>
+                                                  to={generateProfileLink(comment.creator.nickname)}>
                                                 <img
                                                     src={comment.creator.avatarUrl || "/assets/icons/profile-placeholder.svg"}
                                                     alt="user"

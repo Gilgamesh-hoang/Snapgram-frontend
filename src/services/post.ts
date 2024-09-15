@@ -1,4 +1,4 @@
-import {httpGet, httpPost, httpPut} from "@/utils/httpRequest.ts";
+import {httpDelete, httpGet, httpPost, httpPut} from "@/utils/httpRequest.ts";
 import {ApiResponse, Post, PostMetric} from "@/model/type.ts";
 
 
@@ -36,13 +36,22 @@ export const getPostsById = async (id: string) => {
 }
 
 export const savedPost = async (postId: string, isSaved: boolean) => {
-    return await httpPut<ApiResponse>(`/posts/saved`, {postId, isSaved});
+    if (isSaved)
+        return await httpPost<ApiResponse>(`/posts/${postId}/save`);
+    else
+        return await httpDelete<ApiResponse>(`/posts/${postId}/unsaved`);
 }
 export const likedPost = async (postId: string, isLiked: boolean) => {
-    return await httpPut<ApiResponse<PostMetric>>(`/posts/liked`, {postId, isLiked})
-        .then(response => {
-            return response.data;
-        });
+    if (isLiked)
+        return await httpPost<ApiResponse<PostMetric>>(`/posts/${postId}/like`)
+            .then(response => {
+                return response.data;
+            });
+    else
+        return await httpDelete<ApiResponse<PostMetric>>(`/posts/${postId}/unlike`)
+            .then(response => {
+                return response.data;
+            });
 }
 
 export const getPostsByUser = async (nickname: string, pageNum: number, pageSize: number) => {

@@ -58,7 +58,7 @@ export const isNicknameExist = async (nickname: string): Promise<boolean> => {
         return response.data;
     });
 }
-export const friendSuggestions = async (pageNum: number, pageSize:number) => {
+export const friendSuggestions = async (pageNum: number, pageSize: number) => {
     return await httpGet<ApiResponse<User[]>>('/users/friend-suggestions', {
         params: {
             pageNum, pageSize
@@ -84,37 +84,18 @@ export const signup = async (user: SignUpRequest) => {
             }
         });
 }
-export const getFollowers = async (userId: string, pageNum: number, pageSize: number) => {
-    return await httpGet<ApiResponse<User[]>>(`/users/${userId}/followers`, {
-        params: {
-            pageNum, pageSize
-        }
-    }).then(response => {
-        return response.data;
-    });
-}
-export const getFollowings = async (userId: string, pageNum: number, pageSize: number) => {
-    return await httpGet<ApiResponse<User[]>>(`/users/${userId}/following`, {
-        params: {
-            pageNum, pageSize
-        }
-    }).then(response => {
-        return response.data;
-    });
-}
 export const getCurrentUser = async () => {
     return await httpGet<ApiResponse<User>>('/users/me')
         .then(response => {
             return response.data;
         });
-
 }
 export const getUserInfo = async (nickname: string) => {
-    return await httpGet<ApiResponse<UserInfo>>('/users', {params: {nickname}})
+    const nicknameDecode = decodeURIComponent(nickname);
+    return await httpGet<ApiResponse<UserInfo>>('/users', {params: {nickname: nicknameDecode}})
         .then(response => {
             return response.data;
         });
-
 }
 export const editUserInfo = async (value: z.infer<typeof ProfileValidation>) => {
     const requestBody: ProfileRequest = {
@@ -163,7 +144,7 @@ export const changePassword = async (form: z.infer<typeof ChangePasswordValidati
         currentPassword: form.currentPassword,
         newPassword: form.newPassword,
         confirmNewPassword: form.confirmNewPassword
-    },{withCredentials: true}).then(response => {
+    }, {withCredentials: true}).then(response => {
         updateAccessToken(response.data.token);
     });
 }

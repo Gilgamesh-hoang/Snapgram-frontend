@@ -2,13 +2,14 @@ import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 
 import {sidebarLinks} from "@/constants";
 import {Button} from "@/components/ui/button";
-import React, {useEffect} from "react";
+import React from "react";
 import {clsx} from "clsx";
 import {routes} from "@/route";
 import {logout} from "@/services/auth.ts";
 import {INavLink} from "@/model/type.ts";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import {Loader} from "@/components/shared/index.tsx";
+import {generateProfileLink} from "@/utils/common.ts";
 
 const LeftSidebar = () => {
     const navigate = useNavigate();
@@ -39,7 +40,7 @@ const LeftSidebar = () => {
                 </Link>
 
                 <Link
-                    to={routes.profile.replace(':nickname/*', userContext.nickname)}
+                    to={generateProfileLink(userContext.nickname)}
                     className="flex items-center gap-3">
                     <img
                         src={userContext.avatarUrl}

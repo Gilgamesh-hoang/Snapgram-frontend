@@ -3,7 +3,7 @@ import {FileWithPath, useDropzone} from "react-dropzone";
 
 import {Button} from "@/components/ui";
 import {Carousel} from "@/components/shared";
-import {convertFileToUrl} from "@/utils";
+import {convertFileToUrl} from "@/utils/common.ts";
 import {MediaUrl} from "@/model/type.ts";
 
 type FileUploaderProps = {

@@ -57,7 +57,7 @@ const AllUsers: React.FC = () => {
                 setHasMore(false);
             });
         } else {
-            friendSuggestions(page,PAGE_SIZE_FRIEND_SUGGESTION).then((res: User[]) => {
+            friendSuggestions(page, PAGE_SIZE_FRIEND_SUGGESTION).then((res: User[]) => {
                 setUsers((prev) => [...prev, ...res]);
                 if (res.length < PAGE_SIZE_FRIEND_SUGGESTION) {
                     setHasMore(false);
@@ -68,59 +68,67 @@ const AllUsers: React.FC = () => {
         }
     }, [page, searchDebounce]);
 
+    const onFollowSuccess = (userId: string) => {
+        // filter out the user who has been followed
+        setUsers((prev) => prev.filter((user) => user.id !== userId));
+    }
 
     return (
-        <div className="common-container">
-            <div className="user-container">
-                <h2 className="h3-bold md:h2-bold w-full text-left">Người dùng</h2>
+        <>
+            <div className="common-container">
+                <div className="user-container">
+                    <h2 className="h3-bold md:h2-bold w-full text-left">Người dùng</h2>
 
-                <div className="flex w-full">
-                    <form className="relative mr-8 flex w-full max-w-2xl gap-1 rounded-lg bg-dark-4"
-                          onSubmit={(e) => e.preventDefault()}
-                    >
-                        <img className='absolute left-4 top-1/2 -translate-y-1/2'
-                             src="/assets/icons/search.svg"
-                             width={24}
-                             height={24}
-                             alt="search"
-                        />
-                        <Input
-                            type="text"
-                            placeholder="Tìm kiếm"
-                            className="explore-search w-full pl-14"
-                            value={searchValue}
-                            maxLength={50}
-                            onChange={(e) => {
-                                setSearchValue(e.target.value);
-                            }}
-                        />
-                    </form>
-                    <div className=''>
-                        <Button type='button' className='h-full' title='Tải ảnh'>
-                            <AiOutlineCloudUpload size={25}/>
-                        </Button>
+                    <div className="flex w-full">
+                        <form className="relative mr-8 flex w-full max-w-2xl gap-1 rounded-lg bg-dark-4"
+                              onSubmit={(e) => e.preventDefault()}
+                        >
+                            <img className='absolute left-4 top-1/2 -translate-y-1/2'
+                                 src="/assets/icons/search.svg"
+                                 width={24}
+                                 height={24}
+                                 alt="search"
+                            />
+                            <Input
+                                type="text"
+                                placeholder="Tìm kiếm"
+                                className="explore-search w-full pl-14"
+                                value={searchValue}
+                                maxLength={50}
+                                onChange={(e) => {
+                                    setSearchValue(e.target.value);
+                                }}
+                            />
+                        </form>
+                        <div className=''>
+                            <Button type='button' className='h-full' title='Tải ảnh'>
+                                <AiOutlineCloudUpload size={25}/>
+                            </Button>
+                        </div>
+                    </div>
+
+                    <div className='user-grid'>
+                        {users.length > 0 && (
+                            <InfiniteScroll
+                                loader={<Loader/>}
+                                fetchMore={() => setPage((prev) => prev + 1)}
+                                hasMore={hasMore}
+                            >
+                                {users.map((user, index) => (
+                                    <div key={index} className="w-full min-w-[200px] flex-1  ">
+                                        <UserCard id={user.id} name={user.fullName} imageUrl={user.avatarUrl}
+                                                  nickname={user.nickname} key={index}
+                                                  onFollowSuccess={onFollowSuccess}
+                                        />
+                                    </div>
+                                ))}
+                            </InfiniteScroll>
+                        )}
                     </div>
                 </div>
 
-                <div className='user-grid'>
-                    {users.length > 0 && (
-                        <InfiniteScroll
-                            loader={<Loader/>}
-                            fetchMore={() => setPage((prev) => prev + 1)}
-                            hasMore={hasMore}
-                        >
-                            {users.map((user, index) => (
-                                <div key={index} className="w-full min-w-[200px] flex-1  ">
-                                    <UserCard id={user.id} name={user.fullName} imageUrl={user.avatarUrl}
-                                              nickname={user.nickname} key={index}/>
-                                </div>
-                            ))}
-                        </InfiniteScroll>
-                    )}
-                </div>
             </div>
-
-        </div>
+        </>
     );
 }
 

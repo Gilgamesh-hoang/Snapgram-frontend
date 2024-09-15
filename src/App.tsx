@@ -1,5 +1,5 @@
 import "./globals.css";
-
+import "primeicons/primeicons.css";
 import AuthLayout from "./_auth/AuthLayout";
 import RootLayout from "./_root/RootLayout";
 import {Navigate, Outlet, Route, Routes} from "react-router-dom";

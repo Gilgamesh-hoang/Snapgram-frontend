@@ -4,16 +4,6 @@ import React, {useEffect, useState} from "react";
 import {getPostsById} from "@/services/post.ts";
 import {Post} from "@/model/type.ts";
 
-const INITIAL_POST: Post = {
-    id: "",
-    caption: "",
-    media: [],
-    tags: [],
-    likeCount: 0,
-    commentCount: 0,
-    isLiked: false,
-    createdAt: new Date(),
-}
 const EditPost: React.FC = () => {
     const {id} = useParams();
     const [post, setPost] = useState<Post | null>(null);

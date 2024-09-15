@@ -4,6 +4,7 @@ import App from "@/App.tsx";
 import {BrowserRouter} from "react-router-dom";
 import {AuthProvider} from "@/context/AuthContext.tsx";
 import {PrimeReactProvider} from "primereact/api";
+import {ConfirmDialog} from "primereact/confirmdialog";
 
 const rootElement = document.getElementById("root");
 
@@ -14,6 +15,7 @@ if (rootElement) {
         <BrowserRouter>
             <AuthProvider>
                 <PrimeReactProvider>
+                    <ConfirmDialog/>
                     <App/>
                 </PrimeReactProvider>
             </AuthProvider>

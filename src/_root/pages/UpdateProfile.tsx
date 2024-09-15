@@ -16,6 +16,7 @@ import useDebounce from "@/hooks/useDebounce.ts";
 import {routes} from "@/route";
 import Swal from "sweetalert2";
 import ChangePasswordPopup from "@/components/shared/ChangePasswordPopup.tsx";
+import {generateProfileLink} from "@/utils/common.ts";
 
 const UpdateProfile: React.FC = () => {
     const navigate = useNavigate();
@@ -104,7 +105,7 @@ const UpdateProfile: React.FC = () => {
         }
         setIsLoadingState(true);
         editUserInfo(value).then((response) => {
-            navigate(routes.profile.replace(':nickname/*', response.nickname));
+            navigate(generateProfileLink(response.nickname));
         }).catch(() => {
             Swal.fire({
                 icon: 'error',

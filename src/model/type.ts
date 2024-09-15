@@ -33,6 +33,7 @@ export interface MediaUrl {
 export interface Tag {
     name: string;
 }
+export type FollowTab = 'FOLLOWER' | 'FOLLOWING';
 
 export interface Creator {
     id: string;
