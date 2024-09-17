@@ -4,7 +4,7 @@ import {Button} from "@/components/ui";
 import {Loader, PostStats} from "@/components/shared";
 
 import {formatDateString, multiFormatDateString2} from "@/utils/dateUtil";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {getPostsById, savedPost} from "@/services/post.ts";
 import {Comment, Post} from "@/model/type.ts";
 import {getCommentsByPostId} from "@/services/comment.ts";
@@ -15,23 +15,31 @@ import {useUserContext} from "@/context/AuthContext.tsx";
 import CarouselPost from "@/components/shared/CarouselPost.tsx";
 import {PAGE_SIZE_COMMENT} from "@/constants";
 import {generateProfileLink} from "@/utils/common.ts";
+import CommentForm from "@/components/forms/CommentForm.tsx";
+import Avatar from "@/components/shared/Avatar.tsx";
+import {useDispatch} from "react-redux";
+import {setCommentCount} from "@/redux/postSlice.ts";
 
 const PostDetails: React.FC = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const {id} = useParams();
     const {userContext, isLoadingContext} = useUserContext();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [post, setPost] = useState<Post | null>(null);
     const [comments, setComments] = useState<Comment[]>([]);
-    const {id} = useParams();
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [isSaved, setIsSaved] = useState(false);
+    const commentInputRef = useRef<HTMLTextAreaElement>(null);
     useEffect(() => {
         if (id) {
             getPostsById(id).then((data) => {
                 setPost(data);
                 setIsLoading(false)
                 setIsSaved(data.isSaved)
+                // set comment count in redux
+                dispatch(setCommentCount({postId: data.id, count: data.commentCount}));
             }).catch(() => {
                 navigate(-1);
             });
@@ -54,7 +62,9 @@ const PostDetails: React.FC = () => {
     if (!post || isLoading || isLoadingContext) {
         return <Loader/>;
     }
-
+    const onCommentSuccess = (comment: Comment) => {
+        setComments((prev) => [comment, ...prev]);
+    }
     const handleDeletePost = () => {
         navigate(-1);
     };
@@ -194,7 +204,7 @@ const PostDetails: React.FC = () => {
                     <div className="w-full">
                         <hr className=" border border-dark-4/80"/>
                         <div className=" my-4">
-                            <PostStats post={post}/>
+                            <PostStats post={post} commentInputRef={commentInputRef}/>
                         </div>
                         <hr className=" border border-dark-4/80"/>
                     </div>
@@ -211,24 +221,24 @@ const PostDetails: React.FC = () => {
                                         <li className='mb-7' key={index}>
                                             <Link className='mb-3 flex items-center'
                                                   to={generateProfileLink(comment.creator.nickname)}>
-                                                <img
-                                                    src={comment.creator.avatarUrl || "/assets/icons/profile-placeholder.svg"}
-                                                    alt="user"
-                                                    className="mr-3 size-7 rounded-full"
+                                                <Avatar
+                                                    type={0}
+                                                    imageUrl={comment.creator.avatarUrl}
+                                                    style={'mr-3 size-8'}
+                                                    name={comment.creator.fullName}
                                                 />
                                                 <p className='text-light-3'>{comment.creator.nickname}</p>
                                             </Link>
-                                            {/*<div className='mb-3 flex items-center'>*/}
-                                            {/*    <img*/}
-                                            {/*        src={comment.creator.avatarUrl || "/assets/icons/profile-placeholder.svg"}*/}
-                                            {/*        alt="user"*/}
-                                            {/*        className="mr-3 size-7 rounded-full"*/}
-                                            {/*    />*/}
-                                            {/*    <p className='text-light-3'>{comment.creator.nickname}</p>*/}
-                                            {/*</div>*/}
 
                                             <div>
-                                                <p className='small-regular mb-2'>{comment.content}</p>
+                                                <p className='small-regular mb-2'>
+                                                    {comment.content.split('\n').map((line, index) => (
+                                                        <React.Fragment key={index}>
+                                                            {line}
+                                                            <br/>
+                                                        </React.Fragment>
+                                                    ))}
+                                                </p>
                                                 <div className="flex-start gap-2 text-light-3">
                                                     <Tippy
                                                         placement={"bottom-start"}
@@ -262,36 +272,14 @@ const PostDetails: React.FC = () => {
                     </div>
 
                     {/*comment input*/}
-                    <div className='flex h-7 w-full items-center'>
-                        <img
-                            src={"/assets/icons/profile-placeholder.svg"}
-                            alt="user"
-                            className="mr-3 size-7 rounded-full"
-                        />
-
-                        <form className="relative flex w-full gap-5">
-                            <input
-                                type="text"
-                                className="h-9 w-full rounded-md border-none bg-dark-4 px-3 py-2 text-sm placeholder:text-slate-500"
-                                placeholder='Thêm bình luận...'
-                            />
-                            <button className='absolute bottom-1/4 right-3'>
-                                <img
-                                    src={"/assets/icons/send-secondary.svg"}
-                                    alt="send"
-                                    width={20}
-                                    height={20}
-                                    className={'text-secondary-500'}
-                                />
-                            </button>
-                        </form>
+                    <div className='flex h-fit w-full items-center'>
+                        <CommentForm postId={post.id} onCommentSuccess={onCommentSuccess}
+                                    commentInputRef={commentInputRef}/>
                     </div>
                 </div>
             </div>
-
         </div>
-    )
-        ;
+    );
 };
 
 export default PostDetails;

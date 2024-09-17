@@ -61,7 +61,8 @@ const Avatar: React.FC<AvatarProps> = ({type, name, imageUrl, style}) => {
     };
 
     return (
-        <div className={clsx(`relative rounded-full`, style)}>
+        <div className={clsx(`relative rounded-full`)}>
+        {/*<div className={clsx(`relative rounded-full`, style)}>*/}
             {renderAvatar()}
         </div>
     );

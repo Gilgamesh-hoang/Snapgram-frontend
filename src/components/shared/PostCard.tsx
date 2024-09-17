@@ -5,6 +5,7 @@ import {multiFormatDateString} from "@/utils/dateUtil";
 import React, {useState} from "react";
 import CarouselPost from "@/components/shared/CarouselPost.tsx";
 import {MediaUrl} from "@/model/type.ts";
+import CommentForm from "@/components/forms/CommentForm.tsx";
 
 type PostCardProps = {
     post: {
@@ -91,27 +92,28 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
 
             {/*comment*/}
             <div className='mt-6 flex h-7 w-full items-center'>
-                <img
-                    src={"/assets/icons/profile-placeholder.svg"}
-                    alt="user"
-                    className="mr-3 size-7 rounded-full"
-                />
+                <CommentForm/>
+                {/*<img*/}
+                {/*    src={"/assets/icons/profile-placeholder.svg"}*/}
+                {/*    alt="user"*/}
+                {/*    className="mr-3 size-7 rounded-full"*/}
+                {/*/>*/}
 
-                <form className="relative flex w-full gap-5">
-                    <input
-                        type="text"
-                        className="h-9 w-full rounded-md border-none bg-dark-4 px-3 py-2 text-sm placeholder:text-slate-500"
-                        placeholder='Thêm bình luận...'
-                    />
-                    <button className='absolute bottom-1/4 right-3'>
-                        <img
-                            src={"/assets/icons/send-secondary.svg"}
-                            alt="send"
-                            width={20}
-                            height={20}
-                        />
-                    </button>
-                </form>
+                {/*<form className="relative flex w-full gap-5">*/}
+                {/*    <input*/}
+                {/*        type="text"*/}
+                {/*        className="h-9 w-full rounded-md border-none bg-dark-4 px-3 py-2 text-sm placeholder:text-slate-500"*/}
+                {/*        placeholder='Thêm bình luận...'*/}
+                {/*    />*/}
+                {/*    <button className='absolute bottom-1/4 right-3'>*/}
+                {/*        <img*/}
+                {/*            src={"/assets/icons/send-secondary.svg"}*/}
+                {/*            alt="send"*/}
+                {/*            width={20}*/}
+                {/*            height={20}*/}
+                {/*        />*/}
+                {/*    </button>*/}
+                {/*</form>*/}
 
             </div>
         </div>

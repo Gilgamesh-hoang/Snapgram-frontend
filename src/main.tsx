@@ -5,6 +5,8 @@ import {BrowserRouter} from "react-router-dom";
 import {AuthProvider} from "@/context/AuthContext.tsx";
 import {PrimeReactProvider} from "primereact/api";
 import {ConfirmDialog} from "primereact/confirmdialog";
+import {Provider} from "react-redux";
+import store from "@/redux/store.ts";
 
 const rootElement = document.getElementById("root");
 
@@ -16,7 +18,9 @@ if (rootElement) {
             <AuthProvider>
                 <PrimeReactProvider>
                     <ConfirmDialog/>
-                    <App/>
+                    <Provider store={store}>
+                        <App />
+                    </Provider>
                 </PrimeReactProvider>
             </AuthProvider>
         </BrowserRouter>

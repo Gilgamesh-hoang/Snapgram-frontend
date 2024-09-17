@@ -1,19 +1,27 @@
-import {FC, useState} from "react";
-import {Link, useLocation} from "react-router-dom";
-import {Post} from "@/model/type.ts";
+import React, {FC, RefObject, useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
 import {likedPost} from "@/services/post.ts";
+import {Post} from "@/model/type.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "@/redux/store.ts";
+import {updateCommentCount} from "@/redux/postSlice.ts";
 
 type PostStatsProps = {
-    userId?: string;
     post: Post;
     isShowShare?: boolean;
+    commentInputRef?: RefObject<HTMLTextAreaElement>;
 };
 
-const PostStats: FC<PostStatsProps> = ({post, userId, isShowShare = false}) => {
-    const location = useLocation();
+const PostStats: FC<PostStatsProps> = ({post, isShowShare = false, commentInputRef}) => {
+    const location = useLocation();const dispatch = useDispatch();
     const [isLiked, setIsLiked] = useState<boolean>(post.isLiked);
     const [likeCount, setLikeCount] = useState<number>(post.likeCount);
-    const [commentCount, setCommentCount] = useState<number>(post.commentCount);
+    const commentCountState = useSelector((state: RootState) => state.post.commentCounts[post.id] || post.commentCount);
+    const [commentCount, setCommentCount] = useState<number>(commentCountState);
+
+    useEffect(() => {
+        setCommentCount(commentCountState);
+    }, [commentCountState]);
 
     const handleLike = () => {
         const oldValue = isLiked;
@@ -23,6 +31,7 @@ const PostStats: FC<PostStatsProps> = ({post, userId, isShowShare = false}) => {
             .then((metric) => {
                 setLikeCount(metric.likeCount);
                 setCommentCount(metric.commentCount)
+                dispatch(updateCommentCount({postId: post.id, count: metric.commentCount}));
             })
             .catch(() => {
                 setIsLiked(oldValue);
@@ -48,20 +57,16 @@ const PostStats: FC<PostStatsProps> = ({post, userId, isShowShare = false}) => {
                     />
                     <p className="small-medium lg:base-medium">{likeCount}</p>
                 </div>
-                <Link
-                    to={`/posts/1`}
-                >
-                    <div className="flex gap-2">
-                        <img
-                            src={'/assets/icons/comment.svg'}
-                            alt="comment"
-                            width={20}
-                            height={20}
-                            className="cursor-pointer"
-                        />
-                        <p className="small-medium lg:base-medium">{commentCount}</p>
-                    </div>
-                </Link>
+                <div className="flex gap-2" onClick={() => commentInputRef?.current?.focus()}>
+                    <img
+                        src={'/assets/icons/comment.svg'}
+                        alt="comment"
+                        width={20}
+                        height={20}
+                        className="cursor-pointer"
+                    />
+                    <p className="small-medium lg:base-medium">{commentCount}</p>
+                </div>
                 {isShowShare && (
                     <div className="ml-7 flex gap-2">
                         <img
@@ -75,8 +80,6 @@ const PostStats: FC<PostStatsProps> = ({post, userId, isShowShare = false}) => {
                     </div>
                 )}
             </div>
-
-
         </div>
     );
 };
