@@ -19,6 +19,7 @@ import CommentForm from "@/components/forms/CommentForm.tsx";
 import Avatar from "@/components/shared/Avatar.tsx";
 import {useDispatch} from "react-redux";
 import {setCommentCount} from "@/redux/postSlice.ts";
+import CommentNested from "@/components/shared/CommentNested.tsx";
 
 const PostDetails: React.FC = () => {
     const dispatch = useDispatch();
@@ -63,7 +64,7 @@ const PostDetails: React.FC = () => {
         return <Loader/>;
     }
     const onCommentSuccess = (comment: Comment) => {
-        setComments((prev) => [comment, ...prev]);
+        setComments((prev) => [{ ...comment, replyCount: 0 }, ...prev]);
     }
     const handleDeletePost = () => {
         navigate(-1);
@@ -210,7 +211,7 @@ const PostDetails: React.FC = () => {
                     </div>
                     {/*show comments*/}
                     <div className='show_comments-container'>
-                        <ul className='flex flex-col'>
+                        <div className='flex flex-col'>
                             {comments.length > 0 && (
                                 <InfiniteScroll
                                     loader={<Loader/>}
@@ -218,57 +219,11 @@ const PostDetails: React.FC = () => {
                                     hasMore={hasMore}
                                 >
                                     {comments.map((comment, index) => (
-                                        <li className='mb-7' key={index}>
-                                            <Link className='mb-3 flex items-center'
-                                                  to={generateProfileLink(comment.creator.nickname)}>
-                                                <Avatar
-                                                    type={0}
-                                                    imageUrl={comment.creator.avatarUrl}
-                                                    style={'mr-3 size-8'}
-                                                    name={comment.creator.fullName}
-                                                />
-                                                <p className='text-light-3'>{comment.creator.nickname}</p>
-                                            </Link>
-
-                                            <div>
-                                                <p className='small-regular mb-2'>
-                                                    {comment.content.split('\n').map((line, index) => (
-                                                        <React.Fragment key={index}>
-                                                            {line}
-                                                            <br/>
-                                                        </React.Fragment>
-                                                    ))}
-                                                </p>
-                                                <div className="flex-start gap-2 text-light-3">
-                                                    <Tippy
-                                                        placement={"bottom-start"}
-                                                        delay={[200, 0]}
-                                                        offset={[0, -2]}
-                                                        content={
-                                                            <div
-                                                                className="subtle-semibold rounded-xl bg-white p-2 text-dark-2">
-                                                                {formatDateString(post.createdAt)}
-                                                            </div>}
-                                                    >
-                                                        <p className="subtle-semibold lg:small-regular me-3">
-                                                            {multiFormatDateString2(comment.createdAt)}
-                                                        </p>
-                                                    </Tippy>
-
-                                                    <div className='flex cursor-pointer items-center'>
-                                                        <img
-                                                            src={"/assets/icons/reply.svg"}
-                                                            alt="reply"
-                                                        />
-                                                        <span className='ms-1.5 text-light-2'>Trả lời</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        <CommentNested key={index} postId={post.id} level={comment.level} comment={comment} replyCount={comment.replyCount}/>
                                     ))}
                                 </InfiniteScroll>
                             )}
-                        </ul>
+                        </div>
                     </div>
 
                     {/*comment input*/}

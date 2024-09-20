@@ -46,9 +46,11 @@ export interface Comment {
     id: string;
     creator: Creator;
     content: string;
-    parentComment: Comment;
+    parentCommentId: string | null;
+    level: number;
     createdAt: string;
     likeCount: number;
+    replyCount: number;
 }
 
 export interface PostMetric {
