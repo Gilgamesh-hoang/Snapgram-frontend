@@ -1,4 +1,4 @@
-import {httpGet, httpPost} from "@/utils/httpRequest.ts";
+import {httpDelete, httpGet, httpPost, httpPut} from "@/utils/httpRequest.ts";
 import {ApiResponse, Comment} from "@/model/type.ts";
 
 export const getCommentsByPostId = async (postId: string, pageNum: number, pageSize: number) => {
@@ -19,8 +19,20 @@ export const createComment = async (postId: string, content: string) => {
             return response.data;
         });
 }
-export const replyComment = async (postId: string, parentCommentId: string, content: string) => {
-    return await httpPost<ApiResponse<Comment>>(`/comments/reply`, {postId, parentCommentId,content})
+export const replyComment = async (parentCommentId: string, content: string) => {
+    return await httpPost<ApiResponse<Comment>>(`/comments/reply`, {parentCommentId,content})
+        .then(response => {
+            return response.data;
+        });
+}
+export const editComment = async (commentId: string, content: string) => {
+    return await httpPut<ApiResponse<Comment>>(`/comments/${commentId}`, {content})
+        .then(response => {
+            return response.data;
+        });
+}
+export const deleteComment = async (commentId: string) => {
+    return await httpDelete<ApiResponse<number>>(`/comments/${commentId}`)
         .then(response => {
             return response.data;
         });

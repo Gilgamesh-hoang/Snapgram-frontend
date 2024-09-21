@@ -1,18 +1,18 @@
 import React, {ChangeEvent, FC, useRef} from "react";
-import {Comment, Creator} from "@/model/type.ts";
+import {Comment} from "@/model/type.ts";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import Avatar from "@/components/shared/Avatar.tsx";
 import {useDispatch} from "react-redux";
 import {incrementCommentCount} from "@/redux/postSlice.ts";
 import {createComment} from "@/services/comment.ts";
 
-interface CommentProps {
+interface CommentFormProps {
     postId: string;
     onCommentSuccess: (comment: Comment) => void;
     commentInputRef: React.RefObject<HTMLTextAreaElement>;
 }
 
-const CommentForm: FC<CommentProps> = ({postId, onCommentSuccess, commentInputRef}) => {
+const CommentForm: FC<CommentFormProps> = ({postId, onCommentSuccess, commentInputRef}) => {
     const submitRef = useRef<HTMLButtonElement>(null);
     const {userContext} = useUserContext();
     const dispatch = useDispatch();
@@ -46,7 +46,6 @@ const CommentForm: FC<CommentProps> = ({postId, onCommentSuccess, commentInputRe
                 style={'mr-3 size-8'}
                 name={userContext.fullName}
             />
-
             <form onSubmit={handleSubmit} className="relative flex w-full gap-5">
                 <textarea
                     rows={1}
@@ -78,4 +77,6 @@ const CommentForm: FC<CommentProps> = ({postId, onCommentSuccess, commentInputRe
         </>
     );
 }
+
+
 export default CommentForm;

@@ -7,19 +7,19 @@ import {formatDateString, multiFormatDateString2} from "@/utils/dateUtil";
 import React, {useEffect, useRef, useState} from "react";
 import {getPostsById, savedPost} from "@/services/post.ts";
 import {Comment, Post} from "@/model/type.ts";
-import {getCommentsByPostId} from "@/services/comment.ts";
 import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import {routes} from "@/route";
 import Tippy from "@tippyjs/react";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import CarouselPost from "@/components/shared/CarouselPost.tsx";
-import {PAGE_SIZE_COMMENT} from "@/constants";
 import {generateProfileLink} from "@/utils/common.ts";
 import CommentForm from "@/components/forms/CommentForm.tsx";
-import Avatar from "@/components/shared/Avatar.tsx";
 import {useDispatch} from "react-redux";
 import {setCommentCount} from "@/redux/postSlice.ts";
+import useNode from "@/hooks/useNode.ts";
 import CommentNested from "@/components/shared/CommentNested.tsx";
+import {getCommentsByPostId} from "@/services/comment.ts";
+import {PAGE_SIZE_COMMENT} from "@/constants";
 
 const PostDetails: React.FC = () => {
     const dispatch = useDispatch();
@@ -33,6 +33,23 @@ const PostDetails: React.FC = () => {
     const [hasMore, setHasMore] = useState(true);
     const [isSaved, setIsSaved] = useState(false);
     const commentInputRef = useRef<HTMLTextAreaElement>(null);
+    const {insertNode, editNode, deleteNode} = useNode();
+
+    const handleInsertNode = (parentId: string | null, item: Comment | Comment[], placement?: 'BEGIN' | 'END') => {
+        const finalStructure = insertNode(comments, parentId, item, placement);
+        setComments(finalStructure);
+    };
+
+    const handleEditNode = (commentId: string, content: string) => {
+        const finalStructure = editNode(comments, commentId, content);
+        setComments(finalStructure);
+    };
+
+    const handleDeleteNode = (commentId: string) => {
+        const finalStructure = deleteNode(comments, commentId);
+        setComments(finalStructure);
+    };
+
     useEffect(() => {
         if (id) {
             getPostsById(id).then((data) => {
@@ -64,7 +81,7 @@ const PostDetails: React.FC = () => {
         return <Loader/>;
     }
     const onCommentSuccess = (comment: Comment) => {
-        setComments((prev) => [{ ...comment, replyCount: 0 }, ...prev]);
+        handleInsertNode(null, comment);
     }
     const handleDeletePost = () => {
         navigate(-1);
@@ -218,9 +235,17 @@ const PostDetails: React.FC = () => {
                                     fetchMore={() => setPage((prev) => prev + 1)}
                                     hasMore={hasMore}
                                 >
-                                    {comments.map((comment, index) => (
-                                        <CommentNested key={index} postId={post.id} level={comment.level} comment={comment} replyCount={comment.replyCount}/>
+                                    {comments.map((item, index) => (
+
+                                        <CommentNested
+                                            key={index}
+                                            handleInsertNode={handleInsertNode}
+                                            handleEditNode={handleEditNode}
+                                            handleDeleteNode={handleDeleteNode}
+                                            comment={item} post={post}
+                                        />
                                     ))}
+
                                 </InfiniteScroll>
                             )}
                         </div>
@@ -229,12 +254,12 @@ const PostDetails: React.FC = () => {
                     {/*comment input*/}
                     <div className='flex h-fit w-full items-center'>
                         <CommentForm postId={post.id} onCommentSuccess={onCommentSuccess}
-                                    commentInputRef={commentInputRef}/>
+                                     commentInputRef={commentInputRef}/>
                     </div>
                 </div>
             </div>
         </div>
-    );
+    )
+        ;
 };
-
 export default PostDetails;

@@ -47,6 +47,7 @@ export interface Comment {
     creator: Creator;
     content: string;
     parentCommentId: string | null;
+    items: Comment[];
     level: number;
     createdAt: string;
     likeCount: number;
