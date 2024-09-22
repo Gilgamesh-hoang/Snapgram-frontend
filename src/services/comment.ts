@@ -37,3 +37,21 @@ export const deleteComment = async (commentId: string) => {
             return response.data;
         });
 }
+export const likedComment = async (commentId: string, isLiked: boolean) => {
+    if (isLiked)
+        return await httpPost<ApiResponse<number>>(`/comments/${commentId}/like`)
+            .then(response => {
+                return response.data;
+            });
+    else
+        return await httpDelete<ApiResponse<number>>(`/comments/${commentId}/unlike`)
+            .then(response => {
+                return response.data;
+            });
+}
+export const filterLiked = async (commentIds: string[]) => {
+    return await httpPost<ApiResponse<string[]>>(`/comments/liked-by-user/filter` , commentIds)
+        .then(response => {
+            return response.data;
+        });
+}

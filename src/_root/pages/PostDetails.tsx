@@ -16,13 +16,15 @@ import {generateProfileLink} from "@/utils/common.ts";
 import CommentForm from "@/components/forms/CommentForm.tsx";
 import {useDispatch} from "react-redux";
 import {setCommentCount} from "@/redux/postSlice.ts";
-import useNode from "@/hooks/useNode.ts";
+import useCommentNode from "@/hooks/useCommentNode.ts";
 import CommentNested from "@/components/shared/CommentNested.tsx";
-import {getCommentsByPostId} from "@/services/comment.ts";
+import {filterLiked, getCommentsByPostId} from "@/services/comment.ts";
 import {PAGE_SIZE_COMMENT} from "@/constants";
+import {AppDispatch} from "@/redux/store.ts";
+import Element = React.JSX.Element;
 
 const PostDetails: React.FC = () => {
-    const dispatch = useDispatch();
+    const dispatch =  useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const {id} = useParams();
     const {userContext, isLoadingContext} = useUserContext();
@@ -33,7 +35,9 @@ const PostDetails: React.FC = () => {
     const [hasMore, setHasMore] = useState(true);
     const [isSaved, setIsSaved] = useState(false);
     const commentInputRef = useRef<HTMLTextAreaElement>(null);
-    const {insertNode, editNode, deleteNode} = useNode();
+    const [commentLikedIds, setCommentLikedIds] = useState<string[]>([]);
+    const [isFilterCommentLikedFetching, setIsFilterCommentLikedFetching] = useState(false);
+    const {insertNode, editNode, deleteNode} = useCommentNode();
 
     const handleInsertNode = (parentId: string | null, item: Comment | Comment[], placement?: 'BEGIN' | 'END') => {
         const finalStructure = insertNode(comments, parentId, item, placement);
@@ -49,6 +53,7 @@ const PostDetails: React.FC = () => {
         const finalStructure = deleteNode(comments, commentId);
         setComments(finalStructure);
     };
+
 
     useEffect(() => {
         if (id) {
@@ -66,14 +71,25 @@ const PostDetails: React.FC = () => {
 
     useEffect(() => {
         if (id) {
-            getCommentsByPostId(id, page, PAGE_SIZE_COMMENT).then((data) => {
-                setComments((prev) => [...prev, ...data]);
-                if (data.length < PAGE_SIZE_COMMENT) {
+            getCommentsByPostId(id, page, PAGE_SIZE_COMMENT)
+                .then((data) => {
+                    setComments((prev) => [...prev, ...data]);
+                    if (data.length < PAGE_SIZE_COMMENT) {
+                        setHasMore(false);
+                    }
+                    return data.map((item) => item.id);
+                })
+                .then((commentIds) => {
+                    setIsFilterCommentLikedFetching(true);
+                    filterLiked(commentIds).then((data: string[]) => {
+                        setCommentLikedIds(prev => [...prev, ...data]);
+                    }).finally(() => {
+                        setIsFilterCommentLikedFetching(false);
+                    });
+                })
+                .catch(() => {
                     setHasMore(false);
-                }
-            }).catch(() => {
-                setHasMore(false);
-            });
+                });
         }
     }, [page]);
 
@@ -94,6 +110,32 @@ const PostDetails: React.FC = () => {
         savedPost(post.id, newValue).catch(() => {
             setIsSaved(oldValue);
         })
+    }
+
+    const renderComment = () => {
+        if (isFilterCommentLikedFetching) {
+            return <Loader/>;
+        }
+        const results: Element[] = [];
+
+        comments.forEach((item) => {
+            if (commentLikedIds.includes(item.id)) {
+                item.isLiked = true;
+            }
+            results.push(
+                <CommentNested
+                    key={item.id}
+                    commentLikedIds={commentLikedIds}
+                    setCommentLikedIds={setCommentLikedIds}
+                    handleInsertNode={handleInsertNode}
+                    handleEditNode={handleEditNode}
+                    handleDeleteNode={handleDeleteNode}
+                    comment={item}
+                    post={post}
+                />
+            );
+        });
+        return results;
     }
 
     return (
@@ -235,16 +277,7 @@ const PostDetails: React.FC = () => {
                                     fetchMore={() => setPage((prev) => prev + 1)}
                                     hasMore={hasMore}
                                 >
-                                    {comments.map((item, index) => (
-
-                                        <CommentNested
-                                            key={index}
-                                            handleInsertNode={handleInsertNode}
-                                            handleEditNode={handleEditNode}
-                                            handleDeleteNode={handleDeleteNode}
-                                            comment={item} post={post}
-                                        />
-                                    ))}
+                                    {renderComment()}
 
                                 </InfiniteScroll>
                             )}

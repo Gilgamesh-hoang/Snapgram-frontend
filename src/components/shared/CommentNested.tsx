@@ -6,11 +6,20 @@ import Avatar from "@/components/shared/Avatar.tsx";
 import {Comment, Post} from "@/model/type.ts";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import {useDispatch} from "react-redux";
-import {deleteComment, editComment, getRepliesByComment, replyComment} from "@/services/comment.ts";
+import {
+    deleteComment,
+    editComment,
+    filterLiked,
+    getRepliesByComment,
+    likedComment,
+    replyComment
+} from "@/services/comment.ts";
 import {adjustCommentCount, incrementCommentCount} from "@/redux/postSlice.ts";
 import Tippy from "@tippyjs/react";
 import {IoIosMore} from "react-icons/io";
 import {formatDateString, multiFormatDateString2} from "@/utils/dateUtil.ts";
+import {Loader} from "@/components/shared/index.tsx";
+import {AppDispatch} from "@/redux/store.ts";
 import Element = React.JSX.Element;
 
 interface CommentNestedProps {
@@ -19,18 +28,22 @@ interface CommentNestedProps {
     handleInsertNode: (parentId: string, item: Comment | Comment[], placement?: 'BEGIN' | 'END') => void;
     handleEditNode: (commentId: string, content: string) => void;
     handleDeleteNode: (commentId: string) => void;
+    commentLikedIds: string[];
+    setCommentLikedIds: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const CommentNested: FC<CommentNestedProps> = ({
-                                                      post,
-                                                      handleInsertNode,
-                                                      handleEditNode,
-                                                      handleDeleteNode,
-                                                      comment,
-                                                  }) => {
+                                                   post,
+                                                   handleInsertNode,
+                                                   handleEditNode,
+                                                   handleDeleteNode,
+                                                   comment,
+                                                   commentLikedIds,
+                                                   setCommentLikedIds
+                                               }) => {
     const submitRef = useRef<HTMLButtonElement>(null);
     const commentInputRef = useRef<HTMLTextAreaElement>(null);
-    const dispatch = useDispatch();
+    const dispatch =useDispatch<AppDispatch>();
     const {userContext} = useUserContext();
     const [editMode, setEditMode] = useState(false);
     const [editContent, setEditContent] = useState(comment.content);
@@ -39,7 +52,10 @@ const CommentNested: FC<CommentNestedProps> = ({
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [replyCountState, setReplyCountState] = useState(comment.replyCount);
-    const [visible, setVisible] = useState(false);
+    const [isOpenOption, setIsOpenOption] = useState(false);
+    const [isLiked, setIsLiked] = useState<boolean>(comment.isLiked);
+    const [likeCount, setLikeCount] = useState<number>(comment.likeCount);
+    const [isFilterCommentLikedFetching, setIsFilterCommentLikedFetching] = useState(false);
 
     useEffect(() => {
         setEditContent(comment.content);
@@ -87,23 +103,28 @@ const CommentNested: FC<CommentNestedProps> = ({
                 } else {
                     setPage(page + 1);
                 }
+                return comments.map((item) => item.id);
+            })
+            .then((commentIds) => {
+                setIsFilterCommentLikedFetching(true);
+                filterLiked(commentIds).then((data: string[]) => {
+                    setCommentLikedIds(prev => [...prev, ...data]);
+                }).finally(() => {
+                    setIsFilterCommentLikedFetching(false);
+                });
             })
             .catch(() => {
                 setHasMore(false);
             })
     }
 
-    const handleButtonClick = () => {
-        setVisible((prevVisible) => !prevVisible);
-    };
-
     const handleClickOutside = () => {
-        setVisible(false); // Hide Tippy when clicking outside
+        setIsOpenOption(false); // Hide Tippy when clicking outside
     };
 
     const handleEditButton = () => {
         setEditMode(true);
-        setVisible(false);
+        setIsOpenOption(false);
     }
 
     const renderContentOptions = () => {
@@ -140,11 +161,13 @@ const CommentNested: FC<CommentNestedProps> = ({
                             {editButton}
                         </div>}
                     placement='right-end'
-                    visible={visible}
+                    visible={isOpenOption}
                     interactive={true}
                     onClickOutside={handleClickOutside}
                 >
-                    <div onClick={handleButtonClick}>
+                    <div onClick={() => {
+                        setIsOpenOption((prevVisible) => !prevVisible)
+                    }}>
                         <IoIosMore className='cursor-pointer text-gray-500' size={25}/>
                     </div>
                 </Tippy>
@@ -181,6 +204,48 @@ const CommentNested: FC<CommentNestedProps> = ({
         }
     }
 
+    const handleLike = () => {
+        const oldValue = isLiked;
+        const newValue = !isLiked;
+        setIsLiked(newValue);
+        likedComment(comment.id, newValue)
+            .then((res) => {
+                setLikeCount(res);
+                if (newValue) {
+                    setCommentLikedIds((prev) => [...prev, comment.id]);
+                } else {
+                    setCommentLikedIds((prev) => prev.filter((id) => id !== comment.id));
+                }
+            })
+            .catch(() => {
+                setIsLiked(oldValue);
+            })
+    }
+
+    const renderComment = () => {
+        if (isFilterCommentLikedFetching) {
+            return <Loader/>;
+        }
+        const results: Element[] = [];
+        comment?.items?.forEach((comment, index) => {
+            if (commentLikedIds.includes(comment.id)) {
+                comment.isLiked = true;
+            }
+            results.push(
+                <CommentNested
+                    key={comment.id}
+                    commentLikedIds={commentLikedIds}
+                    setCommentLikedIds={setCommentLikedIds}
+                    handleInsertNode={handleInsertNode}
+                    handleEditNode={handleEditNode}
+                    handleDeleteNode={handleDeleteNode}
+                    comment={comment}
+                    post={post}
+                />
+            );
+        });
+        return results;
+    }
     return (
         <>
             <div className={clsx('mb-4 flex', {'mt-3': comment.level === 1})}>
@@ -254,15 +319,18 @@ const CommentNested: FC<CommentNestedProps> = ({
                                 </p>
                             </Tippy>
 
-                            <div className="flex gap-1">
+                            <div className="flex gap-2">
                                 <img
-                                    src={`/assets/icons/liked.svg`}
+                                    src={`${
+                                        isLiked ? "/assets/icons/liked.svg" : "/assets/icons/like.svg"
+                                    }`}
                                     alt="like"
-                                    width={20}
-                                    height={20}
+                                    width={17}
+                                    height={17}
                                     className="cursor-pointer"
+                                    onClick={handleLike}
                                 />
-                                <p className="small-medium lg:base-medium">10</p>
+                                <p className="small-medium lg:base-medium">{likeCount}</p>
                             </div>
 
                             {comment.level === 0 &&
@@ -300,14 +368,7 @@ const CommentNested: FC<CommentNestedProps> = ({
                             </div>
                         )}
                         {showCommentChild && comment.level === 0 && (
-                            comment?.items?.map((comment, index) => (
-                                <CommentNested key={index}
-                                               post={post}
-                                               comment={comment}
-                                               handleInsertNode={handleInsertNode}
-                                               handleEditNode={handleEditNode}
-                                               handleDeleteNode={handleDeleteNode}/>
-                            ))
+                            renderComment()
                         )}
                         {comment.level === 0 && replyCountState > 0 && hasMore &&
                             <button className='small-regular mt-4 text-gray-500'

@@ -1,6 +1,6 @@
 import {Comment} from "@/model/type.ts";
 
-const useNode = () => {
+const useCommentNode = () => {
     const insertNode = (tree: Comment[], parentId: string | null, item: Comment | Comment[], placement: 'BEGIN' | 'END' = 'BEGIN'): Comment[] => {
         const temp = [...tree];
         if (parentId === null) {
@@ -75,4 +75,4 @@ const useNode = () => {
     return {insertNode, editNode, deleteNode};
 };
 
-export default useNode;
+export default useCommentNode;
