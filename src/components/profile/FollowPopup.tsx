@@ -6,7 +6,7 @@ import {filterFollow, getFollowers, getFollowings} from "@/services/follow.ts";
 import {PAGE_SIZE_USER_FOLLOW} from "@/constants";
 import {searchUserFollowers, searchUserFollowing} from "@/services/search.ts";
 import UserItem from "@/components/shared/UserItem.tsx";
-import {Loader} from "@/components/shared/index.tsx";
+import {Loader} from "@/components/shared";
 import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import Element = React.JSX.Element;

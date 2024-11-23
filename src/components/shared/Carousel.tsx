@@ -11,6 +11,7 @@ type CarouselProps = {
 };
 const Carousel: React.FC<CarouselProps> = ({sources, callback, isShowClose = false}) => {
     const [slide, setSlide] = useState(0);
+    const isShowArrows = sources.length > 1;
 
     const nextSlide = () => {
         setSlide(slide === sources.length - 1 ? 0 : slide + 1);
@@ -23,13 +24,15 @@ const Carousel: React.FC<CarouselProps> = ({sources, callback, isShowClose = fal
     const useCallback = (index: number) => {
         if (index === sources.length - 1)
             prevSlide();
-        if(callback)
+        if (callback)
             callback(index);
     }
 
     return (
         <div className="carousel">
-            <IoIosArrowDropleftCircle onClick={prevSlide} className="arrow arrow-left"/>
+            {/*<IoIosArrowDropleftCircle onClick={prevSlide} className="arrow arrow-left "/>*/}
+            <IoIosArrowDropleftCircle onClick={prevSlide}
+                                      className={clsx('arrow arrow-left ', {'hidden': !isShowArrows})}/>
 
             {sources.map((item, idx) => {
                 return (
@@ -64,9 +67,11 @@ const Carousel: React.FC<CarouselProps> = ({sources, callback, isShowClose = fal
                 );
             })}
 
-            <IoIosArrowDroprightCircle onClick={nextSlide} className="arrow arrow-right"/>
-
-            <span className="indicators">
+            {/*<IoIosArrowDroprightCircle onClick={nextSlide} className="arrow arrow-right"/>*/}
+            <IoIosArrowDroprightCircle onClick={nextSlide}
+                                       className={clsx('arrow arrow-right ', {'hidden': !isShowArrows})}/>
+            {isShowArrows &&
+                <span className="indicators">
                 {sources.map((_, idx) => {
                     return (
                         <button
@@ -80,6 +85,7 @@ const Carousel: React.FC<CarouselProps> = ({sources, callback, isShowClose = fal
                     );
                 })}
             </span>
+            }
         </div>
     );
 };

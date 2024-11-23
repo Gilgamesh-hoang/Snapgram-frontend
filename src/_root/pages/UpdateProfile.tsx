@@ -15,7 +15,7 @@ import {editUserInfo, getUserInfo, isEmailExist, isNicknameExist} from "@/servic
 import useDebounce from "@/hooks/useDebounce.ts";
 import {routes} from "@/route";
 import Swal from "sweetalert2";
-import ChangePasswordPopup from "@/components/shared/ChangePasswordPopup.tsx";
+import ChangePasswordPopup from "@/components/profile/ChangePasswordPopup.tsx";
 import {generateProfileLink} from "@/utils/common.ts";
 
 const UpdateProfile: React.FC = () => {

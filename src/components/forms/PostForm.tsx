@@ -8,7 +8,7 @@ import {FileUploader, Loader} from "@/components/shared";
 import {Post} from "@/model/type.ts";
 import {createPost, updatePost} from "@/services/post.ts";
 import React, {FC, useEffect, useState} from "react";
-import TagsInput from "@/components/TagsInput.tsx";
+import TagsInput from "@/components/shared/TagsInput.tsx";
 import {BsFillTagsFill} from "react-icons/bs";
 import axios from "axios";
 import Swal from "sweetalert2";

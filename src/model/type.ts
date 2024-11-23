@@ -33,6 +33,7 @@ export interface MediaUrl {
 export interface Tag {
     name: string;
 }
+
 export type FollowTab = 'FOLLOWER' | 'FOLLOWING';
 
 export interface Creator {
@@ -40,6 +41,22 @@ export interface Creator {
     nickname: string;
     fullName: string;
     avatarUrl: string;
+}
+
+export interface CloudinarySignature {
+    apiKey: string;
+    timestamp: number;
+    folder: string;
+    signature: string;
+    publicId: string;
+}
+
+export interface CloudinaryMedia {
+    url: string;
+    version: number;
+    signature: string;
+    publicId: string;
+    resourceType: string;
 }
 
 export interface Comment {

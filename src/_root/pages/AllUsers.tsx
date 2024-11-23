@@ -9,6 +9,8 @@ import {User} from "@/model/type.ts";
 import {useLocation, useNavigate} from "react-router-dom";
 import {friendSuggestions} from "@/services/user.ts";
 import {PAGE_SIZE_ALL_USER, PAGE_SIZE_FRIEND_SUGGESTION} from "@/constants";
+import ChangePasswordPopup from "@/components/profile/ChangePasswordPopup.tsx";
+import SearchUserPopup from "@/components/shared/SearchUserPopup.tsx";
 
 
 const AllUsers: React.FC = () => {
@@ -17,7 +19,7 @@ const AllUsers: React.FC = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const initialSearchValue = decodeURIComponent(queryParams.get('q') || "");
-
+    const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
     const [searchValue, setSearchValue] = useState(initialSearchValue);
     const searchDebounce = useDebounce(searchValue, 500);
     const [page, setPage] = useState(1);
@@ -73,6 +75,10 @@ const AllUsers: React.FC = () => {
         setUsers((prev) => prev.filter((user) => user.id !== userId));
     }
 
+    function togglePopup() {
+        setIsSearchPopupOpen(!isSearchPopupOpen);
+    }
+
     return (
         <>
             <div className="common-container">
@@ -101,7 +107,7 @@ const AllUsers: React.FC = () => {
                             />
                         </form>
                         <div className=''>
-                            <Button type='button' className='h-full' title='Tải ảnh'>
+                            <Button onClick={togglePopup} type='button' className='h-full' title='Tải ảnh'>
                                 <AiOutlineCloudUpload size={25}/>
                             </Button>
                         </div>
@@ -126,7 +132,7 @@ const AllUsers: React.FC = () => {
                         )}
                     </div>
                 </div>
-
+                {isSearchPopupOpen && <SearchUserPopup isOpen={isSearchPopupOpen} onClose={togglePopup}/>}
             </div>
         </>
     );

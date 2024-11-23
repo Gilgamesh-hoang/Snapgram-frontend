@@ -6,11 +6,11 @@ import {Post, UserInfo} from "@/model/type.ts";
 import {routes} from "@/route";
 import {getPostsByUser} from "@/services/post.ts";
 import {PAGE_SIZE_POST_IN_PROFILE} from "@/constants";
-import QRCode from "@/components/shared/QRCode.tsx";
+import QRCode from "@/components/profile/QRCode.tsx";
 import {BsQrCodeScan} from "react-icons/bs";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import {Button} from "@/components/ui";
-import FollowPopup from "@/components/shared/FollowPopup.tsx";
+import FollowPopup from "@/components/profile/FollowPopup.tsx";
 import {generateProfileLink, showConfirmDialog} from "@/utils/common.ts";
 import {filterFollow, followUser, unfollowUser} from "@/services/follow.ts";
 

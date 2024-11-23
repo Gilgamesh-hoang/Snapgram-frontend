@@ -4,7 +4,7 @@ import {ChangePasswordValidation} from "@/validation";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input} from "@/components/ui";
-import {Loader} from "@/components/shared/index.tsx";
+import {Loader} from "@/components/shared";
 import {MdOutlineClose} from "react-icons/md";
 import {changePassword} from "@/services/user.ts";
 import Swal from "sweetalert2";
