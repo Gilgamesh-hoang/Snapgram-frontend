@@ -1,3 +1,5 @@
+import {CloudinaryMedia} from "@/model/type.ts";
+
 export interface SignUpRequest {
     nickname: string;
     email: string;
@@ -12,4 +14,5 @@ export interface ProfileRequest {
     fullName: string;
     gender: 'MALE' | 'FEMALE';
     bio: string;
+    profilePicture: CloudinaryMedia;
 }

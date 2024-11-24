@@ -3,7 +3,7 @@ import {getSignatures} from "@/services/cloudinary.ts";
 import {CloudinaryMedia, CloudinarySignature} from "@/model/type.ts";
 
 const url = import.meta.env.VITE_REACT_APP_CLOUDINARY_URL || '';
-const uploadFile = async (files: File[]) => {
+const uploadFiles = async (files: File[]) => {
     if (!url ) throw new Error('Cloudinary URL or upload preset is not defined')
     if (!files.length) throw new Error('No files to upload')
 
@@ -11,7 +11,6 @@ const uploadFile = async (files: File[]) => {
         const signatures: CloudinarySignature[] = await getSignatures(files.length);
         const uploadPromises = files.map(async (file, index) => {
             const signatureObj = signatures[index];
-            console.log('signatureObj', signatureObj)
 
             // get file type
             const fileType = file.type.split('/')[0];
@@ -50,4 +49,4 @@ const uploadFile = async (files: File[]) => {
     }
 }
 
-export default uploadFile
+export default uploadFiles;

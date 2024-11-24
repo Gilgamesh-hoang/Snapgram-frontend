@@ -3,7 +3,7 @@ import {MdOutlineClose} from "react-icons/md";
 import SingleImageUploader from "@/components/shared/SingleImageUploader.tsx";
 import {Button} from "@/components/ui";
 import {Loader} from "@/components/shared/index.tsx";
-import uploadFile from "@/services/uploadFile.ts";
+import uploadFiles from "@/services/uploadFiles.ts";
 
 function SearchUserPopup({isOpen, onClose}) {
     const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +26,7 @@ function SearchUserPopup({isOpen, onClose}) {
         
         setIsLoading(true)
 
-        uploadFile([file]).then((res) => {
+        uploadFiles([file]).then((res) => {
             console.log('res', res);
         }).catch((error) => {
             console.error('error', error)

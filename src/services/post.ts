@@ -1,31 +1,40 @@
 import {httpDelete, httpGet, httpPost, httpPut} from "@/utils/httpRequest.ts";
-import {ApiResponse, Post, PostMetric} from "@/model/type.ts";
+import {ApiResponse, CloudinaryMedia, Post, PostMetric} from "@/model/type.ts";
 
 
-export const createPost = async (caption: string, media: File[], tags: string[]) => {
-    const requestBody = {caption, tags}
-    const formData = new FormData();
-    formData.append("post", JSON.stringify(requestBody));
-    media.forEach((item) => {
-        formData.append("media", item);
-    });
-    return await httpPost<ApiResponse>("/posts", formData,
-        {headers: {"Content-Type": "multipart/form-data"}});
+// export const createPost = async (caption: string, media: File[], tags: string[]) => {
+//     const requestBody = {caption, tags}
+//     const formData = new FormData();
+//     formData.append("post", JSON.stringify(requestBody));
+//     media.forEach((item) => {
+//         formData.append("media", item);
+//     });
+//     return await httpPost<ApiResponse>("/posts", formData,
+//         {headers: {"Content-Type": "multipart/form-data"}});
+// }
+export const createPost = async (caption: string, media: CloudinaryMedia[], tags: string[]) => {
+    return await httpPost<ApiResponse>("/posts", {caption, media, tags});
 }
 
-export const updatePost = async (postId: string, caption: string, media: File[], tags: string[], removeMedia: string[]) => {
-    const requestBody = {id: postId, caption, tags, removeMedia}
-    const formData = new FormData();
-    formData.append("post", JSON.stringify(requestBody));
-    media.forEach((item) => {
-        formData.append("media", item);
-    });
-    return await httpPut<ApiResponse<Post>>("/posts", formData,
-        {headers: {"Content-Type": "multipart/form-data"}})
+export const updatePost = async (postId: string, caption: string, media: CloudinaryMedia[], tags: string[], removeMedia: string[]) => {
+    return await httpPut<ApiResponse<Post>>("/posts", {id: postId, caption, media, tags, removeMedia})
         .then(response => {
             return response.data;
         });
 }
+// export const updatePost = async (postId: string, caption: string, media: File[], tags: string[], removeMedia: string[]) => {
+//     const requestBody = {id: postId, caption, tags, removeMedia}
+//     const formData = new FormData();
+//     formData.append("post", JSON.stringify(requestBody));
+//     media.forEach((item) => {
+//         formData.append("media", item);
+//     });
+//     return await httpPut<ApiResponse<Post>>("/posts", formData,
+//         {headers: {"Content-Type": "multipart/form-data"}})
+//         .then(response => {
+//             return response.data;
+//         });
+// }
 
 export const getPostsById = async (id: string) => {
     return await httpGet<ApiResponse<Post>>(`/posts/${id}`)

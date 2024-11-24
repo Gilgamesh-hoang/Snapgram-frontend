@@ -17,6 +17,7 @@ import {routes} from "@/route";
 import Swal from "sweetalert2";
 import ChangePasswordPopup from "@/components/profile/ChangePasswordPopup.tsx";
 import {generateProfileLink} from "@/utils/common.ts";
+import uploadFiles from "@/services/uploadFiles.ts";
 
 const UpdateProfile: React.FC = () => {
     const navigate = useNavigate();
@@ -104,16 +105,20 @@ const UpdateProfile: React.FC = () => {
             return;
         }
         setIsLoadingState(true);
-        editUserInfo(value).then((response) => {
-            navigate(generateProfileLink(response.nickname));
-        }).catch(() => {
+        try {
+            const media = await uploadFiles([value.file]);
+            await editUserInfo(value, media[0]).then((response) => {
+                navigate(generateProfileLink(response.nickname));
+            });
+
+        } catch (error) {
             Swal.fire({
                 icon: 'error',
                 title: 'Thay đổi thông tin thất bại',
             });
-        }).finally(() => {
+        } finally {
             setIsLoadingState(false)
-        });
+        }
     };
     return (
         <div className="flex flex-1">

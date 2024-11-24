@@ -15,6 +15,8 @@ import Swal from "sweetalert2";
 
 import {Editor, EditorTextChangeEvent} from 'primereact/editor';
 import {useUserContext} from "@/context/AuthContext.tsx";
+import uploadFiles from "@/services/uploadFiles.ts";
+import {generateProfileLink} from "@/utils/common.ts";
 
 type PostFormProps = {
     post: Post | null;
@@ -26,7 +28,7 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
         const {userContext} = useUserContext();
         const [isLoading, setIsLoading] = useState(false);
         const [tags, setTags] = useState<string[]>([]);
-        const [text, setText] = useState<string>('');
+        const [caption, setCaption] = useState<string>('');
         const [removeMedia, setRemoveMedia] = useState<string[]>([]);
         const form = useForm<z.infer<typeof PostValidation>>({
             resolver: zodResolver(PostValidation),
@@ -40,7 +42,7 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
                 form.reset({
                     caption: post.caption,
                 });
-                setText(post.caption);
+                setCaption(post.caption);
                 setTags(post.tags.map(tag => tag.name));
             }
         }, [post]);
@@ -51,48 +53,58 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
         // Handler
         const handleSubmit = async (value: z.infer<typeof PostValidation>) => {
             if (isLoading) return;
-            if (text.trim().length > 2200) {
+            if (caption.trim().length > 2200) {
                 showAlert('error', 'Nội dung không được vượt quá 2200 ký tự.');
                 return;
             }
             setIsLoading(true);
-            // ACTION = UPDATE
-            if (post && action === "Update") {
-                if (post.creator.id !== userContext.id) {
-                    return;
+
+            try {
+                if (post && action === "Update") {
+                    await handleUpdatePost(value);
+                } else if (action === "Create") {
+                    await handleCreatePost(value);
                 }
-                // console.log('id', post.id)
-                // console.log('tag', tags)
-                // console.log('removeMedia', removeMedia)
-                // console.log('caption', value.caption)
-                updatePost(post.id, text, value.files, tags, removeMedia).then((post) => {
-                    // updatePost(post.id, value.caption, value.files, tags, removeMedia).then((post) => {
+            } catch (error) {
+                handlePostError(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-                }).catch(() => {
+        const handleUpdatePost = async (value: z.infer<typeof PostValidation>) => {
+            if (post?.creator.id !== userContext.id) {
+                return;
+            }
 
-                }).finally(() => {
-                    setIsLoading(false);
-                });
+            const media = await uploadFiles(value.files);
+            const updatedPost = await updatePost(post.id, caption, media, tags, removeMedia);
 
-            } else if (action === "Create") {
-                await createPost(value.caption, value.files, tags)
-                    .then(() => {
-                        navigate(`/posts`);
-                    }).catch((error) => {
-                        console.log('error, ', error);
-                        // If the error is an Axios error, handle different status codes
-                        if (axios.isAxiosError(error)) {
-                            if (error.response?.status === 400) {
-                                showAlert('error', 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.');
-                            } else if (error.response?.status === 500) {
-                                showAlert('error', 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
-                            } else {
-                                showAlert('error', 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
-                            }
-                        }
-                    }).finally(() => {
-                        setIsLoading(false);
-                    });
+            navigate(`/posts/${updatedPost.id}`);
+        };
+        const handleCreatePost = async (value: z.infer<typeof PostValidation>) => {
+            const media = await uploadFiles(value.files);
+            await createPost(caption, media, tags);
+
+            navigate(generateProfileLink(userContext.nickname));
+        };
+
+        const handlePostError = (error: unknown) => {
+            console.error('Error:', error);
+
+            if (axios.isAxiosError(error)) {
+                switch (error.response?.status) {
+                    case 400:
+                        showAlert('error', 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.');
+                        break;
+                    case 500:
+                        showAlert('error', 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
+                        break;
+                    default:
+                        showAlert('error', 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
+                }
+            } else {
+                showAlert('error', 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
             }
         };
 
@@ -175,8 +187,8 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
                                     {/*        callback: (name, value, options) => form.setValue('caption', value, options),*/}
                                     {/*    }}*/}
                                     {/*/>*/}
-                                    <Editor value={text}
-                                            onTextChange={(e: EditorTextChangeEvent) => setText(e.htmlValue || '')}
+                                    <Editor value={caption}
+                                            onTextChange={(e: EditorTextChangeEvent) => setCaption(e.htmlValue || '')}
                                             style={{height: '320px'}}
                                             headerTemplate={header}
                                     />

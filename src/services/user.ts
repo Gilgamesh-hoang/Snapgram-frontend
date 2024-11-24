@@ -1,5 +1,5 @@
 import {httpGet, httpPost, httpPut} from "@/utils/httpRequest.ts";
-import {ApiResponse, JwtResponse, User, UserInfo} from "@/model/type.ts";
+import {ApiResponse, CloudinaryMedia, JwtResponse, User, UserInfo} from "@/model/type.ts";
 import Swal from "sweetalert2";
 import {routes} from "@/route";
 import {ProfileRequest, SignUpRequest} from "@/model/request.ts";
@@ -97,25 +97,17 @@ export const getUserInfo = async (nickname: string) => {
             return response.data;
         });
 }
-export const editUserInfo = async (value: z.infer<typeof ProfileValidation>) => {
+export const editUserInfo = async (value: z.infer<typeof ProfileValidation>, media: CloudinaryMedia) => {
     const requestBody: ProfileRequest = {
         nickname: value.nickname,
         email: value.email,
         fullName: value.fullName,
         bio: value.bio,
-        // avatar: value.file,
-        gender: value.gender
+        gender: value.gender,
+        profilePicture: media
     }
-    // Create a new FormData object
-    const formData = new FormData();
 
-    formData.append('profile', JSON.stringify(requestBody));
-    // Append the avatar file to the FormData object
-    formData.append('avatar', value.file);
-
-    return await httpPut<ApiResponse<User>>('/users', formData, {
-        headers: {'Content-Type': 'multipart/form-data'},
-    }).then(response => {
+    return await httpPut<ApiResponse<User>>('/users', requestBody).then(response => {
         return response.data;
     });
 }
