@@ -9,7 +9,6 @@ import {User} from "@/model/type.ts";
 import {useLocation, useNavigate} from "react-router-dom";
 import {friendSuggestions} from "@/services/user.ts";
 import {PAGE_SIZE_ALL_USER, PAGE_SIZE_FRIEND_SUGGESTION} from "@/constants";
-import ChangePasswordPopup from "@/components/profile/ChangePasswordPopup.tsx";
 import SearchUserPopup from "@/components/shared/SearchUserPopup.tsx";
 
 
@@ -25,10 +24,12 @@ const AllUsers: React.FC = () => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [users, setUsers] = useState<User[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // This effect runs whenever the searchDebounce changes
     useEffect(() => {
         // Reset the page number and clear the users array
+        setIsLoading(true);
         setPage(1);
         setUsers([]);
 
@@ -42,10 +43,12 @@ const AllUsers: React.FC = () => {
 
         // Navigate to the current path with the updated query parameters
         navigate(`${location.pathname}?${queryParams.toString()}`, {replace: true});
+        setIsLoading(false);
     }, [searchDebounce, location.pathname, navigate]);
 
     // This effect runs whenever the page number or searchDebounce changes
     useEffect(() => {
+        setIsLoading(true);
         // If there's a debounced search value, search for users with that value
         // Otherwise, get friend suggestions
         if (searchDebounce && searchDebounce.trim().length) {
@@ -57,6 +60,8 @@ const AllUsers: React.FC = () => {
                 }
             }).catch(() => {
                 setHasMore(false);
+            }).finally(() => {
+                setIsLoading(false);
             });
         } else {
             friendSuggestions(page, PAGE_SIZE_FRIEND_SUGGESTION).then((res: User[]) => {
@@ -66,18 +71,64 @@ const AllUsers: React.FC = () => {
                 }
             }).catch(() => {
                 setHasMore(false);
+            }).finally(() => {
+                setIsLoading(false);
             });
         }
+
     }, [page, searchDebounce]);
+
+    const searchUsersByImage = (users: User[]) => {
+        queryParams.delete('q');
+        setSearchValue("")
+        togglePopup();
+        setUsers(users);
+        setHasMore(false);
+    }
 
     const onFollowSuccess = (userId: string) => {
         // filter out the user who has been followed
         setUsers((prev) => prev.filter((user) => user.id !== userId));
     }
 
-    function togglePopup() {
+
+    const togglePopup = () => {
         setIsSearchPopupOpen(!isSearchPopupOpen);
     }
+
+    const renderUserCard = () => {
+        if (isLoading)
+            return <Loader/>;
+
+        if (!isLoading && users.length === 0) {
+            // Hiển thị thông báo khi không tìm thấy người dùng
+            return (
+                <div className="w-full max-w-2xl">
+                    <p className="text-center text-light-3">Không tìm thấy người dùng</p>
+                </div>
+            );
+        }
+
+        return (
+            <div className='user-grid'>
+                <InfiniteScroll
+                    loader={<Loader/>}
+                    fetchMore={() => setPage((prev) => prev + 1)}
+                    hasMore={hasMore}
+                >
+                    {users.map((user, index) => (
+                        <div key={index} className="w-full min-w-[200px] flex-1">
+                            <UserCard id={user.id} name={user.fullName} imageUrl={user.avatarUrl}
+                                      nickname={user.nickname} key={index}
+                                      onFollowSuccess={onFollowSuccess}
+                            />
+                        </div>
+                    ))}
+                </InfiniteScroll>
+            </div>
+        );
+    }
+
 
     return (
         <>
@@ -112,27 +163,10 @@ const AllUsers: React.FC = () => {
                             </Button>
                         </div>
                     </div>
+                    {renderUserCard()}
 
-                    <div className='user-grid'>
-                        {users.length > 0 && (
-                            <InfiniteScroll
-                                loader={<Loader/>}
-                                fetchMore={() => setPage((prev) => prev + 1)}
-                                hasMore={hasMore}
-                            >
-                                {users.map((user, index) => (
-                                    <div key={index} className="w-full min-w-[200px] flex-1  ">
-                                        <UserCard id={user.id} name={user.fullName} imageUrl={user.avatarUrl}
-                                                  nickname={user.nickname} key={index}
-                                                  onFollowSuccess={onFollowSuccess}
-                                        />
-                                    </div>
-                                ))}
-                            </InfiniteScroll>
-                        )}
-                    </div>
                 </div>
-                {isSearchPopupOpen && <SearchUserPopup isOpen={isSearchPopupOpen} onClose={togglePopup}/>}
+                {isSearchPopupOpen && <SearchUserPopup onClose={togglePopup} callback={searchUsersByImage}/>}
             </div>
         </>
     );

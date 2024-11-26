@@ -14,6 +14,7 @@ import useDebounce from "@/hooks/useDebounce.ts";
 import Swal from 'sweetalert2'
 import {SignUpRequest} from "@/model/request.ts";
 import {isEmailExist, isNicknameExist, signup} from "@/services/user.ts";
+import {showAlert} from "@/utils/common.ts";
 
 
 const SignupForm: React.FC = () => {
@@ -82,14 +83,6 @@ const SignupForm: React.FC = () => {
 
     }
 
-    function showAlert(type: 'success' | 'error', message: string, timeout = 1500) {
-        Swal.fire({
-            icon: type,
-            title: message,
-            showConfirmButton: false,
-            timer: timeout
-        });
-    }
 
     return (
         <Form {...form}>

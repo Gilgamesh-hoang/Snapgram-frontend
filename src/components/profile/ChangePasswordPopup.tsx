@@ -8,6 +8,7 @@ import {Loader} from "@/components/shared";
 import {MdOutlineClose} from "react-icons/md";
 import {changePassword} from "@/services/user.ts";
 import Swal from "sweetalert2";
+import {showAlert} from "@/utils/common.ts";
 
 function ChangePasswordPopup({isOpen, onClose}) {
     const [isLoading, setIsLoading] = useState(false);
@@ -18,22 +19,13 @@ function ChangePasswordPopup({isOpen, onClose}) {
         }
         setIsLoading(true);
         changePassword(form).then(() => {
-            Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "Đổi mật khẩu thành công",
-                showConfirmButton: false,
-                timer: 2000
-            });
+            showAlert('success', 'Đổi mật khẩu thành công', 2000);
+
             setTimeout(() => {
                 onClose();
             }, 2000);
         }).catch(() => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Đổi mật khẩu thất bại',
-                text: 'Mật khẩu hiện tại không đúng hoặc mật khẩu mới không khớp. Vui lòng thử lại.',
-            });
+            showAlert('error', 'Đổi mật khẩu thất bại', 2000, "Mật khẩu hiện tại không đúng hoặc mật khẩu mới không khớp. Vui lòng thử lại.");
         }).finally(() => {
             setIsLoading(false);
         });

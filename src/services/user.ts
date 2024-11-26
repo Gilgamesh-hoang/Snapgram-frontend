@@ -6,6 +6,7 @@ import {ProfileRequest, SignUpRequest} from "@/model/request.ts";
 import * as z from "zod";
 import {ChangePasswordValidation, ProfileValidation} from "@/validation";
 import {updateAccessToken} from "@/services/token.ts";
+import {showAlert} from "@/utils/common.ts";
 
 export const verifyEmail = async (email: string, code: string) => {
     await httpPost<ApiResponse<boolean>>('/auth/verification-email', {
@@ -129,6 +130,7 @@ export const forgotPassword = async (email: string) => {
                 title: 'Gửi yêu cầu thất bại',
                 text: 'Email không tồn tại hoặc đã bị khóa. Vui lòng thử lại.',
             });
+            showAlert('error', 'Gửi yêu cầu thất bại', 2000, "Email không tồn tại hoặc đã bị khóa. Vui lòng thử lại.")
         });
 }
 export const changePassword = async (form: z.infer<typeof ChangePasswordValidation>) => {

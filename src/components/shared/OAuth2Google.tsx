@@ -8,6 +8,7 @@ import {updateAccessToken} from "@/services/token.ts";
 import {routes} from "@/route";
 import {useNavigate} from "react-router-dom";
 import {useUserContext} from "@/context/AuthContext.tsx";
+import {showAlert} from "@/utils/common.ts";
 
 const OAuth2Google = () => {
     const navigate = useNavigate();
@@ -33,14 +34,6 @@ const OAuth2Google = () => {
 
     });
 
-    function showAlert(type: 'success' | 'error', message: string, timeout = 1500) {
-        Swal.fire({
-            icon: type,
-            title: message,
-            showConfirmButton: false,
-            timer: timeout
-        });
-    }
 
     return (
 

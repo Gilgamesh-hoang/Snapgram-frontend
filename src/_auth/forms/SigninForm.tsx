@@ -17,6 +17,7 @@ import axios from "axios";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 import OAuth2Google from "@/components/shared/OAuth2Google.tsx";
 import {useUserContext} from "@/context/AuthContext.tsx";
+import {showAlert} from "@/utils/common.ts";
 
 const SigninForm: React.FC = () => {
     const clientId = import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID || '';
@@ -73,14 +74,6 @@ const SigninForm: React.FC = () => {
             });
     }
 
-    function showAlert(type: 'success' | 'error', message: string, timeout = 1500) {
-        Swal.fire({
-            icon: type,
-            title: message,
-            showConfirmButton: false,
-            timer: timeout
-        });
-    }
 
     return (
         <Form {...form}>

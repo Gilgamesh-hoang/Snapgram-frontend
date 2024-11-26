@@ -11,12 +11,11 @@ import React, {FC, useEffect, useState} from "react";
 import TagsInput from "@/components/shared/TagsInput.tsx";
 import {BsFillTagsFill} from "react-icons/bs";
 import axios from "axios";
-import Swal from "sweetalert2";
 
 import {Editor, EditorTextChangeEvent} from 'primereact/editor';
 import {useUserContext} from "@/context/AuthContext.tsx";
 import uploadFiles from "@/services/uploadFiles.ts";
-import {generateProfileLink} from "@/utils/common.ts";
+import {generateProfileLink, showAlert} from "@/utils/common.ts";
 
 type PostFormProps = {
     post: Post | null;
@@ -77,11 +76,15 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
                 return;
             }
 
-            const media = await uploadFiles(value.files);
+            let media;
+            if (value.files.length > 0) {
+                media = await uploadFiles(value.files);
+            }
             const updatedPost = await updatePost(post.id, caption, media, tags, removeMedia);
 
             navigate(`/posts/${updatedPost.id}`);
-        };
+        }
+
         const handleCreatePost = async (value: z.infer<typeof PostValidation>) => {
             const media = await uploadFiles(value.files);
             await createPost(caption, media, tags);
@@ -108,14 +111,6 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
             }
         };
 
-        function showAlert(type: 'success' | 'error', message: string, timeout = 1500) {
-            Swal.fire({
-                icon: type,
-                title: message,
-                showConfirmButton: false,
-                timer: timeout
-            });
-        }
 
         const renderHeader = () => {
             return (

@@ -1,5 +1,7 @@
-const Loader = () => (
-    <div className="flex-center w-full">
+import {clsx} from "clsx";
+
+const Loader = ({className=""}) => (
+    <div className={clsx("flex-center w-full",className)}>
         <img
             src="/assets/icons/loader.svg"
             alt="loader"
