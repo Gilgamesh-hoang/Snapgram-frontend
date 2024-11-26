@@ -13,11 +13,12 @@ import {useUserContext} from "@/context/AuthContext.tsx";
 import GenderSelection from "@/components/shared/GenderSelection.tsx";
 import {editUserInfo, getUserInfo, isEmailExist, isNicknameExist} from "@/services/user.ts";
 import useDebounce from "@/hooks/useDebounce.ts";
-import {routes} from "@/route";
 import Swal from "sweetalert2";
-import ChangePasswordPopup from "@/components/profile/ChangePasswordPopup.tsx";
 import {generateProfileLink} from "@/utils/common.ts";
 import uploadFiles from "@/services/uploadFiles.ts";
+import {LuScanFace} from "react-icons/lu";
+import ChangePasswordPopup from "@/components/profile/ChangePasswordPopup.tsx";
+import FaceUploadPopup from "@/components/shared/FaceUploadPopup.tsx";
 
 const UpdateProfile: React.FC = () => {
     const navigate = useNavigate();
@@ -25,7 +26,8 @@ const UpdateProfile: React.FC = () => {
     const [nickname, setNickname] = useState('');
     const nicknameDebounce = useDebounce(nickname, 500);
     const [nicknameExists, setNicknameExists] = useState(false);
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isPasswdPopupOpen, setIsPasswdPopupOpen] = useState(false);
+    const [isFacePopupOpen, setIsFacePopupOpen] = useState(false);
     const [bio, setBio] = useState('');
     const [gender, setGender] = useState<'MALE' | 'FEMALE'>('MALE')
     const [email, setEmail] = useState('');
@@ -92,8 +94,12 @@ const UpdateProfile: React.FC = () => {
     }, [userContext.nickname]);
 
 
-    function togglePopup() {
-        setIsPopupOpen(!isPopupOpen);
+    function togglePopup(type: "PASSWORD" | "FACE") {
+        if(type === "PASSWORD") {
+            setIsPasswdPopupOpen(!isPasswdPopupOpen);
+        }else {
+            setIsFacePopupOpen(!isFacePopupOpen);
+        }
     }
 
     if (isLoadingContext || !bio) {
@@ -120,6 +126,14 @@ const UpdateProfile: React.FC = () => {
             setIsLoadingState(false)
         }
     };
+
+    function showDropdownOptions() {
+        const optionsElement = document.getElementById("options");
+        if (optionsElement) {
+            optionsElement.classList.toggle("hidden");
+        }
+    }
+
     return (
         <div className="flex flex-1">
             <div className="common-container ">
@@ -135,22 +149,47 @@ const UpdateProfile: React.FC = () => {
 
                     <div className="flex justify-center gap-4">
                         <div>
-                            <button onClick={togglePopup}
-                                    className={`flex-center h-12 gap-2 rounded-lg bg-dark-4 px-5 text-light-1`}>
-                                <img
-                                    src={"/assets/icons/edit-profile.svg"}
-                                    alt="edit"
-                                    width={20}
-                                    height={20}
-                                />
-                                <i></i>
-                                <p className="small-medium flex whitespace-nowrap">
-                                    Thay đổi mật khẩu
-                                </p>
-                            </button>
+                            <div className="relative flex-none p-2">
+                                <button onClick={showDropdownOptions}
+                                        className="flex w-16 justify-center rounded-md border-2 border-amber-400 bg-dark-4 p-2 focus:outline-none">
 
-                            {isPopupOpen && <ChangePasswordPopup isOpen={isPopupOpen} onClose={togglePopup}/>}
+                                    <svg className="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                         fill="currentColor">
+                                        <path fillRule="evenodd" className={"text-secondary-500"}
+                                              d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                                              clipRule="evenodd"/>
+                                    </svg>
+
+                                </button>
+                                <div id="options"
+                                     className="absolute right-0 mt-2 hidden w-48 rounded-lg bg-dark-4 shadow-xl">
+                                    <button onClick={()=>togglePopup("PASSWORD")}
+                                            className={`flex gap-1.5 p-3`}>
+                                        <img
+                                            src={"/assets/icons/edit-profile.svg"}
+                                            alt="edit"
+                                            width={20}
+                                            height={20}
+                                        />
+                                        <p className="small-medium flex whitespace-nowrap">
+                                            Thay đổi mật khẩu
+                                        </p>
+                                    </button>
+                                    <div className=' h-px bg-primary-500'></div>
+                                    <button onClick={()=>togglePopup("FACE")}
+                                            className={`flex gap-1.5 p-3`}>
+                                        <LuScanFace size={20} className='text-secondary-500'/>
+                                        <p className="small-medium flex whitespace-nowrap">
+                                            Nhận diện khuôn mặt
+                                        </p>
+                                    </button>
+
+                                </div>
+                            </div>
+
                         </div>
+                        {isPasswdPopupOpen && <ChangePasswordPopup isOpen={isPasswdPopupOpen} onClose={()=>setIsPasswdPopupOpen(!isPasswdPopupOpen)}/>}
+                        {isFacePopupOpen && <FaceUploadPopup onClose={()=>setIsFacePopupOpen(!isFacePopupOpen)}/>}
                     </div>
                 </div>
 

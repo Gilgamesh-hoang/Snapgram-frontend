@@ -4,9 +4,9 @@ import SingleImageUploader from "@/components/shared/SingleImageUploader.tsx";
 import {Button} from "@/components/ui";
 import {Loader} from "@/components/shared/index.tsx";
 import uploadFiles from "@/services/uploadFiles.ts";
-import {searchUsersByImage} from "@/services/search.ts";
 import {showAlert} from "@/utils/common.ts";
 import {User} from "@/model/type.ts";
+import {searchUsersByImage} from "@/services/face.ts";
 
 interface SearchUserPopupProps {
     onClose: () => void;
@@ -68,7 +68,7 @@ const SearchUserPopup: React.FC<SearchUserPopupProps> = ({onClose, callback}) =>
                         {isShowSearchBtn &&
                             (
                                 isLoading ?
-                                    <div className="flex justify">
+                                    <div className="flex justify-center">
                                         <p className="text-light-3">
                                             <Loader className="mb-2"/> Đang tìm kiếm, quá trình này mất khoảng 20 - 30 giây...</p>
                                     </div>

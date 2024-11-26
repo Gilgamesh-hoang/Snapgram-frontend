@@ -45,7 +45,7 @@ function ChangePasswordPopup({isOpen, onClose}) {
     return (
         <>
 
-            <div className="fixed inset-0 flex items-center justify-center backdrop-blur">
+            <div className="fixed inset-0  z-[1] flex items-center justify-center backdrop-blur">
                 {/*<Toast ref={toast}*/}
                 {/*       position='top-right'/>*/}
                 <div className="relative max-w-lg rounded-lg bg-dark-3 p-8 shadow-lg backdrop-filter-none">

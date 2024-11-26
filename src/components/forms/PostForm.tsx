@@ -207,6 +207,7 @@ const PostForm: FC<PostFormProps> = ({post, action}) => {
                                         fieldChange={field.onChange}
                                         mediaUrl={post ? post.media : []}
                                         setRemoveMedia={setRemoveMedia}
+                                        note={'SVG, PNG, JPG, MP4'}
                                     />
                                 </FormControl>
                                 <FormMessage className="error-message"/>

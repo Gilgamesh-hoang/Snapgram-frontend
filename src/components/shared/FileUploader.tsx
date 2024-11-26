@@ -5,14 +5,27 @@ import {Button} from "@/components/ui";
 import {Carousel} from "@/components/shared";
 import {convertFileToUrl} from "@/utils/common.ts";
 import {MediaUrl} from "@/model/type.ts";
+import {clsx} from "clsx";
 
 type FileUploaderProps = {
     fieldChange: (files: File[]) => void;
     mediaUrl: MediaUrl[];
     setRemoveMedia?: Dispatch<SetStateAction<string[]>>;
+    acceptType?: "*" | "image" | "video";
+    maxFiles?: number;
+    note?: string;
+    classname?: string;
 };
 
-const FileUploader: FC<FileUploaderProps> = ({fieldChange, mediaUrl,setRemoveMedia }) => {
+const FileUploader: FC<FileUploaderProps> = ({
+                                                 fieldChange,
+                                                 mediaUrl,
+                                                 maxFiles = 20,
+                                                 acceptType = "*",
+                                                 note = "",
+                                                 classname = "",
+                                                 setRemoveMedia
+                                             }) => {
     const [files, setFiles] = useState<File[]>([]);
     const [fileUrl, setFileUrl] = useState<MediaUrl[]>(mediaUrl);
 
@@ -56,15 +69,31 @@ const FileUploader: FC<FileUploaderProps> = ({fieldChange, mediaUrl,setRemoveMed
         },
         [files]
     );
+    const getAcceptType = (): { [key: string]: string[] } => {
+        if (acceptType === "image") {
+            return {
+                "image/*": [".png", ".jpeg", ".jpg", ".webp"]
+            }
+        } else if (acceptType === "video") {
+            return {
+                "video/*": [".mp4"]
+            }
+        }
+        return {
+            "image/*": [".png", ".jpeg", ".jpg", ".webp"],
+            "video/*": [".mp4"],
+        }
+    }
 
     const {getRootProps, getInputProps} = useDropzone({
         onDrop,
-        accept: {
-            "image/*": [".png", ".jpeg", ".jpg", ".webp"],
-            "video/*": [".mp4"],
-        },
+        accept: getAcceptType(),
         multiple: true,
+        maxFiles,
+        maxSize: 20000000,
     });
+
+
     const rootProps = fileUrl && fileUrl.length > 0 ? {} : getRootProps();
 
     function removeItem(itemIndex: number): void {
@@ -75,6 +104,7 @@ const FileUploader: FC<FileUploaderProps> = ({fieldChange, mediaUrl,setRemoveMed
 
         setFileUrl(fileUrl.filter((value, index) => index !== itemIndex));
         setFiles(files.filter((value, index) => index !== itemIndex));
+        fieldChange(files.filter((value, index) => index !== itemIndex));
     }
 
     return (
@@ -85,13 +115,13 @@ const FileUploader: FC<FileUploaderProps> = ({fieldChange, mediaUrl,setRemoveMed
 
             {fileUrl && fileUrl.length > 0 ? (
                 <>
-                    <div className="flex w-full flex-1 justify-center p-5 lg:p-10">
+                    <div className="flex w-full flex-1 justify-center p-5">
                         <Carousel sources={fileUrl} callback={removeItem} isShowClose={true}/>
                     </div>
                     <p className="file_uploader-label" {...getRootProps()}>Nhấn vào để thêm ảnh / video</p>
                 </>
             ) : (
-                <div className="file_uploader-box ">
+                <div className={clsx("file_uploader-box ", classname)}>
                     <img
                         src="/assets/icons/file-upload.svg"
                         width={96}
@@ -102,7 +132,7 @@ const FileUploader: FC<FileUploaderProps> = ({fieldChange, mediaUrl,setRemoveMed
                     <h3 className="base-medium mb-2 mt-6 text-light-2">
                         Thả ảnh vào đây
                     </h3>
-                    <p className="small-regular mb-6 text-light-4">SVG, PNG, JPG, MP4</p>
+                    <p className="small-regular mb-6 text-light-4">{note}</p>
 
                     <Button type="button" className="shad-button_dark_4">
                         Chọn từ máy tính

@@ -17,7 +17,7 @@ const BottomBar = () => {
                     <Link
                         key={`bottombar-${link.label}`}
                         to={link.route}
-                        className={clsx("flex-center relative flex-col gap-1 p-2 transition rounded-lg", (isActive && "bg-primary-500"))}
+                        className={clsx("flex-center relative flex-col gap-1 rounded-lg p-2 transition", (isActive && "bg-primary-500"))}
                     >
                         <img
                             src={link.imgURL}
