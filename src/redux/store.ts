@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import postReducer from './postSlice';
+import timelineReducer from './timelineSlice';
 const store = configureStore({
     reducer: {
         post: postReducer,
+        timeline: timelineReducer,
     },
 });
 

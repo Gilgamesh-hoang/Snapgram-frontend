@@ -5,7 +5,7 @@ import {Loader, PostStats} from "@/components/shared";
 
 import {formatDateString, multiFormatDateString2} from "@/utils/dateUtil";
 import React, {useEffect, useRef, useState} from "react";
-import {getPostsById, savedPost} from "@/services/post.ts";
+import {checkLikedPost, getPostsById} from "@/services/post.ts";
 import {Comment, Post} from "@/model/type.ts";
 import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import {routes} from "@/route";
@@ -21,10 +21,11 @@ import CommentNested from "@/components/shared/CommentNested.tsx";
 import {filterLiked, getCommentsByPostId} from "@/services/comment.ts";
 import {PAGE_SIZE_COMMENT} from "@/constants";
 import {AppDispatch} from "@/redux/store.ts";
+import {checkSaved, savedPost} from "@/services/savePost.ts";
 import Element = React.JSX.Element;
 
 const PostDetails: React.FC = () => {
-    const dispatch =  useDispatch<AppDispatch>();
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const {id} = useParams();
     const {userContext, isLoadingContext} = useUserContext();
@@ -54,19 +55,36 @@ const PostDetails: React.FC = () => {
         setComments(finalStructure);
     };
 
+    const getPost = async () => {
+        if (id) {
+            try {
+                // Lấy dữ liệu bài viết
+                const data = await getPostsById(id);
+
+                // Kiểm tra bài viết đã được thích chưa
+                const likedPosts = await checkLikedPost([id]);
+                data.isLiked = likedPosts.includes(id);
+
+                // Đặt dữ liệu bài viết vào state
+                setPost(data);
+                setIsLoading(false);
+
+                // Cập nhật số lượng bình luận vào redux
+                dispatch(setCommentCount({ postId: data.id, count: data.commentCount }));
+
+                // Kiểm tra bài viết đã được lưu chưa
+                const savedPosts = await checkSaved([id]);
+                setIsSaved(savedPosts.includes(id));
+            } catch (error) {
+                // Điều hướng quay lại nếu xảy ra lỗi
+                navigate(-1);
+            }
+        }
+    };
+
 
     useEffect(() => {
-        if (id) {
-            getPostsById(id).then((data) => {
-                setPost(data);
-                setIsLoading(false)
-                setIsSaved(data.isSaved)
-                // set comment count in redux
-                dispatch(setCommentCount({postId: data.id, count: data.commentCount}));
-            }).catch(() => {
-                navigate(-1);
-            });
-        }
+        getPost();
     }, []);
 
     useEffect(() => {
@@ -137,7 +155,6 @@ const PostDetails: React.FC = () => {
         });
         return results;
     }
-
     return (
         <div className="post_details-container">
             <div className="hidden w-full max-w-5xl md:flex">
@@ -224,24 +241,13 @@ const PostDetails: React.FC = () => {
                             <div className="flex gap-2"
                                  onClick={handleSavePost}
                             >
-                                {isSaved ? (
-                                    <img
-                                        src={"/assets/icons/saved.svg"}
-                                        alt="share"
-                                        width={20}
-                                        height={20}
-                                        className="cursor-pointer"
-                                    />
-                                ) : (
-                                    <img
-                                        src={"/assets/icons/save.svg"}
-                                        alt="save"
-                                        width={20}
-                                        height={20}
-                                        className="cursor-pointer"
-                                    />
-                                )}
-
+                                <img
+                                    src={isSaved ? "/assets/icons/saved.svg" : "/assets/icons/save.svg"}
+                                    alt="share"
+                                    width={20}
+                                    height={20}
+                                    className="cursor-pointer"
+                                />
                             </div>
                         </div>
 
@@ -249,14 +255,12 @@ const PostDetails: React.FC = () => {
                     <div className="w-full">
                         <p className="small-regular lg:base-regular">{post.caption}</p>
                         <div className="w-full">
-                            <ul className='mt-2 flex flex-wrap p-0'>
+                            <ul className='mt-2 flex flex-wrap gap-1.5'>
                                 {post.tags.map((tag, index) => (
-                                    <Link to={tag.name} key={index}>
-                                        <li key={index}
-                                            className="my-2 mr-4 flex list-none items-center justify-center rounded-md bg-primary-500 px-2">
-                                            <span className='tag-title'>{tag.name}</span>
-                                        </li>
-                                    </Link>
+                                    <li key={`${tag}${index}${post.id}`}
+                                        className="small-medium text-[15px] text-light-3">
+                                        #{tag.name}
+                                    </li>
                                 ))}
                             </ul>
                         </div>
@@ -264,7 +268,7 @@ const PostDetails: React.FC = () => {
                     <div className="w-full">
                         <hr className=" border border-dark-4/80"/>
                         <div className=" my-4">
-                            <PostStats post={post} commentInputRef={commentInputRef}/>
+                            <PostStats post={post} onClickOnComment={() => commentInputRef?.current?.focus()}/>
                         </div>
                         <hr className=" border border-dark-4/80"/>
                     </div>

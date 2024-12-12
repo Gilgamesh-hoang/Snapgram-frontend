@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 import {Loader, PostStats} from "@/components/shared";
 import {routes} from "@/route";
@@ -25,7 +25,7 @@ const GridPostList: FC<GridPostListProps> = ({
                                                  setPage,
                                                  hasMore
                                              }) => {
-
+    const navigate = useNavigate();
     return (
         <ul className="grid-container">
             {posts.length > 0 && (
@@ -58,7 +58,7 @@ const GridPostList: FC<GridPostListProps> = ({
                                         <p className="line-clamp-1 xl:w-[100px]">{post.creator.nickname}</p>
                                     </div>
                                 )}
-                                {showStats && <PostStats post={post}/>}
+                                {showStats && <PostStats post={post} onClickOnComment={() => navigate(routes.posts.replace(':id', post.id))}/>}
                             </div>
                         </li>
                     ))}

@@ -1,6 +1,6 @@
 import React from "react";
 import {Loader} from "@/components/shared";
-import {multiFormatDateString} from "@/utils/dateUtil";
+import {multiFormatDateString2} from "@/utils/dateUtil";
 import {Link} from "react-router-dom";
 
 const Notifies: React.FC = () => {
@@ -42,7 +42,7 @@ const Notifies: React.FC = () => {
                                     eos exercitationem fugiat iusto minima</span>
                                     <div className="flex-start mt-2 gap-2 text-light-3">
                                         <p className="subtle-semibold lg:small-regular">
-                                            {multiFormatDateString(new Date().toDateString())}
+                                            {multiFormatDateString2(new Date().toDateString())}
                                         </p>
                                     </div>
                                 </div>
@@ -68,7 +68,7 @@ const Notifies: React.FC = () => {
                                     eos exercitationem fugiat iusto minima</span>
                                     <div className="flex-start mt-2 gap-2 text-light-3">
                                         <p className="subtle-semibold lg:small-regular">
-                                            {multiFormatDateString(new Date().toDateString())}
+                                            {multiFormatDateString2(new Date().toDateString())}
                                         </p>
                                     </div>
                                 </div>
@@ -94,7 +94,7 @@ const Notifies: React.FC = () => {
                                     eos exercitationem fugiat iusto minima</span>
                                     <div className="flex-start mt-2 gap-2 text-light-3">
                                         <p className="subtle-semibold lg:small-regular">
-                                            {multiFormatDateString(new Date().toDateString())}
+                                            {multiFormatDateString2(new Date().toDateString())}
                                         </p>
                                     </div>
                                 </div>
@@ -120,7 +120,7 @@ const Notifies: React.FC = () => {
                                     eos exercitationem fugiat iusto minima</span>
                                     <div className="flex-start mt-2 gap-2 text-light-3">
                                         <p className="subtle-semibold lg:small-regular">
-                                            {multiFormatDateString(new Date().toDateString())}
+                                            {multiFormatDateString2(new Date().toDateString())}
                                         </p>
                                     </div>
                                 </div>

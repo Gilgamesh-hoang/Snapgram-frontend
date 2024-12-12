@@ -1,32 +1,32 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 import {PostStats} from "@/components/shared";
-import {multiFormatDateString} from "@/utils/dateUtil";
+import {formatDateString, multiFormatDateString2} from "@/utils/dateUtil";
 import React, {useState} from "react";
 import CarouselPost from "@/components/shared/CarouselPost.tsx";
-import {MediaUrl} from "@/model/type.ts";
-import CommentForm from "@/components/forms/CommentForm.tsx";
+import {Post} from "@/model/type.ts";
+import Tippy from "@tippyjs/react";
+import {routes} from "@/route";
+import 'tippy.js/dist/svg-arrow.css';
+import {savedPost} from "@/services/savePost.ts";
 
 type PostCardProps = {
-    post: {
-        creator: {
-            id: string;
-            name: string;
-            imageUrl: string;
-        };
-        createdAt: string;
-        id: string;
-        caption: string;
-        location: string;
-        imageUrl: MediaUrl[];
-        tags: string[];
-    };
+    post: Post;
 
 };
 
 const PostCard: React.FC<PostCardProps> = ({post}) => {
-    const [isSaved, setIsSaved] = useState(true);
-    if (!post.creator) return;
+    const navigate = useNavigate();
+    const [isSaved, setIsSaved] = useState(post.isSaved);
+
+    const handleSavePost = () => {
+        const oldValue = isSaved;
+        const newValue = !isSaved;
+        setIsSaved(newValue);
+        savedPost(post.id, newValue).catch(() => {
+            setIsSaved(oldValue);
+        })
+    }
 
     return (
         <div className="post-card">
@@ -35,7 +35,7 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
                     <Link to={`/profile/${post.creator.id}`}>
                         <img
                             src={
-                                post.creator?.imageUrl ||
+                                post.creator.avatarUrl ||
                                 "/assets/icons/profile-placeholder.svg"
                             }
                             alt="creator"
@@ -45,20 +45,26 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
 
                     <div className="flex flex-col">
                         <p className="base-medium lg:body-bold text-light-1">
-                            {post.creator.name}
+                            {post.creator.nickname}
                         </p>
-                        <div className="flex-center gap-2 text-light-3">
-                            <p className="subtle-semibold lg:small-regular ">
-                                {multiFormatDateString(post.createdAt)}
-                            </p>
-                            •
-                            <p className="subtle-semibold lg:small-regular">
-                                {post.location}
-                            </p>
+                        <div className="gap-2 text-light-3">
+                            <Tippy
+                                placement={"bottom-end"}
+                                delay={[200, 0]}
+                                offset={[10, 5]}
+                                content={
+                                    <div className="subtle-semibold rounded-xl bg-white p-2 text-dark-2">
+                                        {formatDateString(post.createdAt)}
+                                    </div>}
+                            >
+                                <p className="subtle-semibold lg:small-regular">
+                                    {multiFormatDateString2(post.createdAt)}
+                                </p>
+                            </Tippy>
                         </div>
                     </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2" onClick={handleSavePost}>
                     <img
                         src={isSaved ? "/assets/icons/saved.svg" : "/assets/icons/save.svg"}
                         alt="share"
@@ -72,50 +78,19 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
 
             <div className="small-medium lg:base-medium py-5">
                 <p>{post.caption}</p>
-                <ul className="mt-2 flex gap-1">
-                    {post.tags.map((tag: string, index: number) => (
-                        <li key={`${tag}${index}`} className="small-regular text-light-3">
-                            #{tag}
+                <ul className="mt-2 flex gap-1.5">
+                    {post.tags.map((tag, index) => (
+                        <li key={`${tag}${index}${post.id}`} className="small-semibold text-[15px] text-light-3">
+                            #{tag.name}
                         </li>
                     ))}
                 </ul>
             </div>
 
-            <CarouselPost sources={post.imageUrl}/>
+            <CarouselPost sources={post.media}/>
 
-            {/*<img*/}
-            {/*    src={post.imageUrl[0].src}*/}
-            {/*    alt="post image"*/}
-            {/*    className="post-card_img"*/}
-            {/*/>*/}
-            <PostStats isShowShare={true} post={null}/>
+            <PostStats post={post} onClickOnComment={() => navigate(routes.posts.replace(':id', post.id))}/>
 
-            {/*comment*/}
-            <div className='mt-6 flex h-7 w-full items-center'>
-                <CommentForm/>
-                {/*<img*/}
-                {/*    src={"/assets/icons/profile-placeholder.svg"}*/}
-                {/*    alt="user"*/}
-                {/*    className="mr-3 size-7 rounded-full"*/}
-                {/*/>*/}
-
-                {/*<form className="relative flex w-full gap-5">*/}
-                {/*    <input*/}
-                {/*        type="text"*/}
-                {/*        className="h-9 w-full rounded-md border-none bg-dark-4 px-3 py-2 text-sm placeholder:text-slate-500"*/}
-                {/*        placeholder='Thêm bình luận...'*/}
-                {/*    />*/}
-                {/*    <button className='absolute bottom-1/4 right-3'>*/}
-                {/*        <img*/}
-                {/*            src={"/assets/icons/send-secondary.svg"}*/}
-                {/*            alt="send"*/}
-                {/*            width={20}*/}
-                {/*            height={20}*/}
-                {/*        />*/}
-                {/*    </button>*/}
-                {/*</form>*/}
-
-            </div>
         </div>
     );
 };

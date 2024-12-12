@@ -1,4 +1,4 @@
-import React, {FC, RefObject, useEffect, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {useLocation} from "react-router-dom";
 import {likedPost} from "@/services/post.ts";
 import {Post} from "@/model/type.ts";
@@ -9,11 +9,12 @@ import {updateCommentCount} from "@/redux/postSlice.ts";
 type PostStatsProps = {
     post: Post;
     isShowShare?: boolean;
-    commentInputRef?: RefObject<HTMLTextAreaElement>;
-};
+    onClickOnComment: () => void;
 
-const PostStats: FC<PostStatsProps> = ({post, isShowShare = false, commentInputRef}) => {
-    const location = useLocation();const dispatch = useDispatch();
+};
+const PostStats: FC<PostStatsProps> = ({post, isShowShare = false, onClickOnComment}) => {
+    const location = useLocation();
+    const dispatch = useDispatch();
     const [isLiked, setIsLiked] = useState<boolean>(post.isLiked);
     const [likeCount, setLikeCount] = useState<number>(post.likeCount);
     const commentCountState = useSelector((state: RootState) => state.post.commentCounts[post.id] || post.commentCount);
@@ -29,7 +30,11 @@ const PostStats: FC<PostStatsProps> = ({post, isShowShare = false, commentInputR
         setIsLiked(newValue);
         likedPost(post.id, newValue)
             .then((metric) => {
-                setLikeCount(metric.likeCount);
+                if(metric.likeCount === likeCount) {
+                    setLikeCount(metric.likeCount + (newValue ? 1 : -1));
+                }else {
+                    setLikeCount(metric.likeCount);
+                }
                 setCommentCount(metric.commentCount)
                 dispatch(updateCommentCount({postId: post.id, count: metric.commentCount}));
             })
@@ -57,7 +62,7 @@ const PostStats: FC<PostStatsProps> = ({post, isShowShare = false, commentInputR
                     />
                     <p className="small-medium lg:base-medium">{likeCount}</p>
                 </div>
-                <div className="flex gap-2" onClick={() => commentInputRef?.current?.focus()}>
+                <div className="flex gap-2" onClick={onClickOnComment}>
                     <img
                         src={'/assets/icons/comment.svg'}
                         alt="comment"

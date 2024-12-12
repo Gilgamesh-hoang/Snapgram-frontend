@@ -44,12 +44,6 @@ export const getPostsById = async (id: string) => {
 
 }
 
-export const savedPost = async (postId: string, isSaved: boolean) => {
-    if (isSaved)
-        return await httpPost<ApiResponse>(`/posts/${postId}/save`);
-    else
-        return await httpDelete<ApiResponse>(`/posts/${postId}/unsaved`);
-}
 export const likedPost = async (postId: string, isLiked: boolean) => {
     if (isLiked)
         return await httpPost<ApiResponse<PostMetric>>(`/posts/${postId}/like`)
@@ -61,6 +55,14 @@ export const likedPost = async (postId: string, isLiked: boolean) => {
             .then(response => {
                 return response.data;
             });
+}
+
+export const checkLikedPost = async (postIds: string[]) => {
+    return await httpPost<ApiResponse<string[]>>(`/posts/check-likes`, postIds)
+        .then(response => {
+            return response.data;
+        });
+
 }
 
 export const getPostsByUser = async (nickname: string, pageNum: number, pageSize: number) => {
