@@ -1,9 +1,9 @@
 import {Link, useNavigate, useParams} from "react-router-dom";
 
 import {Button} from "@/components/ui";
-import {Loader, PostStats} from "@/components/shared";
+import {CarouselPost, Loader, PostStats} from "@/components/shared";
 
-import {formatDateString, multiFormatDateString2} from "@/utils/dateUtil";
+import {formatDateString, multiFormatDateString} from "@/utils/dateUtil";
 import React, {useEffect, useRef, useState} from "react";
 import {checkLikedPost, getPostsById} from "@/services/post.ts";
 import {Comment, Post} from "@/model/type.ts";
@@ -11,7 +11,6 @@ import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import {routes} from "@/route";
 import Tippy from "@tippyjs/react";
 import {useUserContext} from "@/context/AuthContext.tsx";
-import CarouselPost from "@/components/shared/CarouselPost.tsx";
 import {generateProfileLink} from "@/utils/common.ts";
 import CommentForm from "@/components/forms/CommentForm.tsx";
 import {useDispatch} from "react-redux";
@@ -205,7 +204,7 @@ const PostDetails: React.FC = () => {
                                             </div>}
                                     >
                                         <p className="subtle-semibold lg:small-regular">
-                                            {multiFormatDateString2(post.createdAt)}
+                                            {multiFormatDateString(post.createdAt)}
                                         </p>
                                     </Tippy>
                                 </div>

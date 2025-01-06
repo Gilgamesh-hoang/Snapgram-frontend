@@ -41,7 +41,6 @@ const CommentForm: FC<CommentFormProps> = ({postId, onCommentSuccess, commentInp
     return (
         <>
             <Avatar
-                type={0}
                 imageUrl={userContext.avatarUrl}
                 style={'mr-3 size-8'}
                 name={userContext.fullName}

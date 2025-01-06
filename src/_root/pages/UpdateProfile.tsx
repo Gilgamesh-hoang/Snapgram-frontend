@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import {Button, Input, Textarea} from "@/components/ui";
-import {Loader, ProfileUploader} from "@/components/shared";
+import {FaceUploadPopup, Loader, ProfileUploader} from "@/components/shared";
 
 import {ProfileValidation} from "@/validation";
 import React, {useEffect, useState} from "react";
@@ -18,7 +18,6 @@ import {generateProfileLink} from "@/utils/common.ts";
 import uploadFiles from "@/services/uploadFiles.ts";
 import {LuScanFace} from "react-icons/lu";
 import ChangePasswordPopup from "@/components/profile/ChangePasswordPopup.tsx";
-import FaceUploadPopup from "@/components/shared/FaceUploadPopup.tsx";
 
 const UpdateProfile: React.FC = () => {
     const navigate = useNavigate();

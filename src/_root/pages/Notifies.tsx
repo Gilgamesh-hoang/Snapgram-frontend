@@ -1,11 +1,68 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Loader} from "@/components/shared";
-import {multiFormatDateString2} from "@/utils/dateUtil";
-import {Link} from "react-router-dom";
+import {Notification} from "@/model/type.ts";
+import {getNotifications} from "@/services/notification.ts";
+import {PAGE_SIZE_NOTIFICATION} from "@/constants";
+import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
+import NotificationItem from "@/components/shared/NotificationItem.tsx";
+import {useSocketContext} from "@/context/SocketContext.tsx";
 
 const Notifies: React.FC = () => {
-
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
+    const {socket} = useSocketContext();
+
+    useEffect(() => {
+        if (!socket) return;
+        socket.on("notification", (response: string) => {
+            const data: Notification[] = JSON.parse(response);
+            updateNotification(data);
+        });
+
+        return () => {
+            console.log("Removing notification listener");
+            socket.off("notification");
+        };
+    }, [socket]);
+
+    useEffect(() => {
+        setIsLoading(true);
+        getNotifications(page, PAGE_SIZE_NOTIFICATION).then(res => {
+            updateNotification(res);
+            res.length < PAGE_SIZE_NOTIFICATION ? setHasMore(false) : setHasMore(true);
+        }).catch(() => {
+            setHasMore(false);
+        }).finally(() => {
+            setIsLoading(false);
+        });
+    }, [page]);
+
+    const updateNotification = (data: Notification[]) => {
+        setNotifications(prev => {
+            // Tạo một Map để lưu trữ các thông báo duy nhất theo ID
+            const notifyMap = new Map(prev.map(item => [item.id, item]));
+
+            // Ghi đè các thông báo cũ bằng thông báo mới (dựa theo ID)
+            data.forEach(item => notifyMap.set(item.id, item));
+
+            // Chuyển Map trở lại thành mảng
+            return Array.from(notifyMap.values());
+        });
+    }
+
+    const handleDeleteSuccess = (id: string) => {
+        setNotifications(prev => prev.filter(item => item.id !== id));
+    }
+
+    const renderNotifies = (): React.ReactNode => {
+        return notifications.map((item) => {
+            return (
+                <NotificationItem notification={item} handleDeleteSuccess={handleDeleteSuccess} key={item.id}/>
+            );
+        });
+    }
 
     return (
         <div className="common-container">
@@ -20,116 +77,15 @@ const Notifies: React.FC = () => {
                     />
                     <h2 className="h3-bold md:h2-bold w-full text-left">Thông báo</h2>
                 </div>
-                {isLoading ? (
-                    <Loader/>
-                ) : (
-                    <ul className='flex w-4/5 flex-col'>
-                        <li className='rounded-2xl hover:bg-dark-3'>
-                            <Link to={''} className='flex px-6 py-8'>
-                                <div className='mr-3'>
-                                    <img
-                                        src={"/assets/icons/profile-placeholder.svg"}
-                                        alt="user"
-                                        className='w-28 rounded-full'
-                                    />
-                                </div>
-
-                                <div>
-                                    <span className='base-extrabold'>John Smith </span>
-                                    <span className='base-light'>Lorem ipsum dolor sit amet, consectetur adipisicing
-                                    elit. Accusamus alias commodi Lorem ipsum dolor sit amet, consectetur adipisicing
-                                    elit. Accusamus alias commodi
-                                    eos exercitationem fugiat iusto minima</span>
-                                    <div className="flex-start mt-2 gap-2 text-light-3">
-                                        <p className="subtle-semibold lg:small-regular">
-                                            {multiFormatDateString2(new Date().toDateString())}
-                                        </p>
-                                    </div>
-                                </div>
-                            </Link>
-
-                            <hr className='h-px border-none bg-light-4'/>
-                        </li>
-                        <li className='rounded-2xl hover:bg-dark-3'>
-                            <Link to={''} className='flex px-6 py-8'>
-                                <div className='mr-3'>
-                                    <img
-                                        src={"/assets/icons/profile-placeholder.svg"}
-                                        alt="user"
-                                        className='w-28 rounded-full'
-                                    />
-                                </div>
-
-                                <div>
-                                    <span className='base-extrabold'>John Smith </span>
-                                    <span className='base-light'>Lorem ipsum dolor sit amet, consectetur adipisicing
-                                    elit. Accusamus alias commodi Lorem ipsum dolor sit amet, consectetur adipisicing
-                                    elit. Accusamus alias commodi
-                                    eos exercitationem fugiat iusto minima</span>
-                                    <div className="flex-start mt-2 gap-2 text-light-3">
-                                        <p className="subtle-semibold lg:small-regular">
-                                            {multiFormatDateString2(new Date().toDateString())}
-                                        </p>
-                                    </div>
-                                </div>
-                            </Link>
-
-                            <hr className='h-px border-none bg-light-4'/>
-                        </li>
-                        <li className='rounded-2xl hover:bg-dark-3'>
-                            <Link to={''} className='flex px-6 py-8'>
-                                <div className='mr-3'>
-                                    <img
-                                        src={"/assets/icons/profile-placeholder.svg"}
-                                        alt="user"
-                                        className='w-28 rounded-full'
-                                    />
-                                </div>
-
-                                <div>
-                                    <span className='base-extrabold'>John Smith </span>
-                                    <span className='base-light'>Lorem ipsum dolor sit amet, consectetur adipisicing
-                                    elit. Accusamus alias commodi Lorem ipsum dolor sit amet, consectetur adipisicing
-                                    elit. Accusamus alias commodi
-                                    eos exercitationem fugiat iusto minima</span>
-                                    <div className="flex-start mt-2 gap-2 text-light-3">
-                                        <p className="subtle-semibold lg:small-regular">
-                                            {multiFormatDateString2(new Date().toDateString())}
-                                        </p>
-                                    </div>
-                                </div>
-                            </Link>
-
-                            <hr className='h-px border-none bg-light-4'/>
-                        </li>
-                        <li className='rounded-2xl hover:bg-dark-3'>
-                            <Link to={''} className='flex px-6 py-8'>
-                                <div className='mr-3'>
-                                    <img
-                                        src={"/assets/icons/profile-placeholder.svg"}
-                                        alt="user"
-                                        className='w-28 rounded-full'
-                                    />
-                                </div>
-
-                                <div>
-                                    <span className='base-extrabold'>John Smith </span>
-                                    <span className='base-light'>Lorem ipsum dolor sit amet, consectetur adipisicing
-                                    elit. Accusamus alias commodi Lorem ipsum dolor sit amet, consectetur adipisicing
-                                    elit. Accusamus alias commodi
-                                    eos exercitationem fugiat iusto minima</span>
-                                    <div className="flex-start mt-2 gap-2 text-light-3">
-                                        <p className="subtle-semibold lg:small-regular">
-                                            {multiFormatDateString2(new Date().toDateString())}
-                                        </p>
-                                    </div>
-                                </div>
-                            </Link>
-
-                            <hr className='h-px border-none bg-light-4'/>
-                        </li>
-                    </ul>
-                )}
+                <ul className='flex w-4/5 flex-col'>
+                    <InfiniteScroll
+                        loader={<Loader/>}
+                        fetchMore={() => setPage((prev) => prev + 1)}
+                        hasMore={hasMore}
+                    >
+                        {renderNotifies()}
+                    </InfiniteScroll>
+                </ul>
             </div>
         </div>
     );

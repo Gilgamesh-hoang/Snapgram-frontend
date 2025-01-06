@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {MdOutlineClose} from "react-icons/md";
 import {Button} from "@/components/ui";
-import {FileUploader, Loader} from "@/components/shared/index.tsx";
+import {FileUploader, Loader} from "@/components/shared";
 import {showAlert} from "@/utils/common.ts";
 import uploadFiles from "@/services/uploadFiles.ts";
 import {sendImagesToTrain} from "@/services/face.ts";

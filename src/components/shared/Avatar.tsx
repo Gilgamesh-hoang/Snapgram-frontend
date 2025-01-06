@@ -4,13 +4,13 @@ import {HiMiniUserGroup} from "react-icons/hi2";
 import {clsx} from "clsx";
 
 interface AvatarProps {
-    type: number;
+    type?: 'USER' | 'GROUP';
     name: string;
     imageUrl?: string;
     style?: string;
 }
 
-const Avatar: React.FC<AvatarProps> = ({type, name, imageUrl, style}) => {
+const Avatar: React.FC<AvatarProps> = ({type='USER', name, imageUrl, style}) => {
     const avatarName = useMemo(() => {
         if (!name) return '';
 
@@ -27,7 +27,7 @@ const Avatar: React.FC<AvatarProps> = ({type, name, imageUrl, style}) => {
     // This function is responsible for rendering the avatar based on the provided props.
     const renderAvatar = () => {
         // If the type prop is 'room', render a group icon.
-        if (type === 1) {
+        if (type === 'GROUP') {
             return (
                 <div className={`flex items-center justify-center rounded-full border-2 border-gray-700`}>
                     <HiMiniUserGroup className={style}/>
@@ -62,7 +62,7 @@ const Avatar: React.FC<AvatarProps> = ({type, name, imageUrl, style}) => {
 
     return (
         <div className={clsx(`relative rounded-full`)}>
-        {/*<div className={clsx(`relative rounded-full`, style)}>*/}
+            {/*<div className={clsx(`relative rounded-full`, style)}>*/}
             {renderAvatar()}
         </div>
     );

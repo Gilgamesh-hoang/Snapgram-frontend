@@ -4,7 +4,8 @@ import {Loader, PostStats} from "@/components/shared";
 import {routes} from "@/route";
 import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import React, {FC} from "react";
-import {Post, User} from "@/model/type.ts";
+import {Post} from "@/model/type.ts";
+import {generatePostLink} from "@/utils/common.ts";
 
 type GridPostListProps = {
     showUser?: boolean;
@@ -13,12 +14,10 @@ type GridPostListProps = {
     setPage: (prev: number) => void;
     page: number;
     posts: Post[];
-    // creator?: User;
 };
 
 const GridPostList: FC<GridPostListProps> = ({
                                                  posts,
-                                                 // creator,
                                                  showUser = true,
                                                  showStats = true,
                                                  page,
@@ -36,7 +35,7 @@ const GridPostList: FC<GridPostListProps> = ({
                 >
                     {posts.map((post) => (
                         <li key={post.id} className="relative h-80 min-w-80">
-                            <Link to={`${routes.posts.replace(':id', post.id)}`} className="grid-post_link">
+                            <Link to={generatePostLink(post.id)} className="grid-post_link">
                                 <img
                                     src={post.media[0].url}
                                     alt="post"

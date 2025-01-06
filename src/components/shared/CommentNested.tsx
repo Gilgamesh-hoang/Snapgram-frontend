@@ -17,7 +17,7 @@ import {
 import {adjustCommentCount, incrementCommentCount} from "@/redux/postSlice.ts";
 import Tippy from "@tippyjs/react";
 import {IoIosMore} from "react-icons/io";
-import {formatDateString, multiFormatDateString2} from "@/utils/dateUtil.ts";
+import {formatDateString, multiFormatDateString} from "@/utils/dateUtil.ts";
 import {Loader} from "@/components/shared/index.tsx";
 import {AppDispatch} from "@/redux/store.ts";
 import Element = React.JSX.Element;
@@ -253,7 +253,6 @@ const CommentNested: FC<CommentNestedProps> = ({
                     <Link className=''
                           to={generateProfileLink(comment.creator.nickname)}>
                         <Avatar
-                            type={0}
                             imageUrl={comment.creator.avatarUrl}
                             style={'mr-3 size-8'}
                             name={comment.creator.fullName}
@@ -315,7 +314,7 @@ const CommentNested: FC<CommentNestedProps> = ({
                                     </div>}
                             >
                                 <p className="subtle-semibold lg:small-regular">
-                                    {multiFormatDateString2(comment.createdAt)}
+                                    {multiFormatDateString(comment.createdAt)}
                                 </p>
                             </Tippy>
 

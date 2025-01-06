@@ -1,8 +1,7 @@
 import React, {useState} from "react";
 import {MdOutlineClose} from "react-icons/md";
-import SingleImageUploader from "@/components/shared/SingleImageUploader.tsx";
 import {Button} from "@/components/ui";
-import {Loader} from "@/components/shared/index.tsx";
+import {Loader, SingleImageUploader} from "@/components/shared/index.tsx";
 import uploadFiles from "@/services/uploadFiles.ts";
 import {showAlert} from "@/utils/common.ts";
 import {User} from "@/model/type.ts";

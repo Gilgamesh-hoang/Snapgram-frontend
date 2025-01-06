@@ -1,9 +1,8 @@
 import {Link, useNavigate} from "react-router-dom";
 
-import {PostStats} from "@/components/shared";
-import {formatDateString, multiFormatDateString2} from "@/utils/dateUtil";
+import {CarouselPost, PostStats} from "@/components/shared";
+import {formatDateString, multiFormatDateString} from "@/utils/dateUtil";
 import React, {useState} from "react";
-import CarouselPost from "@/components/shared/CarouselPost.tsx";
 import {Post} from "@/model/type.ts";
 import Tippy from "@tippyjs/react";
 import {routes} from "@/route";
@@ -58,7 +57,7 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
                                     </div>}
                             >
                                 <p className="subtle-semibold lg:small-regular">
-                                    {multiFormatDateString2(post.createdAt)}
+                                    {multiFormatDateString(post.createdAt)}
                                 </p>
                             </Tippy>
                         </div>

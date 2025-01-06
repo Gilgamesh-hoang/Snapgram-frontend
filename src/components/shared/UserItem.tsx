@@ -135,7 +135,6 @@ const UserItem: React.FC<UserItemProps> = (
             <div className="flex items-center gap-4">
                 <Link to={generateProfileLink(nickname)}>
                     <Avatar
-                        type={0}
                         imageUrl={imageUrl}
                         style={'size-11'}
                         name={name}

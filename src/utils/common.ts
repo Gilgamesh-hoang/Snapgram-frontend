@@ -21,6 +21,10 @@ export function generateProfileLink(nickname: string): string {
     return `${routes.profile.replace(':nickname/*', encodeURIComponent(nickname))}`;
 }
 
+export function generatePostLink(id: string): string {
+    return `${routes.posts.replace(':id', id)}`;
+}
+
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }

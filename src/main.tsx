@@ -7,6 +7,7 @@ import {PrimeReactProvider} from "primereact/api";
 import {ConfirmDialog} from "primereact/confirmdialog";
 import {Provider} from "react-redux";
 import store from "@/redux/store.ts";
+import {SocketProvider} from "@/context/SocketContext.tsx";
 
 const rootElement = document.getElementById("root");
 
@@ -19,7 +20,9 @@ if (rootElement) {
                 <PrimeReactProvider>
                     <ConfirmDialog/>
                     <Provider store={store}>
-                        <App />
+                        <SocketProvider>
+                            <App/>
+                        </SocketProvider>
                     </Provider>
                 </PrimeReactProvider>
             </AuthProvider>

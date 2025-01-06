@@ -1,12 +1,11 @@
 import {useNavigate} from "react-router-dom";
 import {createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState} from "react";
-
 import {getAccessToken} from "@/services/token.ts";
 import {getCurrentUser} from "@/services/user.ts";
 import {routes} from "@/route";
 import {User} from "@/model/type.ts";
 
-export const INITIAL_USER : User = {
+export const INITIAL_USER: User = {
     id: "",
     fullName: "",
     nickname: "",
@@ -47,7 +46,6 @@ export function AuthProvider({children}: { children: ReactNode }) {
     const [isLoadingContext, setIsLoading] = useState(true);
 
     useEffect(() => {
-
         const tokenLocal = getAccessToken();
         if (!tokenLocal) {
             navigate(routes.signin);
@@ -56,6 +54,7 @@ export function AuthProvider({children}: { children: ReactNode }) {
         }
         checkAuthUser();
     }, []);
+
     const loginContext = (user: User) => {
         setUserContext(user);
         setIsAuthenticated(true);

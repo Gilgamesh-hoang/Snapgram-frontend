@@ -90,6 +90,22 @@ export interface Post {
     createdAt: string;
 }
 
+export interface Notification {
+    id: string;
+    entityId: string;
+    actor: Creator;
+    type:
+        'LIKE_POST' |
+        'COMMENT_POST' |
+        'REPLY_COMMENT' |
+        'LIKE_COMMENT' |
+        'FOLLOW_USER';
+    isRead: boolean;
+    createdAt: string;
+    content: string;
+    options: Record<string, any>;
+}
+
 export interface INavLink {
     imgURL: string;
     route: string;

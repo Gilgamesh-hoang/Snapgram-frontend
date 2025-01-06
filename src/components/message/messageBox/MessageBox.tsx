@@ -106,7 +106,6 @@ const MessageBox = () => {
                         <FaAngleLeft size={25}/>
                     </Link>
                     <Avatar
-                        type={0}
                         imageUrl={"https://th.bing.com/th/id/OIP.PA_USRL68UjTfF0kRo5ImQHaEo?rs=1&pid=ImgDetMain"}
                         style={'size-14'}
                         name={'Nguyen van a'}

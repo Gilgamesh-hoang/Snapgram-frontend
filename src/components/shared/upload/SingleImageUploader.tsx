@@ -1,11 +1,10 @@
-import React, {Dispatch, FC, SetStateAction, useCallback, useState} from "react";
+import React, {FC, useCallback, useState} from "react";
 import {FileWithPath, useDropzone} from "react-dropzone";
 
 import {Button} from "@/components/ui";
 import {Carousel} from "@/components/shared";
 import {convertFileToUrl} from "@/utils/common.ts";
 import {MediaUrl} from "@/model/type.ts";
-import {clsx} from "clsx";
 
 type FileUploaderProps = {
     fieldChange: (file: File | null) => void;

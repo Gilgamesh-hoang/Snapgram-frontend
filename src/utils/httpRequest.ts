@@ -3,8 +3,9 @@ import Swal from "sweetalert2";
 import {routes} from "@/route";
 import {getAccessToken, getRefreshToken, removeAccessToken, updateAccessToken} from "@/services/token.ts";
 
+const url = import.meta.env.VITE_REACT_APP_SERVER_URL || '';
 const httpRequest: AxiosInstance = axios.create({
-    baseURL: 'http://localhost:8182/api/v1',
+    baseURL: url,
     withCredentials: true,
 });
 httpRequest.interceptors.request.use(
