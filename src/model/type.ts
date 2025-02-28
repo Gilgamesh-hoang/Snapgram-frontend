@@ -34,8 +34,6 @@ export interface Tag {
     name: string;
 }
 
-export type FollowTab = 'FOLLOWER' | 'FOLLOWING';
-
 export interface Creator {
     id: string;
     nickname: string;
@@ -106,8 +104,42 @@ export interface Notification {
     options: Record<string, any>;
 }
 
+export type MessageType = 'TEXT' | 'IMAGE' | 'VIDEO';
+export type ConservationType = 'USER' | 'GROUP';
+
+export interface ConservationInfo {
+    id: string;
+    name: string;
+    type: ConservationType;
+    avatar: string|null;
+    owner?: User;
+}
+
+export interface MessageResponse {
+    id: string;
+    // groupId: string;
+    sender: Creator;
+    recipient: Creator;
+    content: string;
+    // groupName: string;
+    contentType: MessageType;
+    // conservationType: ConservationType;
+    isRead: boolean;
+    createdAt: string;
+    conversation: ConservationInfo;
+}
+
+
 export interface INavLink {
     imgURL: string;
     route: string;
     label: string;
 }
+
+export interface FileType {
+    isImage: boolean;
+    isVideo: boolean;
+}
+
+
+export type FollowTab = 'FOLLOWER' | 'FOLLOWING';

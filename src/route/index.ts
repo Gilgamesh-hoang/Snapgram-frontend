@@ -23,7 +23,7 @@ export interface RouteType {
 }
 
 export const routes = {
-    home: "/",
+    home: "/home",
     signin: "/sign-in",
     signup: "/sign-up",
     forgotPassword: "/forgot-password",
@@ -54,7 +54,7 @@ export const privateRoutes: RouteType[] = [
     {
         path: routes.messages, element: Messages,
         child: [
-            {path: ':type/:name', element: MessageBox,},
+            {path: ':type/:conservationId', element: MessageBox,},
         ]
     },
     {path: routes.notifies, element: Notifies,},

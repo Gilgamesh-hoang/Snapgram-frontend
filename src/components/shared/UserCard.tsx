@@ -4,6 +4,7 @@ import React, {useState} from "react";
 import {generateProfileLink} from "@/utils/common.ts";
 import {followUser} from "@/services/follow.ts";
 import {Loader} from "@/components/shared/index.tsx";
+import Avatar from "@/components/shared/Avatar.tsx";
 
 type UserCardProps = {
     id: string;
@@ -37,11 +38,7 @@ const UserCard: React.FC<UserCardProps> = ({id, name, nickname, imageUrl,onFollo
                 <Link to={generateProfileLink(nickname)}
                       className="flex flex-col items-center gap-4 "
                 >
-                    <img
-                        src={imageUrl || "/assets/icons/profile-placeholder.svg"}
-                        alt="creator"
-                        className="size-16 rounded-full"
-                    />
+                    <Avatar name={nickname} imageUrl={imageUrl} style={"size-16"}/>
 
                     <div className="flex-center flex-col gap-1">
                         <p className="base-medium line-clamp-1 text-center text-light-1">

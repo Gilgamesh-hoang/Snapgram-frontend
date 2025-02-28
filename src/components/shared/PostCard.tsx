@@ -8,6 +8,8 @@ import Tippy from "@tippyjs/react";
 import {routes} from "@/route";
 import 'tippy.js/dist/svg-arrow.css';
 import {savedPost} from "@/services/savePost.ts";
+import {generateProfileLink} from "@/utils/common.ts";
+import Avatar from "@/components/shared/Avatar.tsx";
 
 type PostCardProps = {
     post: Post;
@@ -31,15 +33,8 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
         <div className="post-card">
             <div className="flex-between">
                 <div className="flex items-center gap-3">
-                    <Link to={`/profile/${post.creator.id}`}>
-                        <img
-                            src={
-                                post.creator.avatarUrl ||
-                                "/assets/icons/profile-placeholder.svg"
-                            }
-                            alt="creator"
-                            className="w-12 rounded-full lg:h-12"
-                        />
+                    <Link to={generateProfileLink(post.creator.nickname)}>
+                        <Avatar name={post.creator.nickname} imageUrl={post.creator.avatarUrl} style={"size-12"}  />
                     </Link>
 
                     <div className="flex flex-col">

@@ -43,6 +43,7 @@ const App = () => {
     return (
         <main className="flex h-screen">
             <Routes>
+                <Route path="/" element={<Navigate to="/home" />} />
                 <Route element={<RootLayout/>}>
                     {/*<Route element={<Private/>}>*/}
                         {

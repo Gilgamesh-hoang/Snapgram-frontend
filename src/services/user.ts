@@ -91,6 +91,14 @@ export const getCurrentUser = async () => {
             return response.data;
         });
 }
+
+export const getUserById = async (id:string) => {
+    return await httpGet<ApiResponse<User>>(`/users/${id}`)
+        .then(response => {
+            return response.data;
+        });
+}
+
 export const getUserInfo = async (nickname: string) => {
     const nicknameDecode = decodeURIComponent(nickname);
     return await httpGet<ApiResponse<UserInfo>>('/users', {params: {nickname: nicknameDecode}})

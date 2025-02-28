@@ -48,3 +48,10 @@ export const PostValidation = z.object({
     caption: z.string().max(2200, { message: "Đã quá 2,200 ký tự" }),
     files: z.custom<File[]>(),
 });
+// ============================================================
+// GROUP MESSAGE
+// ============================================================
+export const GroupFormValidation = z.object({
+    name: z.string().min(1, { message: "Tên phải có ít nhất 1 ký tự." })
+        .max(50, { message: "Tên không được quá 50 ký tự." }),
+});

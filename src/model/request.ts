@@ -1,4 +1,4 @@
-import {CloudinaryMedia} from "@/model/type.ts";
+import {CloudinaryMedia, ConservationType, MessageType} from "@/model/type.ts";
 
 export interface SignUpRequest {
     nickname: string;
@@ -8,6 +8,7 @@ export interface SignUpRequest {
     fullName: string;
     gender: 'MALE' | 'FEMALE';
 }
+
 export interface ProfileRequest {
     nickname: string;
     email: string;
@@ -15,4 +16,13 @@ export interface ProfileRequest {
     gender: 'MALE' | 'FEMALE';
     bio: string;
     profilePicture: CloudinaryMedia;
+}
+
+export interface MessageRequest {
+    senderId: string;
+    conversationId?: string;
+    recipientId?: string;
+    content: string;
+    contentType: MessageType;
+    conversationType: ConservationType;
 }

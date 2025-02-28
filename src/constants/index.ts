@@ -9,6 +9,8 @@ export const PAGE_SIZE_USER_FOLLOW: number = 15;
 export const PAGE_SIZE_HOME_FRIEND: number = 6;
 export const PAGE_SIZE_TIMELINE: number = 15;
 export const PAGE_SIZE_NOTIFICATION: number = 20;
+export const PAGE_SIZE_SIDE_BAR_MESSAGE: number = 20;
+export const PAGE_SIZE_SIDE_MESSAGE_PANEL: number = 20;
 export const sidebarLinks = [
     {
         imgURL: "/assets/icons/home.svg",
@@ -46,7 +48,6 @@ export const sidebarLinks = [
         label: "Bài viết",
     },
 ];
-
 export const bottomBarLinks = [
     {
         imgURL: "/assets/icons/home.svg",
@@ -86,3 +87,6 @@ export const TopBarLinks = [
         label: "Bài viết",
     },
 ];
+export const SEND_MESSAGE_EVENT = "send_message";
+export const RECEIVE_MESSAGE_EVENT = "receive_message";
+export const ERROR_EVENT = "error";

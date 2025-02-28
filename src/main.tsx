@@ -33,3 +33,8 @@ if (rootElement) {
 } else {
     console.error("Root element not found");
 }
+/*
+* 1. xem lai phan upload anh trong mess (fileupload.tsx)
+* 2. message embed social
+* 3. infinite scroll
+* */

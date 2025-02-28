@@ -7,7 +7,6 @@ import {Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, 
 import {Loader} from "@/components/shared";
 import {MdOutlineClose} from "react-icons/md";
 import {changePassword} from "@/services/user.ts";
-import Swal from "sweetalert2";
 import {showAlert} from "@/utils/common.ts";
 
 function ChangePasswordPopup({isOpen, onClose}) {

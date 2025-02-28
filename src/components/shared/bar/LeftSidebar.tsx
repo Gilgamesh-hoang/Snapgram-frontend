@@ -8,19 +8,19 @@ import {routes} from "@/route";
 import {logout} from "@/services/auth.ts";
 import {INavLink} from "@/model/type.ts";
 import {useUserContext} from "@/context/AuthContext.tsx";
-import {Loader} from "@/components/shared";
 import {generateProfileLink} from "@/utils/common.ts";
 import NotificationNav from "@/components/shared/bar/NotificationNav.tsx";
 import Avatar from "@/components/shared/Avatar.tsx";
+import MessageNav from "@/components/shared/bar/MessageNav.tsx";
 
 const LeftSidebar = () => {
     const navigate = useNavigate();
     const {pathname} = useLocation();
     const {logoutContext, userContext, isLoadingContext} = useUserContext();
 
-    if (!userContext.nickname) {
-        return <Loader/>;
-    }
+    // if (!userContext.nickname) {
+    //     return <Loader/>;
+    // }
     const handleSignOut = async () => {
         await logout()
             .finally(() => {
@@ -28,6 +28,41 @@ const LeftSidebar = () => {
                 navigate(routes.signin);
             });
     };
+
+    const renderNavBar = () => {
+       return sidebarLinks.map((link: INavLink) => {
+            const isActive = pathname === link.route || pathname.includes(link.route);
+            const isNotify = link.route === routes.notifies;
+            const isMessage = link.route.includes(routes.messages)
+            let item;
+            if (isNotify) {
+                item = <NotificationNav link={link} isActive={isActive}/>
+            } else if (isMessage) {
+                item = <MessageNav link={link} isActive={isActive}/>
+            } else {
+                item = (<NavLink
+                    to={link.route}
+                    className="flex w-full items-center gap-4 p-3">
+                    <img
+                        src={link.imgURL}
+                        alt={link.label}
+                        className={`group-hover:invert-white ${
+                            isActive && "invert-white"
+                        }`}
+                    />
+                    {link.label}
+                </NavLink>)
+            }
+            return (
+                <li
+                    key={link.label}
+                    className={clsx('leftsidebar-link group flex items-center justify-between', isActive && 'bg-primary-500')}
+                >
+                    {item}
+                </li>
+            );
+        })
+    }
 
     return (
         <nav className="leftsidebar">
@@ -61,34 +96,7 @@ const LeftSidebar = () => {
                 </Link>
 
                 <ul className="flex flex-col gap-2">
-                    {sidebarLinks.map((link: INavLink) => {
-                        const isActive = pathname === link.route;
-                        const isNotify = link.route === routes.notifies;
-                        return (
-                            <li
-                                key={link.label}
-                                className={clsx('leftsidebar-link group flex items-center justify-between', isActive && 'bg-primary-500')}
-                            >
-
-                                {isNotify ? (
-                                    <NotificationNav link={link} isActive={isActive}/>
-                                ) : (
-                                    <NavLink
-                                        to={link.route}
-                                        className="flex w-full items-center gap-4 p-3">
-                                        <img
-                                            src={link.imgURL}
-                                            alt={link.label}
-                                            className={`group-hover:invert-white ${
-                                                isActive && "invert-white"
-                                            }`}
-                                        />
-                                        {link.label}
-                                    </NavLink>
-                                )}
-                            </li>
-                        );
-                    })}
+                    {renderNavBar()}
                 </ul>
             </div>
 

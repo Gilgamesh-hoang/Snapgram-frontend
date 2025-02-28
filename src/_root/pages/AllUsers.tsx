@@ -11,7 +11,6 @@ import {friendSuggestions} from "@/services/user.ts";
 import {PAGE_SIZE_ALL_USER, PAGE_SIZE_FRIEND_SUGGESTION} from "@/constants";
 import SearchUserPopup from "@/components/shared/SearchUserPopup.tsx";
 
-
 const AllUsers: React.FC = () => {
     // Initialize searchValue from the URL's query parameter
     const navigate = useNavigate();
@@ -25,7 +24,6 @@ const AllUsers: React.FC = () => {
     const [hasMore, setHasMore] = useState(true);
     const [users, setUsers] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
     // This effect runs whenever the searchDebounce changes
     useEffect(() => {
         // Reset the page number and clear the users array
@@ -46,9 +44,9 @@ const AllUsers: React.FC = () => {
         setIsLoading(false);
     }, [searchDebounce, location.pathname, navigate]);
 
-    // This effect runs whenever the page number or searchDebounce changes
     useEffect(() => {
         setIsLoading(true);
+
         // If there's a debounced search value, search for users with that value
         // Otherwise, get friend suggestions
         if (searchDebounce && searchDebounce.trim().length) {
@@ -74,7 +72,10 @@ const AllUsers: React.FC = () => {
             }).finally(() => {
                 setIsLoading(false);
             });
+
+
         }
+
 
     }, [page, searchDebounce]);
 
@@ -133,7 +134,7 @@ const AllUsers: React.FC = () => {
     return (
         <>
             <div className="common-container">
-                <div className="user-container">
+                <div className="user-container ">
                     <h2 className="h3-bold md:h2-bold w-full text-left">Người dùng</h2>
 
                     <div className="flex w-full">

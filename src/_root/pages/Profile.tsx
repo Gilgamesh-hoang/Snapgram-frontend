@@ -1,4 +1,4 @@
-import {Link, Outlet, Route, Routes, useLocation, useParams,} from "react-router-dom";
+import {Link, Outlet, Route, Routes, useLocation, useNavigate, useParams,} from "react-router-dom";
 import {GridPostList} from "@/components/shared";
 import React, {useEffect, useState} from "react";
 import {getUserInfo} from "@/services/user.ts";
@@ -11,7 +11,7 @@ import {BsQrCodeScan} from "react-icons/bs";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import {Button} from "@/components/ui";
 import FollowPopup from "@/components/profile/FollowPopup.tsx";
-import {generateProfileLink, showConfirmDialog} from "@/utils/common.ts";
+import {generateMessageLink, generateProfileLink, showConfirmDialog} from "@/utils/common.ts";
 import {filterFollow, followUser, unfollowUser} from "@/services/follow.ts";
 
 
@@ -39,6 +39,7 @@ const INITIAL_USER: UserInfo = {
 };
 
 const Profile: React.FC = () => {
+    const navigate = useNavigate();
     const {pathname} = useLocation();
     const {nickname} = useParams();
     const {userContext} = useUserContext();
@@ -112,6 +113,11 @@ const Profile: React.FC = () => {
         showConfirmDialog(`Hủy theo dõi @${nickname}?`, 'Hủy theo dõi', 'pi pi-exclamation-triangle', confirm);
 
     };
+
+    const handleClickMessager = () => {
+        navigate(generateMessageLink('u', user.id, 'action=new'));
+    }
+
     return (
         <>
             <div className="profile-container">
@@ -182,6 +188,7 @@ const Profile: React.FC = () => {
                                     )}
 
                                     <Button type="button"
+                                            onClick={handleClickMessager}
                                             className="ms-3 bg-light-2 px-8 text-dark-2 hover:text-light-2">
                                         Nhắn tin
                                     </Button>
