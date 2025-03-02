@@ -1,9 +1,6 @@
-<div align="center" ">
-<img src="/public/assets/images/logo.svg" style="margin: 20px 0 0 20px;">
-
+<div align="center" >
+<img src="/public/assets/images/Screenshot163502.png" style="margin: 20px 0 0 0px;">
 </div>
-
-[//]: # (insert image here)
 
 ## Table of Contents
 
