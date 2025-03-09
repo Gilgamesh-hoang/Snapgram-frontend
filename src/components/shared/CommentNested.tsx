@@ -22,6 +22,7 @@ import {Loader} from "@/components/shared/index.tsx";
 import {AppDispatch} from "@/redux/store.ts";
 import Element = React.JSX.Element;
 
+
 interface CommentNestedProps {
     comment: Comment;
     post: Post;
@@ -43,7 +44,7 @@ const CommentNested: FC<CommentNestedProps> = ({
                                                }) => {
     const submitRef = useRef<HTMLButtonElement>(null);
     const commentInputRef = useRef<HTMLTextAreaElement>(null);
-    const dispatch =useDispatch<AppDispatch>();
+    const dispatch = useDispatch<AppDispatch>();
     const {userContext} = useUserContext();
     const [editMode, setEditMode] = useState(false);
     const [editContent, setEditContent] = useState(comment.content);
@@ -222,7 +223,7 @@ const CommentNested: FC<CommentNestedProps> = ({
             })
     }
 
-    const renderComment = () => {
+    const renderNestedComment = () => {
         if (isFilterCommentLikedFetching) {
             return <Loader/>;
         }
@@ -246,6 +247,60 @@ const CommentNested: FC<CommentNestedProps> = ({
         });
         return results;
     }
+
+    const renderSentiment = () => {
+        if (!comment.sentiment)
+            return <span></span>;
+
+        let style;
+        let feel;
+
+        switch (comment.sentiment) {
+            case 'HAPPY':
+                style = 'text-[#FFB6C1]';
+                feel = `cảm thấy hạnh phúc 😄`
+                break;
+            case 'FEAR':
+                style = 'text-[#9CA3AF]';
+                feel = 'cảm thấy sợ 😨'
+                break;
+            case 'SURPRISE':
+                style = 'text-[#FFA500]';
+                feel = 'cảm thấy bất ngờ 😮'
+                break;
+            case 'ANGER':
+                style = 'text-[#D32F2F]';
+                feel = 'cảm thấy tức giận 😡'
+                break;
+            case 'ENJOYMENT':
+                style = 'text-[#F5E050]';
+                feel = 'cảm thấy thư giản 😊'
+                break;
+            case 'DISGUST':
+                style = 'text-[#A9BA9D]';
+                feel = 'cảm thấy kinh tởm 🤢'
+                break;
+            case 'SADNESS':
+                style = 'text-[#87CEEB]';
+                feel = 'cảm thấy buồn 😢'
+                break;
+
+            default:
+                style = 'text-[#E5E7EB]';
+                feel = 'cảm thấy bình thường 😐'
+                break;
+        }
+
+
+        return (
+            <>
+                <span>•</span>
+                <p className={clsx('small-regular w-fit', style)}>
+                    {feel}
+                </p>
+            </>
+        );
+    }
     return (
         <>
             <div className={clsx('mb-4 flex', {'mt-3': comment.level === 1})}>
@@ -261,10 +316,13 @@ const CommentNested: FC<CommentNestedProps> = ({
                 </div>
 
                 <div className='flex w-full flex-col'>
-                    <Link className='mb-1 w-fit'
-                          to={generateProfileLink(comment.creator.nickname)}>
-                        <p className='text-light-3'>{comment.creator.nickname}</p>
-                    </Link>
+                    <div className='mb-1 flex items-center gap-2 '>
+                        <Link className='w-fit'
+                              to={generateProfileLink(comment.creator.nickname)}>
+                            <p className='text-light-3'>{comment.creator.nickname}</p>
+                        </Link>
+                        {renderSentiment()}
+                    </div>
                     <div>
                         {editMode ? (
                             <>
@@ -367,7 +425,7 @@ const CommentNested: FC<CommentNestedProps> = ({
                             </div>
                         )}
                         {showCommentChild && comment.level === 0 && (
-                            renderComment()
+                            renderNestedComment()
                         )}
                         {comment.level === 0 && replyCountState > 0 && hasMore &&
                             <button className='small-regular mt-4 text-gray-500'
@@ -379,5 +437,4 @@ const CommentNested: FC<CommentNestedProps> = ({
         </>
     );
 };
-
 export default CommentNested;

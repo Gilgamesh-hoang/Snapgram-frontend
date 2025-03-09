@@ -69,7 +69,7 @@ const PostDetails: React.FC = () => {
                 setIsLoading(false);
 
                 // Cập nhật số lượng bình luận vào redux
-                dispatch(setCommentCount({ postId: data.id, count: data.commentCount }));
+                dispatch(setCommentCount({postId: data.id, count: data.commentCount}));
 
                 // Kiểm tra bài viết đã được lưu chưa
                 const savedPosts = await checkSaved([id]);

@@ -57,6 +57,8 @@ export interface CloudinaryMedia {
     resourceType: string;
 }
 
+export type Sentiment = 'HAPPY' | 'FEAR' | 'SURPRISE' | 'ANGER' | 'ENJOYMENT' | 'DISGUST' | 'OTHER' | 'SADNESS';
+
 export interface Comment {
     id: string;
     creator: Creator;
@@ -68,7 +70,9 @@ export interface Comment {
     likeCount: number;
     isLiked: boolean;
     replyCount: number;
+    sentiment?: Sentiment;
 }
+
 
 export interface PostMetric {
     likeCount: number;
@@ -111,7 +115,7 @@ export interface ConservationInfo {
     id: string;
     name: string;
     type: ConservationType;
-    avatar: string|null;
+    avatar: string | null;
     owner?: User;
 }
 
