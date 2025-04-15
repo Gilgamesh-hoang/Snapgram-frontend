@@ -16,6 +16,7 @@ const CommentForm: FC<CommentFormProps> = ({postId, onCommentSuccess, commentInp
     const submitRef = useRef<HTMLButtonElement>(null);
     const {userContext} = useUserContext();
     const dispatch = useDispatch();
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const content = commentInputRef.current?.value;
