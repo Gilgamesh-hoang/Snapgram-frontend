@@ -5,8 +5,8 @@
 ## Table of Contents
 
 - [Overview](#overview)
+- [Github Backend](#github-backend)
 - [Features](#features)
-- [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Usage](#usage)
@@ -20,6 +20,11 @@ Snapgram is a modern social media application inspired by Instagram, designed to
 for sharing photos and connecting with others.
 
 ![Snapgram Logo](./public/assets/images/Screenshot160604.png)
+
+---
+## Github Backend
+
+https://github.com/Gilgamesh-hoang/Snapgram-backend.git
 
 ---
 
@@ -45,73 +50,6 @@ for sharing photos and connecting with others.
 * React Router for navigation
 * Vite for build tooling
 * Axios for HTTP requests
-
----
-
-
-##  Project Structure
-
-```sh
-└── src/
-    ├── _auth
-    │   ├── AuthLayout.tsx
-    │   └── forms
-    ├── _root
-    │   ├── pages
-    │   └── RootLayout.tsx
-    ├── App.tsx
-    ├── components
-    │   ├── forms
-    │   ├── message
-    │   ├── profile
-    │   ├── shared
-    │   └── ui
-    ├── constants
-    │   └── index.ts
-    ├── context
-    │   ├── AuthContext.tsx
-    │   └── SocketContext.tsx
-    ├── globals.css
-    ├── hooks
-    │   ├── useCommentNode.ts
-    │   └── useDebounce.ts
-    ├── main.tsx
-    ├── model
-    │   ├── request.ts
-    │   └── type.ts
-    ├── redux
-    │   ├── messageSlice.ts
-    │   ├── postSlice.ts
-    │   ├── store.ts
-    │   └── timelineSlice.ts
-    ├── route
-    │   └── index.ts
-    ├── services
-    │   ├── auth.ts
-    │   ├── cloudinary.ts
-    │   ├── comment.ts
-    │   ├── face.ts
-    │   ├── follow.ts
-    │   ├── message.ts
-    │   ├── notification.ts
-    │   ├── post.ts
-    │   ├── savePost.ts
-    │   ├── search.ts
-    │   ├── timeline.ts
-    │   ├── token.ts
-    │   ├── uploadFiles.ts
-    │   └── user.ts
-    ├── utils
-    │   ├── common.ts
-    │   ├── dateUtil.ts
-    │   ├── httpRequest.ts
-    │   └── linkUtil.ts
-    ├── validation
-    │   └── index.ts
-    └── vite-env.d.ts
-```
-
-
 
 ---
 
