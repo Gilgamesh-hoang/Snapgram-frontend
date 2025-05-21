@@ -57,7 +57,7 @@ export interface CloudinaryMedia {
     resourceType: string;
 }
 
-export type Sentiment = 'HAPPY' | 'FEAR' | 'SURPRISE' | 'ANGER' | 'ENJOYMENT' | 'DISGUST' | 'OTHER' | 'SADNESS';
+export type Sentiment = 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL'
 
 export interface Comment {
     id: string;

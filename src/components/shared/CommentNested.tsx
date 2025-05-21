@@ -256,38 +256,26 @@ const CommentNested: FC<CommentNestedProps> = ({
         let feel;
 
         switch (comment.sentiment) {
-            case 'HAPPY':
-                style = 'text-[#FFB6C1]';
-                feel = `cảm thấy hạnh phúc 😄`
+            case 'POSITIVE':
+                style = {
+                    background: 'rgba(46,204,113,0.2)',
+                    color: '#2ecc71'
+                };
+                feel = `tích cực 😊`
                 break;
-            case 'FEAR':
-                style = 'text-[#9CA3AF]';
-                feel = 'cảm thấy sợ 😨'
+            case 'NEGATIVE':
+                style = {
+                    background: 'rgba(231,76,60,0.2)',
+                    color: '#e74c3c'
+                };
+                feel = 'tiêu cực 😞'
                 break;
-            case 'SURPRISE':
-                style = 'text-[#FFA500]';
-                feel = 'cảm thấy bất ngờ 😮'
-                break;
-            case 'ANGER':
-                style = 'text-[#D32F2F]';
-                feel = 'cảm thấy tức giận 😡'
-                break;
-            case 'ENJOYMENT':
-                style = 'text-[#F5E050]';
-                feel = 'cảm thấy thư giản 😊'
-                break;
-            case 'DISGUST':
-                style = 'text-[#A9BA9D]';
-                feel = 'cảm thấy kinh tởm 🤢'
-                break;
-            case 'SADNESS':
-                style = 'text-[#87CEEB]';
-                feel = 'cảm thấy buồn 😢'
-                break;
-
-            default:
-                style = 'text-[#E5E7EB]';
-                feel = 'cảm thấy bình thường 😐'
+            case 'NEUTRAL':
+                style = {
+                    background: 'rgba(149,165,166,0.2)',
+                    color: '#95a5a6'
+                };
+                feel = 'trung tính 😐'
                 break;
         }
 
@@ -295,9 +283,13 @@ const CommentNested: FC<CommentNestedProps> = ({
         return (
             <>
                 <span>•</span>
-                <p className={clsx('small-regular w-fit', style)}>
-                    {feel}
-                </p>
+                <div className="rounded-full px-3 py-1"
+                     style={style}
+                >
+                    <p className={'small-regular w-fit'}>
+                        {feel}
+                    </p>
+                </div>
             </>
         );
     }
