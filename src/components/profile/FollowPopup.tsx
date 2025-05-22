@@ -7,8 +7,8 @@ import {PAGE_SIZE_USER_FOLLOW} from "@/constants";
 import {searchUserFollowers, searchUserFollowing} from "@/services/search.ts";
 import UserItem from "@/components/shared/UserItem.tsx";
 import {Loader} from "@/components/shared";
-import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import {useUserContext} from "@/context/AuthContext.tsx";
+import InfiniteScroll from "react-infinite-scroll-component";
 import Element = React.JSX.Element;
 
 interface FollowPopupProps {
@@ -70,24 +70,26 @@ const FollowPopup: FC<FollowPopupProps> = ({onClose, tab, userId}) => {
         fetchFunction: () => Promise<User[]>,
         searchTerm: string | null
     ) => {
+        setIsFilterFetching(true);
+
         fetchFunction()
             .then((res: User[]) => {
                 setUsers((prev) => [...prev, ...res]);
                 if (res.length > 0) {
                     const ids = res.map((user) => user.id);
-                    setIsFilterFetching(true);
+
                     filterFollow(ids)
                         .then((res) => {
                             setFollowingIds(addToSet(Array.from(followingIds), res));
                         })
-                        .finally(() => {
-                            setIsFilterFetching(false);
-                        });
                 }
                 res.length < PAGE_SIZE_USER_FOLLOW ? setHasMore(false) : setHasMore(true);
             })
             .catch(() => {
                 setHasMore(false);
+            })
+            .finally(() => {
+                setIsFilterFetching(false);
             });
     };
     const showFollowers = (searchTerm: string | null) => {
@@ -103,9 +105,10 @@ const FollowPopup: FC<FollowPopupProps> = ({onClose, tab, userId}) => {
     }
 
     const renderFollowItems = () => {
-        if (isFilterFetching) {
+        if (followingIds.size === 0 && isFilterFetching) {
             return <Loader/>;
         }
+
         let myself: Element | null = null;
         const result: Element[] = [];
         users.forEach((user) => {
@@ -164,14 +167,21 @@ const FollowPopup: FC<FollowPopupProps> = ({onClose, tab, userId}) => {
                         />
 
                     </div>
-                    <div
-                        className="custom-scrollbar mt-4 flex h-[26rem] max-h-[26rem] flex-col gap-4 overflow-y-scroll pe-1.5">
+                    <div id="followScrollable"
+                         className="custom-scrollbar mt-4  h-[26rem] max-h-[26rem]  overflow-y-scroll pe-1.5">
+
                         <InfiniteScroll
-                            loader={<Loader/>}
-                            fetchMore={() => setPage((prev) => prev + 1)}
+                            dataLength={users.length}
+                            next={() => setPage((prev) => prev + 1)}
                             hasMore={hasMore}
+                            loader={<Loader/>}
+                            scrollableTarget="followScrollable"
+                            style={{overflow: "hidden"}}
                         >
-                            {renderFollowItems()}
+                            <div className='flex flex-col gap-4'>
+
+                                {renderFollowItems()}
+                            </div>
                         </InfiniteScroll>
                     </div>
                 </div>

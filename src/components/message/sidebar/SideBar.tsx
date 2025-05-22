@@ -2,20 +2,21 @@ import React, {useEffect, useState} from "react";
 import {Input} from "@/components/ui";
 import {SidebarItem} from "@/components/message/sidebar";
 import {MessageResponse} from "@/model/type.ts";
-import {getAllConservations} from "@/services/message.ts";
 import {PAGE_SIZE_NOTIFICATION, PAGE_SIZE_SIDE_BAR_MESSAGE, RECEIVE_MESSAGE_EVENT} from "@/constants";
 import {Loader} from "@/components/shared";
-import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import {useSocketContext} from "@/context/SocketContext.tsx";
 import {MdOutlineGroupAdd} from "react-icons/md";
 import CreateGroupModal from "@/components/message/groupForm/CreateGroupModal.tsx";
+import InfiniteScroll from "react-infinite-scroll-component";
+import {getAllConservations} from "@/services/message.ts";
 
 const SideBar = () => {
     const [conservations, setConservations] = useState<MessageResponse[]>([])
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
     const {socket} = useSocketContext();
     const [showModal, setShowModal] = useState(false);
+
     useEffect(() => {
         getAllConservations(page, PAGE_SIZE_SIDE_BAR_MESSAGE).then((response) => {
             // sort response by last message time
@@ -115,7 +116,9 @@ const SideBar = () => {
                     </div>
                 </div>
 
-                <div className='custom-scrollbar h-[calc(100vh-165px)] w-[96%] overflow-y-auto overflow-x-hidden'>
+                <div className='custom-scrollbar h-[calc(100vh-165px)] w-[96%] overflow-y-auto overflow-x-hidden'
+                     id="sidebarMessageScrollable"
+                >
                     {
                         conservations.length === 0 && (
                             <div className='mt-12'>
@@ -125,9 +128,12 @@ const SideBar = () => {
                     }
 
                     <InfiniteScroll
-                        loader={<Loader/>}
-                        fetchMore={() => setPage((prev) => prev + 1)}
+                        dataLength={conservations.length}
+                        next={() => setPage((prev) => prev + 1)}
                         hasMore={hasMore}
+                        loader={<Loader/>}
+                        scrollableTarget="sidebarMessageScrollable"
+                        style={{overflow: "hidden"}}
                     >
                         {conservations.map((user, index) =>
                             <SidebarItem key={index} {...user} />

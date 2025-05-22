@@ -70,7 +70,7 @@ const PostCard: React.FC<PostCardProps> = ({post}) => {
             </div>
 
 
-            <div className="small-medium lg:base-medium py-5">
+            <div className="base-regular py-5">
                 <p>{post.caption}</p>
                 <ul className="mt-2 flex gap-1.5">
                     {post.tags.map((tag, index) => (

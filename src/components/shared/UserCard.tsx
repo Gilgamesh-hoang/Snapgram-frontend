@@ -10,7 +10,7 @@ type UserCardProps = {
     id: string;
     name: string;
     nickname: string;
-    imageUrl: string;
+    imageUrl?: string;
     onFollowSuccess?: (userId: string) => void;
 };
 

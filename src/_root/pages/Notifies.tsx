@@ -3,14 +3,13 @@ import {Loader} from "@/components/shared";
 import {Notification} from "@/model/type.ts";
 import {getNotifications} from "@/services/notification.ts";
 import {PAGE_SIZE_NOTIFICATION} from "@/constants";
-import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import NotificationItem from "@/components/shared/NotificationItem.tsx";
 import {useSocketContext} from "@/context/SocketContext.tsx";
-
+import InfiniteScroll from "react-infinite-scroll-component";
 const Notifies: React.FC = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = React.useState(false);
     const {socket} = useSocketContext();
 
@@ -57,15 +56,15 @@ const Notifies: React.FC = () => {
     }
 
     const renderNotifies = (): React.ReactNode => {
-        return notifications.map((item) => {
+        return notifications.map((item, index) => {
             return (
-                <NotificationItem notification={item} handleDeleteSuccess={handleDeleteSuccess} key={item.id}/>
+                <NotificationItem notification={item} handleDeleteSuccess={handleDeleteSuccess} key={index}/>
             );
         });
     }
 
     return (
-        <div className="common-container">
+        <div className="common-container"  id='notifyScrollable'>
             <div className="flex w-full max-w-5xl flex-col items-start">
                 <div className="mb-4 flex w-full max-w-5xl gap-2 ">
                     <img
@@ -79,9 +78,12 @@ const Notifies: React.FC = () => {
                 </div>
                 <ul className='flex w-4/5 flex-col'>
                     <InfiniteScroll
-                        loader={<Loader/>}
-                        fetchMore={() => setPage((prev) => prev + 1)}
+                        dataLength={notifications.length}
+                        next={() => setPage((prev) => prev + 1)}
                         hasMore={hasMore}
+                        loader={<Loader/>}
+                        scrollableTarget="notifyScrollable"
+                        style={{overflow: "hidden"}}
                     >
                         {renderNotifies()}
                     </InfiniteScroll>

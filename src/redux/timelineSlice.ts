@@ -11,6 +11,7 @@ interface PostState {
     isLoading: boolean;
     savedIds: string[];
     likedIds: string[];
+    page: number;
 }
 
 const initialState: PostState = {
@@ -19,11 +20,13 @@ const initialState: PostState = {
     isLoading: false,
     savedIds: [],
     likedIds: [],
+    page: 1,
 };
 export const fetchTimelines = createAsyncThunk(
     'fetchTimelines',
-    async (page: number, {getState}: any) => {
-
+    async (_, { getState }: any) => {
+        const state = getState().timeline as PostState;
+        const page = state.page;
         const timelinePosts = await getTimeline(page, PAGE_SIZE_TIMELINE);
         const postIds = timelinePosts.map(post => post.id);
 
@@ -45,9 +48,7 @@ const timelineSlice = createSlice({
     name: 'timeline',
     initialState,
     reducers: {
-        dummyAction(state) {
 
-        },
     },
     extraReducers: (builder) => {
         builder
@@ -60,6 +61,7 @@ const timelineSlice = createSlice({
                     state.posts = [...state.posts, ...timelinePosts];
                     state.savedIds = [...state.savedIds, ...savedIds];
                     state.likedIds = [...state.likedIds, ...likedIds];
+                    state.page += 1;
 
                     if (timelinePosts.length < PAGE_SIZE_TIMELINE) {
                         state.hasMore = false;
@@ -74,5 +76,6 @@ const timelineSlice = createSlice({
     },
 });
 
-export const {dummyAction} = timelineSlice.actions;
+// export const {} = timelineSlice.actions;
 export default timelineSlice.reducer;
+

@@ -38,7 +38,7 @@ export interface Creator {
     id: string;
     nickname: string;
     fullName: string;
-    avatarUrl: string;
+    avatarUrl?: string;
 }
 
 export interface CloudinarySignature {

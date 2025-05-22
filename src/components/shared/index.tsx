@@ -10,5 +10,4 @@ export { default as PostStats } from "./PostStats";
 export { default as Carousel } from "./carousel/Carousel.tsx";
 export { default as CarouselPost } from "./carousel/CarouselPost.tsx";
 export { default as FileUploader } from "./upload/FileUploader.tsx";
-export { default as FaceUploadPopup } from "./upload/FaceUploadPopup.tsx";
 export { default as SingleImageUploader } from "./upload/SingleImageUploader.tsx";

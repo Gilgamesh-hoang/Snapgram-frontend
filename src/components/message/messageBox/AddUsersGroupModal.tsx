@@ -8,12 +8,12 @@ import {PAGE_SIZE_USER_FOLLOW} from "@/constants";
 import useDebounce from "@/hooks/useDebounce.ts";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import {Loader} from "@/components/shared";
-import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import {getFollowings} from "@/services/follow.ts";
 import {IoIosCloseCircleOutline} from "react-icons/io";
 import {addUsersToGroup, getParticipants} from "@/services/message.ts";
 import {showAlertOnLeft} from "@/utils/common.ts";
 import axios from "axios";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 
 const AddUsersGroupModal = ({conversationId, onClose}: { conversationId: string, onClose: () => void }) => {
@@ -156,11 +156,14 @@ const AddUsersGroupModal = ({conversationId, onClose}: { conversationId: string,
 
                     {/* Danh sách thành viên */}
                     <div className='flex h-80 gap-2 '>
-                        <div className="custom-scrollbar flex-1 overflow-y-auto border-r border-gray-600">
+                        <div className="custom-scrollbar flex-1 overflow-y-auto border-r border-gray-600" id="userScrollable">
                             <InfiniteScroll
-                                loader={<Loader/>}
-                                fetchMore={() => setPage((prev) => prev + 1)}
+                                dataLength={users.length}
+                                next={() => setPage((prev) => prev + 1)}
                                 hasMore={hasMore}
+                                loader={<Loader/>}
+                                scrollableTarget="userScrollable"
+                                style={{overflow: "hidden"}}
                             >
                                 {renderUsers()}
                             </InfiniteScroll>

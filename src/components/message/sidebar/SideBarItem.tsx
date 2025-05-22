@@ -1,4 +1,4 @@
-import {NavLink} from "react-router-dom";
+import {NavLink, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {MessageResponse} from "@/model/type.ts";
 import Avatar from "@/components/shared/Avatar.tsx";
@@ -30,7 +30,9 @@ const SideBarItem: React.FC<MessageResponse> = (message) => {
     const [lastMessage, setLastMessage] = useState<MessageResponse>(message);
     const conversationInfo = message.conversation;
     const messages = useSelector((state: RootState) => selectMessagesById(state, conversationInfo.id));
-
+    const params = useParams();
+    const currentConversationId = params.conservationId;
+    const isActive = currentConversationId === conversationInfo.id;
 
     useEffect(() => {
         if (messages.length > 0) {
@@ -92,7 +94,8 @@ const SideBarItem: React.FC<MessageResponse> = (message) => {
 
     return (
         <NavLink to={getUrl()} onClick={markAsRead}
-                 className='flex cursor-pointer items-center gap-2 rounded border border-transparent px-2 py-3 hover:bg-dark-4'>
+                 className={clsx('flex cursor-pointer items-center gap-2 rounded border border-transparent px-2 py-3 hover:bg-dark-4',
+                     {"bg-dark-4": isActive})}>
             <div>
                 <Avatar
                     imageUrl={conversationInfo.avatar}

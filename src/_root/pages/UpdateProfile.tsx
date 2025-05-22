@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import {Button, Input, Textarea} from "@/components/ui";
-import {FaceUploadPopup, Loader, ProfileUploader} from "@/components/shared";
+import {Loader, ProfileUploader} from "@/components/shared";
 
 import {ProfileValidation} from "@/validation";
 import React, {useEffect, useState} from "react";
@@ -26,7 +26,6 @@ const UpdateProfile: React.FC = () => {
     const nicknameDebounce = useDebounce(nickname, 500);
     const [nicknameExists, setNicknameExists] = useState(false);
     const [isPasswdPopupOpen, setIsPasswdPopupOpen] = useState(false);
-    const [isFacePopupOpen, setIsFacePopupOpen] = useState(false);
     const [bio, setBio] = useState('');
     const [gender, setGender] = useState<'MALE' | 'FEMALE'>('MALE')
     const [email, setEmail] = useState('');
@@ -93,12 +92,8 @@ const UpdateProfile: React.FC = () => {
     }, [userContext.nickname]);
 
 
-    function togglePopup(type: "PASSWORD" | "FACE") {
-        if(type === "PASSWORD") {
-            setIsPasswdPopupOpen(!isPasswdPopupOpen);
-        }else {
-            setIsFacePopupOpen(!isFacePopupOpen);
-        }
+    function togglePopup() {
+        setIsPasswdPopupOpen(!isPasswdPopupOpen);
     }
 
     if (isLoadingContext || !bio) {
@@ -162,7 +157,7 @@ const UpdateProfile: React.FC = () => {
                                 </button>
                                 <div id="options"
                                      className="absolute right-0 mt-2 hidden w-48 rounded-lg bg-dark-4 shadow-xl">
-                                    <button onClick={()=>togglePopup("PASSWORD")}
+                                    <button onClick={togglePopup}
                                             className={`flex gap-1.5 p-3`}>
                                         <img
                                             src={"/assets/icons/edit-profile.svg"}
@@ -175,7 +170,7 @@ const UpdateProfile: React.FC = () => {
                                         </p>
                                     </button>
                                     <div className=' h-px bg-primary-500'></div>
-                                    <button onClick={()=>togglePopup("FACE")}
+                                    <button onClick={togglePopup}
                                             className={`flex gap-1.5 p-3`}>
                                         <LuScanFace size={20} className='text-secondary-500'/>
                                         <p className="small-medium flex whitespace-nowrap">
@@ -187,8 +182,8 @@ const UpdateProfile: React.FC = () => {
                             </div>
 
                         </div>
-                        {isPasswdPopupOpen && <ChangePasswordPopup isOpen={isPasswdPopupOpen} onClose={()=>setIsPasswdPopupOpen(!isPasswdPopupOpen)}/>}
-                        {isFacePopupOpen && <FaceUploadPopup onClose={()=>setIsFacePopupOpen(!isFacePopupOpen)}/>}
+                        {isPasswdPopupOpen && <ChangePasswordPopup isOpen={isPasswdPopupOpen}
+                                                                   onClose={() => setIsPasswdPopupOpen(!isPasswdPopupOpen)}/>}
                     </div>
                 </div>
 

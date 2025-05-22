@@ -7,7 +7,6 @@ import {formatDateString, multiFormatDateString} from "@/utils/dateUtil";
 import React, {useEffect, useRef, useState} from "react";
 import {checkLikedPost, getPostsById} from "@/services/post.ts";
 import {Comment, Post} from "@/model/type.ts";
-import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import {routes} from "@/route";
 import Tippy from "@tippyjs/react";
 import {useUserContext} from "@/context/AuthContext.tsx";
@@ -21,6 +20,7 @@ import {filterLiked, getCommentsByPostId} from "@/services/comment.ts";
 import {PAGE_SIZE_COMMENT} from "@/constants";
 import {AppDispatch} from "@/redux/store.ts";
 import {checkSaved, savedPost} from "@/services/savePost.ts";
+import InfiniteScroll from "react-infinite-scroll-component";
 import Element = React.JSX.Element;
 
 const PostDetails: React.FC = () => {
@@ -88,6 +88,8 @@ const PostDetails: React.FC = () => {
 
     useEffect(() => {
         if (id) {
+            setIsFilterCommentLikedFetching(true);
+
             getCommentsByPostId(id, page, PAGE_SIZE_COMMENT)
                 .then((data) => {
                     setComments((prev) => [...prev, ...data]);
@@ -97,15 +99,15 @@ const PostDetails: React.FC = () => {
                     return data.map((item) => item.id);
                 })
                 .then((commentIds) => {
-                    setIsFilterCommentLikedFetching(true);
                     filterLiked(commentIds).then((data: string[]) => {
                         setCommentLikedIds(prev => [...prev, ...data]);
-                    }).finally(() => {
-                        setIsFilterCommentLikedFetching(false);
-                    });
+                    })
                 })
                 .catch(() => {
                     setHasMore(false);
+                })
+                .finally(() => {
+                    setIsFilterCommentLikedFetching(false);
                 });
         }
     }, [page]);
@@ -113,6 +115,7 @@ const PostDetails: React.FC = () => {
     if (!post || isLoading || isLoadingContext) {
         return <Loader/>;
     }
+
     const onCommentSuccess = (comment: Comment) => {
         handleInsertNode(null, comment);
     }
@@ -130,18 +133,18 @@ const PostDetails: React.FC = () => {
     }
 
     const renderComment = () => {
-        if (isFilterCommentLikedFetching) {
+        if (comments.length === 0 && isFilterCommentLikedFetching) {
             return <Loader/>;
         }
+
         const results: Element[] = [];
 
-        comments.forEach((item) => {
-            if (commentLikedIds.includes(item.id)) {
-                item.isLiked = true;
-            }
+        comments.forEach((item, index) => {
+            item.isLiked = commentLikedIds.includes(item.id);
+
             results.push(
                 <CommentNested
-                    key={item.id}
+                    key={index}
                     commentLikedIds={commentLikedIds}
                     setCommentLikedIds={setCommentLikedIds}
                     handleInsertNode={handleInsertNode}
@@ -154,6 +157,7 @@ const PostDetails: React.FC = () => {
         });
         return results;
     }
+
     return (
         <div className="post_details-container">
             <div className="hidden w-full max-w-5xl md:flex">
@@ -272,18 +276,20 @@ const PostDetails: React.FC = () => {
                         <hr className=" border border-dark-4/80"/>
                     </div>
                     {/*show comments*/}
-                    <div className='show_comments-container'>
+                    <div className='show_comments-container' id="commentScrollable">
                         <div className='flex flex-col'>
-                            {comments.length > 0 && (
-                                <InfiniteScroll
-                                    loader={<Loader/>}
-                                    fetchMore={() => setPage((prev) => prev + 1)}
-                                    hasMore={hasMore}
-                                >
-                                    {renderComment()}
 
-                                </InfiniteScroll>
-                            )}
+                            <InfiniteScroll
+                                dataLength={comments.length}
+                                next={() => setPage((prev) => prev + 1)}
+                                hasMore={hasMore}
+                                loader={<Loader/>}
+                                scrollableTarget="commentScrollable"
+                                style={{overflow: "hidden"}}
+                            >
+                                {renderComment()}
+
+                            </InfiniteScroll>
                         </div>
                     </div>
 
@@ -295,7 +301,6 @@ const PostDetails: React.FC = () => {
                 </div>
             </div>
         </div>
-    )
-        ;
+    );
 };
 export default PostDetails;

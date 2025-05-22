@@ -16,10 +16,11 @@ import {PAGE_SIZE_USER_FOLLOW} from "@/constants";
 import useDebounce from "@/hooks/useDebounce.ts";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import {Loader} from "@/components/shared";
-import InfiniteScroll from "@/components/shared/InfiniteScroll.tsx";
 import {getFollowings} from "@/services/follow.ts";
 import {IoIosCloseCircleOutline} from "react-icons/io";
 import uploadFiles from "@/services/uploadFiles.ts";
+import {SidebarItem} from "@/components/message/sidebar";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 
 const CreateGroupModal = ({onClose}: { onClose: () => void }) => {
@@ -237,11 +238,14 @@ const CreateGroupModal = ({onClose}: { onClose: () => void }) => {
 
                         {/* Danh sách thành viên */}
                         <div className='flex h-80 gap-2 '>
-                            <div className="custom-scrollbar flex-1 overflow-y-auto border-r border-gray-600">
+                            <div className="custom-scrollbar flex-1 overflow-y-auto border-r border-gray-600" id="userScrollable">
                                 <InfiniteScroll
-                                    loader={<Loader/>}
-                                    fetchMore={() => setPage((prev) => prev + 1)}
+                                    dataLength={users.length}
+                                    next={() => setPage((prev) => prev + 1)}
                                     hasMore={hasMore}
+                                    loader={<Loader/>}
+                                    scrollableTarget="userScrollable"
+                                    style={{overflow: "hidden"}}
                                 >
                                     {users.map((user, index) => (
                                         <CheckboxUser key={user.id} user={user} onClick={handleSelectUser}
@@ -252,7 +256,7 @@ const CreateGroupModal = ({onClose}: { onClose: () => void }) => {
                             </div>
                             <div className='custom-scrollbar flex-1 overflow-y-auto'>
                                 {selectedUsers.map((user) => (
-                                    <div className='flex justify-between items-center mb-4' key={user.id}>
+                                    <div className='mb-4 flex items-center justify-between' key={user.id}>
                                         <UserItem user={user}/>
                                         <button type={"button"}>
                                             <IoIosCloseCircleOutline size={25}/>

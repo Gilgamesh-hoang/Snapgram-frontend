@@ -203,7 +203,7 @@ const MessageItem: React.FC<MessageItemProps> = ({message}) => {
 
     return (
 
-        <div className='flex'>
+        <div className='flex my-1'>
             {message.sender.id !== userContext.id && renderAvatar()}
             <div
                 className={`w-fit max-w-[243px] rounded-xl p-2 md:max-w-sm lg:max-w-md 
