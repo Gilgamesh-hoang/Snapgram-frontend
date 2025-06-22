@@ -38,8 +38,12 @@ const messageSlice = createSlice({
             if (!state.messages[id]) {
                 state.messages[id] = { messages: [], page: 1, hasMore: true, isLoading: false };
             }
-            // Thêm tin nhắn mới vào đầu mảng
-            state.messages[id].messages = [message, ...state.messages[id].messages];
+            // Kiểm tra xem tin nhắn đã tồn tại hay chưa dựa trên id
+            const exists = state.messages[id].messages.some(msg => msg.id === message.id);
+            if (!exists) {
+                // Chỉ thêm tin nhắn nếu chưa tồn tại
+                state.messages[id].messages = [message, ...state.messages[id].messages];
+            }
         },
     },
     extraReducers: (builder) => {

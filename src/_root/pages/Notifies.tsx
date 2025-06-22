@@ -47,7 +47,9 @@ const Notifies: React.FC = () => {
             data.forEach(item => notifyMap.set(item.id, item));
 
             // Chuyển Map trở lại thành mảng
-            return Array.from(notifyMap.values());
+            return Array.from(notifyMap.values()).sort(
+                (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
         });
     }
 

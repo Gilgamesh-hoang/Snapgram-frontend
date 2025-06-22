@@ -40,6 +40,7 @@ const SideBar = () => {
 
         const handleNewMessage = (messageJson: string) => {
             const newMessage: MessageResponse = JSON.parse(messageJson);
+            console.log("New message received:", newMessage)
 
             setConservations((prevConservations) => {
                 const conversationId = newMessage.conversation.id;
@@ -48,7 +49,6 @@ const SideBar = () => {
                 const existingIndex = prevConservations.findIndex(
                     (conv) => conv.conversation.id === conversationId
                 );
-
                 let updatedConversations;
                 if (existingIndex !== -1) {
                     // Nếu đã có, đưa cuộc trò chuyện lên đầu và cập nhật tin nhắn mới nhất
@@ -58,12 +58,13 @@ const SideBar = () => {
                         createdAt: newMessage.createdAt,
                         isRead: false,
                     };
-
+                    console.log("Updated conversation:", updatedConversation)
                     updatedConversations = [
                         updatedConversation,
                         ...prevConservations.filter((_, idx) => idx !== existingIndex),
                     ];
                 } else {
+                    console.log("Adding new conversation:", newMessage.conversation.id)
                     // Nếu chưa có, thêm cuộc trò chuyện mới vào đầu danh sách
                     updatedConversations = [newMessage, ...prevConservations];
                 }
@@ -74,6 +75,7 @@ const SideBar = () => {
 
         socket.on(RECEIVE_MESSAGE_EVENT, handleNewMessage);
         return () => {
+            console.log("Cleaning up socket listener for new messages")
             socket.off(RECEIVE_MESSAGE_EVENT, handleNewMessage);
         };
     }, [socket]);

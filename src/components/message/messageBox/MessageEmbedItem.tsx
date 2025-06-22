@@ -16,7 +16,7 @@ const MessageEmbedItem = (
     const isYoutube = isYoutubeURL(url);
     return (
         <>
-            {isFacebook && <FacebookEmbed url={url} width={width} height={height}/>}
+            {/*{isFacebook && <FacebookEmbed url={url} width={width} height={height}/>}*/}  {/* occur error */}
             {isInstagram && <InstagramEmbed url={url} width={width}/>}
             {isLinkedIn && <LinkedInEmbed url={url} width={width} height={height}/>}
             {isTwitter && <XEmbed url={url} width={width}/>}

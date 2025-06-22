@@ -36,6 +36,7 @@ const SideBarItem: React.FC<MessageResponse> = (message) => {
 
     useEffect(() => {
         if (messages.length > 0) {
+            console.log('Updating last message for conversation:', conversationInfo.id, messages[0])
             setLastMessage(messages[0]);
         }
     }, [messages]);
