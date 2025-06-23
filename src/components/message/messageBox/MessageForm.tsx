@@ -13,6 +13,7 @@ import {MdOutlinePermMedia} from "react-icons/md";
 import {FileUploader, Loader} from "@/components/shared";
 import {Button} from "@/components/ui";
 import {useNavigate, useSearchParams} from "react-router-dom";
+import {addLastMessage} from "@/redux/sidebarMessageSlice.ts";
 
 export interface FileUploadProps {
     isImage: boolean;
@@ -73,8 +74,9 @@ const MessageForm: React.FC<MessageFormProps> = ({info}) => {
             if (ackData) {
                 const messageResponse: MessageResponse = JSON.parse(ackData);
                 dispatch(addNewMessage({id: info.id, message: messageResponse}));
+                dispatch(addLastMessage(messageResponse)); // Cập nhật tin nhắn mới nhất trong sidebar
 
-                if(action === 'new') {
+                if (action === 'new') {
                     navigate(`/messages/u/${messageResponse.conversation.id}`); // Cập nhật URL
                 }
             } else {

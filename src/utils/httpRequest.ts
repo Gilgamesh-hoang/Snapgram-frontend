@@ -1,7 +1,7 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios';
+import {getAccessToken, getRefreshToken, removeAccessToken, updateAccessToken} from "@/services/token.ts";
 import Swal from "sweetalert2";
 import {routes} from "@/route";
-import {getAccessToken, getRefreshToken, removeAccessToken, updateAccessToken} from "@/services/token.ts";
 
 const url = import.meta.env.VITE_REACT_APP_SERVER_URL || '';
 const httpRequest: AxiosInstance = axios.create({
@@ -26,34 +26,69 @@ httpRequest.interceptors.request.use(
     }
 );
 
+// Biến để theo dõi trạng thái refresh token
+let isRefreshing = false;
+let failedQueue: Array<{ resolve: (value: any) => void; reject: (reason?: any) => void }> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+    failedQueue.forEach((prom) => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve(token);
+        }
+    });
+    failedQueue = [];
+};
+
 httpRequest.interceptors.response.use(
     (res) => {
         return res;
     },
     async (err) => {
         const originalConfig = err.config;
-
-
         if (originalConfig.url !== "/auth/login" && err.response) {
             // If the error status is 401 and there is no originalRequest._retry flag,
             // it means the token has expired and we need to refresh it
             if (err.response.status === 401 && !originalConfig._retry) {
                 originalConfig._retry = true;
+
+                if (isRefreshing) {
+                    // Nếu đang refresh, thêm request vào queue và chờ
+                    return new Promise((resolve, reject) => {
+                        failedQueue.push({resolve, reject});
+                    })
+                        .then((token) => {
+                            originalConfig.headers.Authorization = `Bearer ${token}`;
+                            return httpRequest(originalConfig);
+                        })
+                        .catch((err) => Promise.reject(err));
+                }
+
+                isRefreshing = true;
                 await getRefreshToken()
                     .then((response) => {
                         const accessToken = response.data.token;
                         updateAccessToken(accessToken);
+                        originalConfig.headers.Authorization = `Bearer ${accessToken}`;
+
+                        // Xử lý các request trong queue
+                        processQueue(null, accessToken);
+
                         return httpRequest(originalConfig);
                     })
                     .catch((_error) => {
+                        processQueue(_error);
                         Swal.fire({
                             icon: 'error',
                             title: 'Phiên làm việc hết hạn, vui lòng đăng nhập lại',
                         }).then((result) => {
-                            removeAccessToken();
                             window.location.href = routes.signin;
                         });
-                        // return Promise.reject(_error);
+                        removeAccessToken();
+                        return Promise.reject(_error);
+                    }).finally(() => {
+                        isRefreshing = false;
                     });
             }
         }

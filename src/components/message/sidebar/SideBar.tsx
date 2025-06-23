@@ -2,87 +2,51 @@ import React, {useEffect, useState} from "react";
 import {Input} from "@/components/ui";
 import {SidebarItem} from "@/components/message/sidebar";
 import {MessageResponse} from "@/model/type.ts";
-import {PAGE_SIZE_NOTIFICATION, PAGE_SIZE_SIDE_BAR_MESSAGE, RECEIVE_MESSAGE_EVENT} from "@/constants";
+import {RECEIVE_MESSAGE_EVENT} from "@/constants";
 import {Loader} from "@/components/shared";
 import {useSocketContext} from "@/context/SocketContext.tsx";
 import {MdOutlineGroupAdd} from "react-icons/md";
 import CreateGroupModal from "@/components/message/groupForm/CreateGroupModal.tsx";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {getAllConservations} from "@/services/message.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store.ts";
+import {addLastMessage, fetchLastMessages} from "@/redux/sidebarMessageSlice.ts";
 
 const SideBar = () => {
-    const [conservations, setConservations] = useState<MessageResponse[]>([])
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
     const {socket} = useSocketContext();
     const [showModal, setShowModal] = useState(false);
+    const dispatch = useDispatch<AppDispatch>();
+    const { lastMessages, isLoading, hasMore } = useSelector((state: RootState) => state.sidebarMessage);
 
     useEffect(() => {
-        getAllConservations(page, PAGE_SIZE_SIDE_BAR_MESSAGE).then((response) => {
-            // sort response by last message time
-            response.sort((a, b) => {
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            });
+        loadMoreLastMessages();
+    }, [dispatch]);
 
-            setConservations(response);
-            response.length < PAGE_SIZE_NOTIFICATION ? setHasMore(false) : setHasMore(true);
-        }).catch(() => {
-            setHasMore(false);
-        }).finally(() => {
-        });
-    }, [page]);
-
-    // Lắng nghe sự kiện tin nhắn mới từ WebSocket
     useEffect(() => {
-        if (!socket) {
-            return;
-        }
+        if (!socket) return;
 
         const handleNewMessage = (messageJson: string) => {
             const newMessage: MessageResponse = JSON.parse(messageJson);
-            console.log("New message received:", newMessage)
-
-            setConservations((prevConservations) => {
-                const conversationId = newMessage.conversation.id;
-
-                // Kiểm tra xem cuộc trò chuyện đã có trong danh sách chưa
-                const existingIndex = prevConservations.findIndex(
-                    (conv) => conv.conversation.id === conversationId
-                );
-                let updatedConversations;
-                if (existingIndex !== -1) {
-                    // Nếu đã có, đưa cuộc trò chuyện lên đầu và cập nhật tin nhắn mới nhất
-                    const updatedConversation = {
-                        ...prevConservations[existingIndex],
-                        content: newMessage.content,
-                        createdAt: newMessage.createdAt,
-                        isRead: false,
-                    };
-                    console.log("Updated conversation:", updatedConversation)
-                    updatedConversations = [
-                        updatedConversation,
-                        ...prevConservations.filter((_, idx) => idx !== existingIndex),
-                    ];
-                } else {
-                    console.log("Adding new conversation:", newMessage.conversation.id)
-                    // Nếu chưa có, thêm cuộc trò chuyện mới vào đầu danh sách
-                    updatedConversations = [newMessage, ...prevConservations];
-                }
-
-                return updatedConversations;
-            });
+            dispatch(addLastMessage(newMessage));
         };
 
         socket.on(RECEIVE_MESSAGE_EVENT, handleNewMessage);
         return () => {
-            console.log("Cleaning up socket listener for new messages")
             socket.off(RECEIVE_MESSAGE_EVENT, handleNewMessage);
         };
-    }, [socket]);
+    }, [socket, dispatch]);
+
 
     const handleShowCreateGroupModal = () => {
         setShowModal(true);
     }
+
+    const loadMoreLastMessages = () => {
+        if (isLoading || !hasMore) {
+            return;
+        }
+        dispatch(fetchLastMessages());
+    };
 
     return (
         <>
@@ -122,7 +86,7 @@ const SideBar = () => {
                      id="sidebarMessageScrollable"
                 >
                     {
-                        conservations.length === 0 && (
+                        lastMessages.length === 0 && (
                             <div className='mt-12'>
                                 <p className='text-center text-lg text-slate-400'>Không tìm thấy tin nhắn nào.</p>
                             </div>
@@ -130,14 +94,14 @@ const SideBar = () => {
                     }
 
                     <InfiniteScroll
-                        dataLength={conservations.length}
-                        next={() => setPage((prev) => prev + 1)}
+                        dataLength={lastMessages.length}
+                        next={loadMoreLastMessages}
                         hasMore={hasMore}
                         loader={<Loader/>}
                         scrollableTarget="sidebarMessageScrollable"
                         style={{overflow: "hidden"}}
                     >
-                        {conservations.map((user, index) =>
+                        {lastMessages.map((user, index) =>
                             <SidebarItem key={index} {...user} />
                         )}
                     </InfiniteScroll>

@@ -256,7 +256,10 @@ const PostDetails: React.FC = () => {
 
                     </div>
                     <div className="w-full">
-                        <p className="small-regular lg:base-regular">{post.caption}</p>
+                        <p
+                            className="small-regular lg:base-regular"
+                            dangerouslySetInnerHTML={{__html: post.caption}}
+                        />
                         <div className="w-full">
                             <ul className='mt-2 flex flex-wrap gap-1.5'>
                                 {post.tags.map((tag, index) => (

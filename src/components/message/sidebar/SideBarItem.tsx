@@ -1,5 +1,5 @@
 import {NavLink, useParams} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {MessageResponse} from "@/model/type.ts";
 import Avatar from "@/components/shared/Avatar.tsx";
 import {multiFormatDateString} from "@/utils/dateUtil.ts";
@@ -7,17 +7,11 @@ import {isCloudinaryURL, isValidURL} from "@/utils/linkUtil.ts";
 import {useUserContext} from "@/context/AuthContext.tsx";
 import {clsx} from "clsx";
 import {CiImageOn, CiVideoOn} from "react-icons/ci";
-import {useSelector} from "react-redux";
-import {RootState} from "@/redux/store.ts";
-import {createSelector} from "@reduxjs/toolkit";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "@/redux/store.ts";
 import {markAsReadMessage} from "@/services/message.ts";
 import {generateMessageLink} from "@/utils/common.ts";
-
-const selectMessagesById = createSelector(
-    (state: RootState) => state.messages.messages,
-    (_, id: string) => id,
-    (messages, id) => messages[id] || []
-);
+import {markAsRead as markAsReadState} from "@/redux/sidebarMessageSlice.ts";
 
 const SideBarItem: React.FC<MessageResponse> = (message) => {
     const {userContext} = useUserContext();
@@ -27,20 +21,11 @@ const SideBarItem: React.FC<MessageResponse> = (message) => {
         }
         return message.isRead;
     });
-    const [lastMessage, setLastMessage] = useState<MessageResponse>(message);
     const conversationInfo = message.conversation;
-    const messages = useSelector((state: RootState) => selectMessagesById(state, conversationInfo.id));
     const params = useParams();
     const currentConversationId = params.conservationId;
     const isActive = currentConversationId === conversationInfo.id;
-
-    useEffect(() => {
-        if (messages.length > 0) {
-            console.log('Updating last message for conversation:', conversationInfo.id, messages[0])
-            setLastMessage(messages[0]);
-        }
-    }, [messages]);
-
+    const dispatch = useDispatch<AppDispatch>();
 
     const getUrl = () => {
         if (message.conversation.type === "USER") {
@@ -55,6 +40,7 @@ const SideBarItem: React.FC<MessageResponse> = (message) => {
             setIsRead(true);
             // Gọi API đánh dấu tin nhắn đã đọc
             markAsReadMessage(conversationInfo.id);
+            dispatch(markAsReadState(conversationInfo.id));
         }
     }
 
@@ -117,8 +103,8 @@ const SideBarItem: React.FC<MessageResponse> = (message) => {
                     }
                 </div>
                 <div className='flex items-center justify-between gap-1 text-xs text-slate-500'>
-                    <p className='small-regular line-clamp-1 text-ellipsis'>{renderLastMess(lastMessage)}</p>
-                    <p className='text-right'>{lastMessage.createdAt && multiFormatDateString(lastMessage.createdAt)}</p>
+                    <p className='small-regular line-clamp-1 text-ellipsis'>{renderLastMess(message)}</p>
+                    <p className='text-right'>{message.createdAt && multiFormatDateString(message.createdAt)}</p>
                 </div>
 
             </div>
